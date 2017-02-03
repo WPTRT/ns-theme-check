@@ -27,3 +27,18 @@ require_once NS_THEME_CHECK_DIR . '/inc/helpers.php';
 
 // Load admin.
 require_once NS_THEME_CHECK_DIR . '/inc/admin.php';
+
+/**
+ * Add go to theme check page link on plugin page.
+ *
+ * @since 0.1.2
+ */
+
+function ns_theme_check_plugin_settings_link( $links ) { 
+  $settings_link = '<a href="themes.php?page=ns-theme-check">' . esc_attr( 'Theme Check Page', 'ns-theme-check' ) . '</a>'; 
+  array_unshift($links, $settings_link); 
+  return $links; 
+}
+ 
+$plugin = plugin_basename(__FILE__); 
+add_filter( "plugin_action_links_$plugin", 'ns_theme_check_plugin_settings_link' );
