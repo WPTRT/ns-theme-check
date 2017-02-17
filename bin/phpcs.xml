@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Theme Check">
+
+	<description>WordPress Theme Check standards.</description>
+
+	<rule ref="PHPCompatibility">
+		<exclude name="PHPCompatibility.PHP.DefaultTimezoneRequired.Missing"/>
+	</rule>
+
+	<rule ref="Generic.Debug.CSSLint.ExternalTool">
+		<type>error</type>
+	</rule>
+
+</ruleset>

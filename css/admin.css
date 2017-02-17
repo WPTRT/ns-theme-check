@@ -2,16 +2,6 @@
 	margin: 1em;
 }
 
-.theme-check-report-json .summary-list {
-	list-style-type: disc;
-	list-style-position: inside;
-}
-
-.theme-check-report-json .summary-list .item-field {
-	font-weight: 700;
-	margin-right: 5px;
-}
-
 .theme-check-report-json .report-file-item {
 	padding-bottom: 10px;
 	margin-bottom: 10px;
@@ -41,6 +31,9 @@
 }
 
 .theme-check-report-json .report-table td{
-	padding: 0 10px;
+    padding: 0 5px;
+}
 
+.theme-check-report-json .report-table td.td-line{
+    min-width: 55px;
 }

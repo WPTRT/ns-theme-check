@@ -13,6 +13,11 @@
 	        }
 	    ],
 	"require": {
-		"wp-coding-standards/wpcs": "dev-feature/theme-review-sniffs"
+		"wp-coding-standards/wpcs": "dev-feature/theme-review-sniffs",
+		"wimg/php-compatibility": "~7.1"
+	},
+	"scripts": {
+		"post-update-cmd": "rm -rf vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility; cp -rp vendor/wimg/php-compatibility vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility",
+		"post-install-cmd": "rm -rf vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility; cp -rp vendor/wimg/php-compatibility vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility"
 	}
 }
