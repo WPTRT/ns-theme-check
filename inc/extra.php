@@ -10,19 +10,18 @@
  *
  * @since 0.1.3
  *
- * @param string $json JSON encoded string
+ * @param string $data Report data.
  * @return string Modified string.
  */
-function ns_theme_check_extra_checks( $json ) {
+function ns_theme_check_extra_checks( $data ) {
 
 	$styles_needed = ns_theme_check_styles_needed();
 
 	if ( ! empty( $styles_needed ) ) {
-		// TODO: Logic to add errors
-		// $json = ns_theme_check_add_errors( $styles_needed );
+		$data = ns_theme_check_add_errors( $data, $styles_needed );
 	}
 
-	return $json;
+	return $data;
 
 }
 
@@ -48,7 +47,7 @@ function ns_theme_check_styles_needed() {
 	$obj1->warnings = 0;
 
 	$obj_sub = new stdClass();
-	$obj_sub->message = 'In the theme name, WordPress or Theme keyword is not allowed';
+	$obj_sub->message = 'In the theme name, WordPress or Theme keyword is not allowed.';
 	$obj_sub->type = 'ERROR';
 	$obj_sub->line = 2;
 
@@ -60,4 +59,31 @@ function ns_theme_check_styles_needed() {
 
 	return $main_object;
 
+}
+
+/**
+ * Add errors in main data.
+ *
+ * @since 0.1.3
+ *
+ * @param mixed $data Original data.
+ * @param mixed $new New data.
+ * @return array Modified data.
+ */
+function ns_theme_check_add_errors( $data, $new ) {
+
+	if ( 0 === absint( $new->totals->errors ) && 0 === absint( $new->totals->warnings ) ) {
+		return $data;
+	}
+
+	$data->totals->errors += absint( $new->totals->errors );
+	$data->totals->warnings += absint( $new->totals->warnings );
+
+	foreach ( $new->files as $file_key => $file_value ) {
+		$data->files->$file_key->errors += absint( $file_value->errors );
+		$data->files->$file_key->warnings += absint( $file_value->warnings );
+		$data->files->$file_key->messages = array_merge( $data->files->$file_key->messages, $file_value->messages );
+	}
+
+	return $data;
 }
