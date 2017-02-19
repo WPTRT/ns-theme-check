@@ -236,6 +236,7 @@ function ns_theme_check_do_sniff( $theme_slug, $args = array() ) {
 	} else {
 		$output = json_decode( $raw_output );
 		if ( ! empty( $output ) ) {
+			$output = ns_theme_check_extra_checks( $output );
 			ns_theme_check_render_json_report( $output );
 		}
 	}
