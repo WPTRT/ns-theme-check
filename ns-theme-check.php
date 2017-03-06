@@ -25,6 +25,9 @@ define( 'NS_THEME_CHECK_URL', rtrim( plugin_dir_url( __FILE__ ), '/' ) );
 // Load helpers.
 require_once NS_THEME_CHECK_DIR . '/inc/helpers.php';
 
+// Load extra.
+require_once NS_THEME_CHECK_DIR . '/inc/extra.php';
+
 // Load admin.
 require_once NS_THEME_CHECK_DIR . '/inc/admin.php';
 
