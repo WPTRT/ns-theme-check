@@ -68,10 +68,10 @@ function ns_theme_check_do_sniff( $theme_slug, $args = array() ) {
 	// Path to WordPress Theme coding standards.
 	$cli_args .= ' --runtime-set installed_paths ' . NS_THEME_CHECK_DIR . '/vendor/wp-coding-standards/wpcs/';
 
-	$command =  escapeshellcmd( NS_THEME_CHECK_DIR . '/vendor/bin/phpcs ' . $cli_args );
-	exec( $command, $raw_output, $return_var);
+	$command = escapeshellcmd( NS_THEME_CHECK_DIR . '/vendor/bin/phpcs ' . $cli_args );
+	exec( $command, $raw_output, $return_var );
 
-	if ( ! isset(  $raw_output[0] ) ) {
+	if ( ! isset( $raw_output[0] ) ) {
 		echo 'No results';
 		return $return_var;
 	}
