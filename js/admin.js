@@ -5,7 +5,7 @@ jQuery( document ).ready(function($) {
 	});
 	function themeCheckRunPHPCS(){
 		$.ajax({
-			url: themeCheck.ajax_url,
+			url: ajaxurl,
 			type: 'POST',
 			data: {
 				'action': 'ns_theme_check_run',

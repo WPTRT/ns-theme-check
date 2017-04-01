@@ -66,9 +66,6 @@ function ns_theme_check_admin_scripts( $hook ) {
 	}
 	wp_enqueue_style( 'ns-theme-check-admin', NS_THEME_CHECK_URL . '/css/admin.css', array(), '0.1.3b' );
 	wp_enqueue_script( 'ns-theme-check-admin', NS_THEME_CHECK_URL . '/js/admin.js', array(), '0.1.3' );
-	wp_localize_script( 'ns-theme-check-admin', 'themeCheck', array(
-		'ajax_url' => admin_url( 'admin-ajax.php' )
-	) );
 }
 add_action( 'admin_enqueue_scripts', 'ns_theme_check_admin_scripts' );
 
