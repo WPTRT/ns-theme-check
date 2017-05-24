@@ -132,7 +132,7 @@ function ns_theme_check_render_form() {
 					<?php endforeach; ?>
 				</select>
 			</label>
-			<span id="check-status" class="button button-secondary"/><?php esc_attr_e( 'Go', 'ns-theme-check' ); ?></span>
+			<span id="check-status" class="button button-secondary"><?php esc_attr_e( 'Go', 'ns-theme-check' ); ?></span>
 		</div><!-- .theme-switcher-wrap -->
 		<div class="standards-wrap">
 			<h2><?php esc_html_e( 'Select Standard', 'ns-theme-check' ); ?></h2>
