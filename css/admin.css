@@ -102,6 +102,10 @@
 	position: absolute;
 	z-index: 3;
 }
+.progress-bar.install-error,
+.progress-bar.install-error .meter{
+	background: #ef5d5d;
+}
 .progress-bar .meter {
 	background: #58bf66;
 	height: 40px;

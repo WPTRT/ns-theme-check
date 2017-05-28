@@ -44,7 +44,7 @@ jQuery( document ).ready(function($) {
 					individualSniff( theme_name, theme_args, theme_files, total_files, file_number = 0 );
 				} else {
 					$('.theme-check-report').before(response.data[0].message);
-					$('.progress-bar').html( '<span class="error">' + localization_object.check_failed + '</span>' );
+					$('.progress-bar').html( '<span class="error">' + localization_object.check_failed + '</span>' ).addClass('install-error');
 				}
 			},
 			error: function(errorThrown){
@@ -110,6 +110,7 @@ jQuery( document ).ready(function($) {
 							}
 						}
 					};
+					$('.progress-bar').addClass('install-error');
 					wrapper = renderJSON(error_data)
 				}
 				$('.theme-check-report').append(wrapper);
