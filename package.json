@@ -1,7 +1,7 @@
 {
-  "name": "ns-theme-check",
+  "name": "theme-sniffer",
   "version": "0.1.4",
-  "description": "Theme Check plugin using sniffs. `WordPress-Theme` standard is used from WPTRT/WordPress-Coding-Standards.",
+  "description": "Theme Sniffer plugin using sniffs. `WordPress-Theme` standard is used from WPTRT/WordPress-Coding-Standards.",
   "main": "index.js",
   "dependencies": {
     "stylelint": "^7.10.1"
@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ernilambar/ns-theme-check.git"
+    "url": "git+https://github.com/ernilambar/theme-sniffer.git"
   },
   "author": "Nilambar Sharma <nilambar@outlook.com>",
   "license": "GPL-2.0",
   "bugs": {
-    "url": "https://github.com/ernilambar/ns-theme-check/issues"
+    "url": "https://github.com/ernilambar/theme-sniffer/issues"
   },
-  "homepage": "https://github.com/ernilambar/ns-theme-check#readme"
+  "homepage": "https://github.com/ernilambar/theme-sniffer#readme"
 }

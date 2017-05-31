@@ -1,10 +1,10 @@
-.wrap.ns-theme-check{
+.wrap.theme-sniffer{
 	padding: 50px;
 	background: #fff;
 	margin: 20px 20px 0 0;
 }
 
-.wrap.ns-theme-check h1{
+.wrap.theme-sniffer h1{
 	font-weight: 500;
 }
 
@@ -101,6 +101,10 @@
 .progress-bar span{
 	position: absolute;
 	z-index: 3;
+}
+.progress-bar.install-error,
+.progress-bar.install-error .meter{
+	background: #ef5d5d;
 }
 .progress-bar .meter {
 	background: #58bf66;

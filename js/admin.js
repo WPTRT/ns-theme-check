@@ -3,20 +3,34 @@ jQuery( document ).ready(function($) {
 
 	var count = 0;
 
-	$('#check-status').click(function(){
+	$('#check-status').on( 'click', function() {
+		var $sniff_report = $('.theme-sniffer-report');
 		count = 0;
-		$('.theme-check-report').empty();
+		$sniff_report.empty();
 		$('.progress-bar').remove();
-		$('.theme-check-report').before('<div class="progress-bar"><span>' + localization_object.check_starting + '</span></div>');
+		$sniff_report.before('<div class="progress-bar"><span>' + localization_object.check_starting + '</span></div>');
 		themeCheckRunPHPCS();
 	});
 
-	function themeCheckRunPHPCS(){
+	$('select[name="themename"]').on( 'change', function() {
+		var $sniff_report = $('.theme-sniffer-report');
+		var $progress_bar = $('.progress-bar');
+
+		if ($progress_bar.length) {
+			$progress_bar.remove();
+		}
+
+		if ($sniff_report.length) {
+			$sniff_report.html('');
+		}
+	});
+
+	function themeCheckRunPHPCS() {
 		$.ajax({
 			type: 'POST',
 			url: ajaxurl,
 			data: {
-				'action': 'ns_theme_check_run',
+				'action': 'theme_sniffer_run',
 				'themename': $('select[name=themename]').val(),
 				'hide_warning': $('input[name=hide_warning]').is(':checked'),
 				'raw_output': $('input[name=raw_output]').is(':checked'),
@@ -26,7 +40,7 @@ jQuery( document ).ready(function($) {
 				'wordpress-extra': $('input[name=wordpress-extra]').is(':checked'),
 				'wordpress-docs': $('input[name=wordpress-docs]').is(':checked'),
 				'wordpress-vip': $('input[name=wordpress-vip]').is(':checked'),
-				'ns_theme_check_nonce': $('#ns_theme_check_nonce').val(),
+				'theme_sniffer_nonce': $('#theme_sniffer_nonce').val(),
 			},
 			success:function(response) {
 				if ( true === response.success ) {
@@ -43,34 +57,37 @@ jQuery( document ).ready(function($) {
 
 					individualSniff( theme_name, theme_args, theme_files, total_files, file_number = 0 );
 				} else {
-					$('.theme-check-report').before(response.data[0].message);
-					$('.progress-bar').html( '<span class="error">' + localization_object.check_failed + '</span>' );
+					$('.theme-sniffer-report').before(response.data[0].message);
+					$('.progress-bar').html( '<span class="error">' + localization_object.check_failed + '</span>' ).addClass('install-error');
 				}
 			},
 			error: function(errorThrown){
 				console.log(errorThrown);
 			}
 		});
+		return false;
 	}
 
 	function individualSniff( theme_name, theme_args, theme_files, total_files, file_number ) {
 		var file_no = file_number;
+		var $sniff_report = $('.theme-sniffer-report');
+
 		$.ajax({
 			type: 'POST',
 			url: ajaxurl,
 			data: {
-				'action': 'ns_theme_check_sniff',
+				'action': 'theme_sniffer_sniff',
 				'theme_name': theme_name,
 				'theme_args': theme_args,
 				'file': theme_files[file_no],
-				'ns_theme_check_nonce': $('#ns_theme_check_nonce').val(),
+				'theme_sniffer_nonce': $('#theme_sniffer_nonce').val(),
 			},
 			success: function(data, status, xhr) {
 				var wrapper;
 				count++;
 				bumpProgressBar(count, total_files);
 				wrapper = renderJSON(data)
-				$('.theme-check-report').append(wrapper);
+				$sniff_report.append(wrapper);
 			},
 			complete: function() {
 				file_no++;
@@ -110,13 +127,13 @@ jQuery( document ).ready(function($) {
 							}
 						}
 					};
-					wrapper = renderJSON(error_data)
+					$('.progress-bar').addClass('install-error');
+					wrapper = renderJSON(error_data);
 				}
-				$('.theme-check-report').append(wrapper);
+				$sniff_report.append(wrapper);
 			}
 		});
 		return false;
-
 	}
 
 	function renderJSON( json ) {
@@ -141,11 +158,11 @@ jQuery( document ).ready(function($) {
 		var table = document.createElement('table');
 		table.className = "report-table";
 
-		$.each(json.data.files, function( files, value ){
+		$.each(json.data.files, function( files, value ) {
 			var filepath = files.split('/themes/');
 			heading.textContent = filepath[1];
 
-			$.each( value.messages, function( index, value ){
+			$.each( value.messages, function( index, value ) {
 
 				var row = document.createElement('tr');
 				if ( 'ERROR' == value.type ) {
@@ -170,18 +187,16 @@ jQuery( document ).ready(function($) {
 				row.appendChild(message);
 
 				table.appendChild(row);
-			} );
-
+			});
 		});
 
 		wrapper.appendChild(heading);
 		wrapper.appendChild(table);
 
 		return wrapper;
-
 	}
 
-	function bumpProgressBar(count, total_files){
+	function bumpProgressBar(count, total_files) {
 		var percentComplete = (( count / total_files ) * 100).toFixed(2);
 		$('.progress-bar').html( '<span>' + localization_object.percent_complete + percentComplete + '%</span>' ).append('<span class="meter" style="width: ' + percentComplete + '%"></span>');
 	}

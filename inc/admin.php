@@ -2,7 +2,7 @@
 /**
  * Admin functions
  *
- * @package NS_Theme_Check
+ * @package Theme_Sniffer
  */
 
 /**
@@ -13,40 +13,40 @@
  * @param array $links Array of plugin action links.
  * @return array Modified array of plugin action links.
  */
-function ns_theme_check_plugin_settings_link( $links ) {
-	$theme_check_link = '<a href="themes.php?page=ns-theme-check">' . esc_attr__( 'Theme Check Page', 'ns-theme-check' ) . '</a>';
-	array_unshift( $links, $theme_check_link );
+function theme_sniffer_plugin_settings_link( $links ) {
+	$theme_sniffer_link = '<a href="themes.php?page=theme-sniffer">' . esc_attr__( 'Theme Sniffer Page', 'theme-sniffer' ) . '</a>';
+	array_unshift( $links, $theme_sniffer_link );
 	return $links;
 }
-add_filter( 'plugin_action_links_' . NS_THEME_CHECK_BASENAME, 'ns_theme_check_plugin_settings_link' );
+add_filter( 'plugin_action_links_' . THEME_SNIFFER_BASENAME, 'theme_sniffer_plugin_settings_link' );
 
 /**
  * Register admin menu.
  *
  * @since 0.1.0
  */
-function ns_theme_check_admin_menu() {
+function theme_sniffer_admin_menu() {
 	add_theme_page(
-		esc_html__( 'NS Theme Check', 'ns-theme-check' ),
-		esc_html__( 'NS Theme Check', 'ns-theme-check' ),
+		esc_html__( 'Theme Sniffer', 'theme-sniffer' ),
+		esc_html__( 'Theme Sniffer', 'theme-sniffer' ),
 		'manage_options',
-		'ns-theme-check',
-		'ns_theme_check_render_admin_page'
+		'theme-sniffer',
+		'theme_sniffer_render_admin_page'
 	);
 }
-add_action( 'admin_menu', 'ns_theme_check_admin_menu' );
+add_action( 'admin_menu', 'theme_sniffer_admin_menu' );
 
 /**
  * Callback for admin page.
  *
  * @since 0.1.0
  */
-function ns_theme_check_render_admin_page() {
+function theme_sniffer_render_admin_page() {
 	?>
-	<div class="wrap ns-theme-check">
-		<h1><?php esc_html_e( 'NS Theme Check', 'ns-theme-check' ); ?></h1>
+	<div class="wrap theme-sniffer">
+		<h1><?php esc_html_e( 'Theme Sniffer', 'theme-sniffer' ); ?></h1>
 		<hr />
-		<?php ns_theme_check_render_form(); ?>
+		<?php theme_sniffer_render_form(); ?>
 	</div>
 	<?php
 }
@@ -58,29 +58,29 @@ function ns_theme_check_render_admin_page() {
  *
  * @param string $hook Admin hook name.
  */
-function ns_theme_check_admin_scripts( $hook ) {
-	if ( 'appearance_page_ns-theme-check' !== $hook ) {
+function theme_sniffer_admin_scripts( $hook ) {
+	if ( 'appearance_page_theme-sniffer' !== $hook ) {
 		return;
 	}
-	wp_enqueue_style( 'ns-theme-check-admin', NS_THEME_CHECK_URL . '/css/admin.css', array(), '0.1.3c' );
-	wp_enqueue_script( 'ns-theme-check-admin', NS_THEME_CHECK_URL . '/js/admin.js', array( 'jquery', 'underscore' ), '0.1.4' );
-	wp_localize_script( 'ns-theme-check-admin', 'localization_object', array(
-		'sniff_error' => __( 'The check has failed. This could happen due to running out of memory. Either reduce the file length or increase PHP memory.', 'ns-theme-check' ),
-		'percent_complete' => __( 'Percent completed: ', 'ns-theme-check' ),
-		'check_starting' => __( 'Check starting...', 'ns-theme-check' ),
-		'check_failed' => __( 'Check has failed :(', 'ns-theme-check' ),
+	wp_enqueue_style( 'theme-sniffer-admin', THEME_SNIFFER_URL . '/css/admin.css', array(), '0.1.3c' );
+	wp_enqueue_script( 'theme-sniffer-admin', THEME_SNIFFER_URL . '/js/admin.js', array( 'jquery', 'underscore' ), '0.1.4' );
+	wp_localize_script( 'theme-sniffer-admin', 'localization_object', array(
+		'sniff_error' => __( 'The check has failed. This could happen due to running out of memory. Either reduce the file length or increase PHP memory.', 'theme-sniffer' ),
+		'percent_complete' => __( 'Percent completed: ', 'theme-sniffer' ),
+		'check_starting' => __( 'Check starting...', 'theme-sniffer' ),
+		'check_failed' => __( 'Check has failed :(', 'theme-sniffer' ),
 	));
 }
-add_action( 'admin_enqueue_scripts', 'ns_theme_check_admin_scripts' );
+add_action( 'admin_enqueue_scripts', 'theme_sniffer_admin_scripts' );
 
 /**
  * Render form.
  *
  * @since 0.1.0
  */
-function ns_theme_check_render_form() {
+function theme_sniffer_render_form() {
 
-	$standards = ns_theme_check_get_standards();
+	$standards = theme_sniffer_get_standards();
 
 	$all_themes = wp_get_themes();
 	$themes = array();
@@ -127,10 +127,10 @@ function ns_theme_check_render_form() {
 		}
 	}
 	?>
-	<form action="<?php echo esc_url( admin_url( 'themes.php?page=ns-theme-check' ) ); ?>" method="post" class="frm-theme-check">
-		<?php wp_nonce_field( 'ns_theme_check_run', 'ns_theme_check_nonce' ); ?>
+	<form action="<?php echo esc_url( admin_url( 'themes.php?page=theme-sniffer' ) ); ?>" method="post" class="frm-theme-sniffer">
+		<?php wp_nonce_field( 'theme_sniffer_run', 'theme_sniffer_nonce' ); ?>
 		<div class="theme-switcher-wrap">
-			<h2><?php esc_html_e( 'Select Theme', 'ns-theme-check' ); ?></h2>
+			<h2><?php esc_html_e( 'Select Theme', 'theme-sniffer' ); ?></h2>
 			<label for="themename">
 				<select name="themename">
 					<?php foreach ( $themes as $key => $value ) : ?>
@@ -138,10 +138,10 @@ function ns_theme_check_render_form() {
 					<?php endforeach; ?>
 				</select>
 			</label>
-			<span id="check-status" class="button button-secondary"><?php esc_attr_e( 'Go', 'ns-theme-check' ); ?></span>
+			<span id="check-status" class="button button-secondary"><?php esc_attr_e( 'Go', 'theme-sniffer' ); ?></span>
 		</div><!-- .theme-switcher-wrap -->
 		<div class="standards-wrap">
-			<h2><?php esc_html_e( 'Select Standard', 'ns-theme-check' ); ?></h2>
+			<h2><?php esc_html_e( 'Select Standard', 'theme-sniffer' ); ?></h2>
 			<?php foreach ( $standards as $key => $standard ) : ?>
 				<label for="<?php echo esc_attr( $key ); ?>" title="<?php echo esc_attr( $standard['description'] ); ?>">
 					<input type="checkbox" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" value="1" <?php checked( $standard_status[ $key ], 1 ); ?> />
@@ -150,38 +150,38 @@ function ns_theme_check_render_form() {
 			<?php endforeach; ?>
 		</div><!-- .standards-wrap -->
 		<div class="options-wrap">
-			<h2><?php esc_html_e( 'Options', 'ns-theme-check' ); ?></h2>
-			<label for="hide_warning"><input type="checkbox" name="hide_warning" id="hide_warning" value="1" <?php checked( $hide_warning, 1 ); ?> /><?php esc_html_e( 'Hide Warnings', 'ns-theme-check' ); ?></label>
-			&nbsp;<label for="raw_output"><input type="checkbox" name="raw_output" id="raw_output" value="1" <?php checked( $raw_output, 1 ); ?> /><?php esc_html_e( 'Raw Output', 'ns-theme-check' ); ?></label>&nbsp;
-			<?php $php_versions = ns_theme_check_get_php_versions(); ?>
+			<h2><?php esc_html_e( 'Options', 'theme-sniffer' ); ?></h2>
+			<label for="hide_warning"><input type="checkbox" name="hide_warning" id="hide_warning" value="1" <?php checked( $hide_warning, 1 ); ?> /><?php esc_html_e( 'Hide Warnings', 'theme-sniffer' ); ?></label>
+			&nbsp;<label for="raw_output"><input type="checkbox" name="raw_output" id="raw_output" value="1" <?php checked( $raw_output, 1 ); ?> /><?php esc_html_e( 'Raw Output', 'theme-sniffer' ); ?></label>&nbsp;
+			<?php $php_versions = theme_sniffer_get_php_versions(); ?>
 			<label for="minimum_php_version">
 				<select name="minimum_php_version">
 				<?php foreach ( $php_versions as $version ) : ?>
 					<option value="<?php echo esc_attr( $version ); ?>" <?php selected( $minimum_php_version, $version ); ?>><?php echo esc_html( $version ); ?></option>
 				<?php endforeach; ?>
 				</select>
-				<?php esc_html_e( 'Minimum PHP Version', 'ns-theme-check' ); ?>
+				<?php esc_html_e( 'Minimum PHP Version', 'theme-sniffer' ); ?>
 			</label>
 		</div><!-- .options-wrap -->
 	</form>
-	<div class="theme-check-report"></div><!-- .theme-check-report -->
+	<div class="theme-sniffer-report"></div><!-- .theme-sniffer-report -->
 	<?php
 }
 
-add_action( 'wp_ajax_ns_theme_check_run', 'ns_theme_check_initialize_sniff' );
+add_action( 'wp_ajax_theme_sniffer_run', 'theme_sniffer_initialize_sniff' );
 /**
  * Start sniffing
  *
  * @since 0.1.0
  */
-function ns_theme_check_initialize_sniff() {
+function theme_sniffer_initialize_sniff() {
 	// Bail if empty.
 	if ( empty( $_POST['themename'] ) ) {
 		return;
 	}
 
-	if ( ! file_exists( NS_THEME_CHECK_DIR . '/vendor/autoload.php' ) ) {
-		$message = sprintf( esc_html__( 'It seems you are using GitHub provided zip for the plugin. Visit %1$sInstalling%2$s to find the correct bundled plugin zip.', 'ns-theme-check' ), '<a href="https://github.com/ernilambar/ns-theme-check#installing" target="_blank">', '</a>' );
+	if ( ! file_exists( THEME_SNIFFER_DIR . '/vendor/autoload.php' ) ) {
+		$message = sprintf( esc_html__( 'It seems you are using GitHub provided zip for the plugin. Visit %1$sInstalling%2$s to find the correct bundled plugin zip.', 'theme-sniffer' ), '<a href="https://github.com/ernilambar/theme-sniffer#installing" target="_blank">', '</a>' );
 		$error = new WP_Error( '-1', $message );
 		wp_send_json_error( $error );
 	}
@@ -189,8 +189,8 @@ function ns_theme_check_initialize_sniff() {
 	$theme_slug = esc_html( $_POST['themename'] );
 
 	// Verify nonce.
-	if ( ! isset( $_POST['ns_theme_check_nonce'] ) || ! wp_verify_nonce( $_POST['ns_theme_check_nonce'], 'ns_theme_check_run' ) ) {
-		esc_html_e( 'Error', 'ns-theme-check' );
+	if ( ! isset( $_POST['theme_sniffer_nonce'] ) || ! wp_verify_nonce( $_POST['theme_sniffer_nonce'], 'theme_sniffer_run' ) ) {
+		esc_html_e( 'Error', 'theme-sniffer' );
 		return;
 	}
 
@@ -206,7 +206,7 @@ function ns_theme_check_initialize_sniff() {
 		$args['minimum_php_version'] = esc_html( $_POST['minimum_php_version'] );
 	}
 
-	$standards = ns_theme_check_get_standards();
+	$standards = theme_sniffer_get_standards();
 	foreach ( $standards as $key => $standard ) {
 		if ( isset( $_POST[ $key ] ) && 'true' === $_POST[ $key ] ) {
 			$args['standard'][] = $standard['label'];
@@ -233,24 +233,24 @@ function ns_theme_check_initialize_sniff() {
 
 }
 
-add_action( 'wp_ajax_ns_theme_check_sniff', 'ns_theme_check_individual_files' );
+add_action( 'wp_ajax_theme_sniffer_sniff', 'theme_sniffer_individual_files' );
 /**
  * Render sniff results.
  *
  * @since 0.1.0
  */
-function ns_theme_check_individual_files() {
+function theme_sniffer_individual_files() {
 	// Bail if empty.
 	if ( empty( $_POST['theme_name'] ) || empty( $_POST['theme_args'] ) || empty( $_POST['file'] ) ) {
 		return;
 	}
 
 	// Verify nonce.
-	if ( ! isset( $_POST['ns_theme_check_nonce'] ) || ! wp_verify_nonce( $_POST['ns_theme_check_nonce'], 'ns_theme_check_run' ) ) {
+	if ( ! isset( $_POST['theme_sniffer_nonce'] ) || ! wp_verify_nonce( $_POST['theme_sniffer_nonce'], 'theme_sniffer_run' ) ) {
 		return;
 	}
 
-	$sniff = ns_theme_check_do_sniff( $_POST['theme_name'], $_POST['theme_args'], $_POST['file'] );
+	$sniff = theme_sniffer_do_sniff( $_POST['theme_name'], $_POST['theme_args'], $_POST['file'] );
 
 	wp_send_json_success( $sniff );
 
