@@ -2,7 +2,7 @@
 /**
  * Helper functions
  *
- * @package NS_Theme_Check
+ * @package Theme_Sniffer
  */
 
 /**
@@ -12,32 +12,32 @@
  *
  * @return array Standards details.
  */
-function ns_theme_check_get_standards() {
+function theme_sniffer_get_standards() {
 
 	$output = array(
 		'wordpress-theme' => array(
 			'label'       => 'WordPress-Theme',
-			'description' => 'Ruleset for WordPress theme review requirements (Required)',
+			'description' => __( 'Ruleset for WordPress theme review requirements (Required)', 'theme-sniffer' ),
 			'default'     => 1,
 		),
 		'wordpress-core' => array(
 			'label'       => 'WordPress-Core',
-			'description' => 'Main ruleset for WordPress core coding standards (Optional)',
+			'description' => __( 'Main ruleset for WordPress core coding standards (Optional)', 'theme-sniffer' ),
 			'default'     => 0,
 		),
 		'wordpress-extra' => array(
 			'label'       => 'WordPress-Extra',
-			'description' => 'Extended ruleset for recommended best practices (Optional)',
+			'description' => __( 'Extended ruleset for recommended best practices (Optional)', 'theme-sniffer' ),
 			'default'     => 0,
 		),
 		'wordpress-docs' => array(
 			'label'       => 'WordPress-Docs',
-			'description' => 'Additional ruleset for WordPress inline documentation standards (Optional)',
+			'description' => __( 'Additional ruleset for WordPress inline documentation standards (Optional)', 'theme-sniffer' ),
 			'default'     => 0,
 		),
 		'wordpress-vip' => array(
 			'label'       => 'WordPress-VIP',
-			'description' => 'Extended ruleset for WordPress VIP coding requirements (Optional)',
+			'description' => __( 'Extended ruleset for WordPress VIP coding requirements (Optional)', 'theme-sniffer' ),
 			'default'     => 0,
 		),
 	);
@@ -53,7 +53,7 @@ function ns_theme_check_get_standards() {
  *
  * @return array PHP versions.
  */
-function ns_theme_check_get_php_versions() {
+function theme_sniffer_get_php_versions() {
 
 	$output = array(
 		'5.2',
@@ -75,7 +75,7 @@ function ns_theme_check_get_php_versions() {
  *
  * @return array PHP versions.
  */
-function ns_theme_check_get_theme_tags() {
+function theme_sniffer_get_theme_tags() {
 
 	$tags['allowed_tags'] = array(
 		'grid-layout'           => 'grid-layout',
@@ -131,10 +131,10 @@ function ns_theme_check_get_theme_tags() {
  *
  * @return array List of extra headers.
  */
-function ns_theme_check_add_headers( $extra_headers ) {
+function theme_sniffer_add_headers( $extra_headers ) {
 	$extra_headers[] = 'License';
 	$extra_headers[] = 'License URI';
 	$extra_headers[] = 'Template Version';
 	return $extra_headers;
 }
-add_filter( 'extra_theme_headers', 'ns_theme_check_add_headers' );
+add_filter( 'extra_theme_headers', 'theme_sniffer_add_headers' );

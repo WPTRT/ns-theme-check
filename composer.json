@@ -1,7 +1,7 @@
 {
-	"name": "ernilambar/ns-theme-check",
+	"name": "ernilambar/theme-sniffer",
 	"type": "wordpress-plugin",
-	"description": "Theme Check with sniff",
+	"description": "Theme Sniffer with sniff",
 	"authors": [{
 		"name": "Nilambar Sharma",
 		"email": "nilambar@outlook.com"

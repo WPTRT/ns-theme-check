@@ -1,6 +1,6 @@
-# NS Theme Check
+# Theme Sniffer
 
-Theme Check plugin using sniffs. `WordPress-Theme` standard is used from [WPTRT/WordPress-Coding-Standards](https://github.com/WPTRT/WordPress-Coding-Standards).
+Theme Sniffer plugin using sniffs. `WordPress-Theme` standard is used from [WPTRT/WordPress-Coding-Standards](https://github.com/WPTRT/WordPress-Coding-Standards).
 
 ![Screenshot](screenshot.png?raw=true)
 
@@ -8,7 +8,7 @@ Theme Check plugin using sniffs. `WordPress-Theme` standard is used from [WPTRT/
 
 ### Option 1: Easy
 
-* Download [zip file](https://github.com/ernilambar/ns-theme-check/releases/download/0.1.4/ns-theme-check.0.1.4.zip). [Note: Please use this distribution plugin zip. GitHub provided zip will not work.]
+* Download [zip file](https://github.com/ernilambar/theme-sniffer/releases/download/0.1.4/theme-sniffer.0.1.4.zip). [Note: Please use this distribution plugin zip. GitHub provided zip will not work.]
 * Install this as you normally install a WordPress plugin
 * Activate plugin
 
@@ -21,7 +21,7 @@ Theme Check plugin using sniffs. `WordPress-Theme` standard is used from [WPTRT/
 
 ## Using
 
-* Go to `Appearance` -> `NS Theme Check`
+* Go to `Appearance` -> `Theme Sniffer`
 * Select theme from the dropdown
 * Click `GO`
 
