@@ -48,6 +48,9 @@ if ( class_exists( 'WP_CLI' ) ) {
 	 * ---
 	 *
 	 * @when after_theme_setup
+	 *
+	 * @param  array $slug       Array containing non-named args from command line. Expect a theme slug.
+	 * @param  array $assoc_args Array containing the named args from command line as default option overrides.
 	 */
 	function ns_theme_check_run_wpcli_report( $slug, $assoc_args ) {
 
@@ -55,6 +58,7 @@ if ( class_exists( 'WP_CLI' ) ) {
 
 		// Test for some files only present in the release version of the plugin.
 		if ( ! file_exists( NS_THEME_CHECK_DIR . '/vendor/autoload.php' ) ) {
+			// translators: 1 - link to proper theme instalation info.
 			$message = sprintf( esc_html__( 'It seems you are using GitHub provided zip for the plugin. Visit %1$sInstalling%2$s to find the correct bundled plugin zip.', 'ns-theme-check' ), '<a href="https://github.com/ernilambar/ns-theme-check#installing" target="_blank">', '</a>' );
 			$error = new WP_Error( '-1', $message );
 			// Log an error message and exit(1).
