@@ -28,3 +28,6 @@ require_once NS_THEME_CHECK_DIR . '/inc/helpers.php';
 // Load admin.
 require_once NS_THEME_CHECK_DIR . '/inc/admin.php';
 require_once NS_THEME_CHECK_DIR . '/inc/checks.php';
+
+// Load WP-CLI command.
+require_once NS_THEME_CHECK_DIR . '/inc/wpcli-command.php';
