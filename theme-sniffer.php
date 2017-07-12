@@ -18,10 +18,48 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( version_compare( PHP_VERSION, '5.2', '<=' ) ) {
-	deactivate_plugins( plugin_basename( __FILE__ ) );
-	$error_message = '<p style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Oxygen-Sans,Ubuntu,Cantarell,\'Helvetica Neue\',sans-serif;font-size: 13px;line-height: 1.5;color:#444;">' . __( 'This plugin requires php version greater than 5.2.', 'theme-sniffer' ) . '</p>';
-	die( $error_message ); // WPCS: XSS ok.
+add_action( 'admin_init', 'theme_sniffer_check_php' );
+
+/**
+ * Check php function hook
+ *
+ * Hooks to the init hook, checks for the php version - if lower than 5.3
+ * will disable the plugin and add a notice.
+ *
+ * @return void
+ */
+function theme_sniffer_check_php() {
+	// If php version is lower than 5.3, abort.
+	if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+		$plugin = plugin_basename( __FILE__ );
+
+		if ( is_plugin_active( $plugin ) ) {
+			deactivate_plugins( $plugin );
+<<<<<<< HEAD
+			add_action( 'admin_notices', 'theme_sniffer_error_activation_notice' );
+			remove_filter( 'plugin_action_links_' . $plugin, 'theme_sniffer_plugin_settings_link' );
+=======
+
+			add_action( 'admin_notices', 'theme_sniffer_error_activation_notice' );
+>>>>>>> b420c60... Update code
+			unset( $_GET['activate'] );
+		}
+	}
+}
+
+/**
+ * Activation error message hook.
+ *
+ * Hooks to admin_notices hook and outputs the message on activation error.
+ *
+ * @return void
+ */
+function theme_sniffer_error_activation_notice() {
+	?>
+	<div class="error">
+		<p><?php _e( 'Theme Sniffer requires PHP 5.3 or greater to function.', 'theme-sniffer' ); ?></p>
+	</div>
+	<?php
 }
 
 define( 'THEME_SNIFFER_BASENAME', plugin_basename( __FILE__ ) );
