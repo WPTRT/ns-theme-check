@@ -35,13 +35,8 @@ function theme_sniffer_check_php() {
 
 		if ( is_plugin_active( $plugin ) ) {
 			deactivate_plugins( $plugin );
-<<<<<<< HEAD
 			add_action( 'admin_notices', 'theme_sniffer_error_activation_notice' );
 			remove_filter( 'plugin_action_links_' . $plugin, 'theme_sniffer_plugin_settings_link' );
-=======
-
-			add_action( 'admin_notices', 'theme_sniffer_error_activation_notice' );
->>>>>>> b420c60... Update code
 			unset( $_GET['activate'] );
 		}
 	}
