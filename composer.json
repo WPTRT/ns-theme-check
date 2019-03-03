@@ -5,7 +5,7 @@
 	"description": "Theme Sniffer plugin which uses PHP_CodeSniffer for automatic theme checking.",
 	"license": "MIT",
 	"authors": [{
-			"name"    : "Contributors",
+			"name": "Contributors",
 			"homepage": "https://github.com/WPTRT/theme-sniffer/graphs/contributors"
 		}, {
 			"name": "Denis Žoljom",
@@ -19,8 +19,10 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
 	},
 	"require-dev": {
+		"codedungeon/phpunit-result-printer": "^0.20.1",
 		"phpcompatibility/php-compatibility": "^9.0",
-		"roave/security-advisories"         : "dev-master"
+		"phpunit/phpunit": "^6.5",
+		"roave/security-advisories": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -31,11 +33,16 @@
 	"scripts": {
 		"phpcs-i": "@php ./vendor/bin/phpcs -i",
 		"check-cs": "@php ./vendor/bin/phpcs --ignore=*/vendor/*,*/node_modules/*",
-		"fix-cs": "@php ./vendor/bin/phpcbf --ignore=*/vendor/*,*/node_modules/*"
+		"fix-cs": "@php ./vendor/bin/phpcbf --ignore=*/vendor/*,*/node_modules/*",
+		"punit": "@php ./vendor/bin/phpunit -c phpunit.xml.dist --no-coverage --colors=always",
+		"punit-cov": "@php ./vendor/bin/phpunit -c phpunit.xml.dist --colors=always",
+		"pint": "@php ./vendor/bin/phpunit -c phpunit.integration.xml.dist --no-coverage --colors=always",
+		"pint-cov": "@php ./vendor/bin/phpunit -c phpunit.integration.xml.dist --colors=always"
 	},
 	"config": {
-    	"sort-packages": true,
-    	"optimize-autoloader": true
+		"sort-packages": true,
+		"optimize-autoloader": true,
+		"process-timeout": 2000
 	},
 	"support": {
 		"issues": "https://github.com/WPTRT/theme-sniffer/issues",
