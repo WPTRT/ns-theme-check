@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	bootstrap="tests/bootstrap-integration.php"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false"
+	syntaxCheck="false"
+	verbose="true"
+	>
+	<testsuites>
+		<testsuite name="integration">
+			<directory prefix="test-" suffix=".php">./tests/integration/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist>
+			<directory>./</directory>
+			<exclude>
+				<directory>./node_modules</directory>
+				<directory>./vendor</directory>
+				<directory>./tests</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-html" target="tests/_reports/coverage-integration" charset="UTF-8" yui="true" highlight="true" lowUpperBound="35" highLowerBound="75" />
+		<log type="coverage-clover" target="tests/_reports/logs/clover-integration.xml"/>
+		<log type="coverage-php" target="tests/_reports/logs/coverage-integration.cov"/>
+		<log type="junit" target="tests/_reports/logs/logfile-integration.xml"/>
+	</logging>
+</phpunit>
