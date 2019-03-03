@@ -22,3 +22,6 @@ ehthumbs_vista.db
 # IDE specific
 theme-sniffer.sublime-project
 theme-sniffer.sublime-workspace
+
+# Test coverage in HTML
+tests/_reports

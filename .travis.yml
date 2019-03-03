@@ -1,62 +1,69 @@
 dist: trusty
 
 cache:
-  apt: true
-  directories:
-    # Cache directory for older Composer versions.
-    - $HOME/.composer/cache/files
-    # Cache directory for more recent Composer versions.
-    - $HOME/.cache/composer/files
+	apt: true
+	directories:
+		# Cache directory for older Composer versions.
+		- $HOME/.composer/cache/files
+		# Cache directory for more recent Composer versions.
+		- $HOME/.cache/composer/files
 
 language: php
 
 php:
-  - 7.0
-  - 7.1
-  - 7.3
-  - nightly
+	- 7.0
+	- 7.1
+	- 7.3
+	- nightly
 
- env:
-  # Highest supported PHPCS version.
-  - PHPCS_BRANCH="dev-master" LINT=1
-  # Lowest supported PHPCS version.
-  - PHPCS_BRANCH="3.3.0"
+env:
+	# Highest supported PHPCS version.
+	- PHPCS_BRANCH="dev-master" LINT=1
+	# Lowest supported PHPCS version.
+	- PHPCS_BRANCH="3.3.1"
 
 notifications:
-  email:
-    on_success: never
-    on_failure: change
+	email:
+		on_success: never
+		on_failure: change
 
 branches:
-  only:
-    - master
-    - development
+	only:
+		- master
+		- development
 
 matrix:
-  fast_finish: true
-  include:
-    # Seperate builds for PHP 7.2 with additional checks.
-    - php: 7.2
-      env: PHPCS_BRANCH="dev-master" LINT=1 SNIFF=1
-      addons:
-        apt:
-          packages:
-            - libxml2-utils
-    - php: 7.2
-      env: PHPCS_BRANCH="3.3.0"
+	fast_finish: true
+	include:
+		# Seperate builds for PHP 7.2 with additional checks.
+		- php: 7.2
+			env: PHPCS_BRANCH="dev-master" LINT=1 SNIFF=1
+			addons:
+				apt:
+					packages:
+						- libxml2-utils
+		- php: 7.2
+			env: PHPCS_BRANCH="3.3.1"
 
-  allow_failures:
-    # Allow failures for unstable builds.
-    - php: nightly
-    - php: 7.3
-      env: PHPCS_BRANCH="3.3.0"
+	allow_failures:
+		# Allow failures for unstable builds.
+		- php: nightly
+		- php: "7.4snapshot"
 
 before_install:
-  - phpenv config-rm xdebug.ini
-  - composer require squizlabs/php_codesniffer:${PHPCS_BRANCH} --no-update --no-suggest --no-scripts
+	# Speed up build time by disabling Xdebug.
+	# https://johnblackbourn.com/reducing-travis-ci-build-times-for-wordpress-projects/
+	# https://twitter.com/kelunik/status/954242454676475904
+	- phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+	- composer install
+	- bash bin/install-wp-tests.sh wordpress_test root '' localhost latest
 
 script:
-  # Lint the PHP files against parse errors.
-  - if [[ "$LINT" == "1" ]]; then if find . -path ./vendor -prune -o -name "*.php" -exec php -l {} \; | grep "^[Parse error|Fatal error]"; then exit 1; fi; fi
-  # Check the codestyle of the WPThemeReview codebase.
-  - if [[ "$SNIFF" == "1" ]]; then $(pwd)/vendor/bin/phpcs; fi
+	# Lint the PHP files against parse errors.
+	if find . -path ./vendor -prune -o -name "*.php" -exec php -l {} \; | grep "^[Parse error|Fatal error]"; then exit 1; fi
+	# Check the codestyle of the WPThemeReview codebase.
+	- composer check-cs .
+	# Run integration tests
+	- composer pint
+	# Run unit tests
+	- composer punit
