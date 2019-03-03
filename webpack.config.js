@@ -115,11 +115,15 @@ if ( ! DEV ) {
 					delete: [
 						'./theme-sniffer/assets/dev',
 						'./theme-sniffer/node_modules',
+						'./theme-sniffer/tests',
 						'./theme-sniffer/composer.json',
 						'./theme-sniffer/composer.lock',
 						'./theme-sniffer/package.json',
 						'./theme-sniffer/package-lock.json',
 						'./theme-sniffer/phpcs.xml.dist',
+						'./theme-sniffer/phpunit.integration.xml.dist',
+						'./theme-sniffer/phpunit.xml.dist',
+						'./theme-sniffer/phpunit-printer.yml',
 						'./theme-sniffer/webpack.config.js'
 					]
 				},

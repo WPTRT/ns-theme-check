@@ -4,7 +4,7 @@
 	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
 	backupGlobals="false"
 	backupStaticAttributes="false"
-	bootstrap="tests/bootstrap.php"
+	bootstrap="tests/bootstrap-unit.php"
 	colors="true"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
@@ -24,7 +24,7 @@
 	</testsuites>
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="false">
-			<directory>./src</directory>
+			<directory>./</directory>
 			<exclude>
 				<directory>./node_modules</directory>
 				<directory>./vendor</directory>

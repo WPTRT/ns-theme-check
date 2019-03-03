@@ -23,7 +23,7 @@
 		</testsuite>
 	</testsuites>
 	<filter>
-		<whitelist>
+		<whitelist processUncoveredFilesFromWhitelist="false">
 			<directory>./</directory>
 			<exclude>
 				<directory>./node_modules</directory>
