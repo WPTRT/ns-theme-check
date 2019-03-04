@@ -20,7 +20,7 @@ env:
 	# Highest supported PHPCS version.
 	- PHPCS_BRANCH="dev-master" LINT=1
 	# Lowest supported PHPCS version.
-	- PHPCS_BRANCH="3.3.1"
+	- PHPCS_BRANCH="3.3.0"
 
 notifications:
 	email:

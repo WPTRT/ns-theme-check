@@ -263,6 +263,27 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	const CB_PUBLIC = false;
 
 	/**
+	 * Missing Required Files
+	 *
+	 * @var array
+	 */
+	protected static $missing_files = [];
+
+	/**
+	 * Theme's slug
+	 *
+	 * @var string
+	 */
+	private static $theme_slug;
+
+	/**
+	 * Theme's root
+	 *
+	 * @var string
+	 */
+	private static $theme_root;
+
+	/**
 	 * Callback method of the current class.
 	 */
 	public function callback() {
@@ -302,7 +323,8 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			wp_send_json_error( $error );
 		}
 
-		$theme_slug = sanitize_text_field( wp_unslash( $_POST[ self::THEME_NAME ] ) );
+		self::$theme_slug = sanitize_text_field( wp_unslash( $_POST[ self::THEME_NAME ] ) );
+		self::$theme_root = get_theme_root( self::$theme_slug );
 
 		$show_warnings = true;
 
@@ -352,7 +374,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$args = [];
 
 		// Current theme text domain.
-		$args[ self::TEXT_DOMAINS ] = [ $theme_slug ];
+		$args[ self::TEXT_DOMAINS ] = [ self::$theme_slug ];
 
 		$all_files = [ 'php' ];
 
@@ -360,7 +382,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$all_files = array_merge( $all_files, [ 'css', 'js' ] );
 		}
 
-		$theme     = wp_get_theme( $theme_slug );
+		$theme     = wp_get_theme( self::$theme_slug );
 		$all_files = $theme->get_files( $all_files, -1, false );
 
 		/**
@@ -448,21 +470,26 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$sniffer_results = json_decode( $sniff_results, true );
 
-		if ( $check_php_only ) {
-			$total_errors  = $sniffer_results[ self::TOTALS ][ self::ERRORS ];
-			$total_warning = $sniffer_results[ self::TOTALS ][ self::WARNINGS ];
-			$total_fixable = $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
-			$total_files   = $sniffer_results[ self::FILES ];
-		} else {
+		$total_errors  = $sniffer_results[ self::TOTALS ][ self::ERRORS ];
+		$total_warning = $sniffer_results[ self::TOTALS ][ self::WARNINGS ];
+		$total_fixable = $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
+		$total_files   = $sniffer_results[ self::FILES ];
+
+		$required_results = $this->required_files_check( self::$theme_slug, $check_php_only );
+
+		$total_errors += $required_results[ self::TOTALS ][ self::ERRORS ];
+		$total_files  += $required_results[ self::FILES ];
+
+		if ( ! $check_php_only ) {
+
 			// Check theme headers.
-			$theme_header_checks;
+			$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
+			$screenshot_checks   = $this->screenshot_check();
 
-			$theme_header_checks = $this->style_headers_check( $theme_slug, wp_get_theme( $theme_slug ), $show_warnings );
-
-			$total_errors  = $theme_header_checks[ self::TOTALS ][ self::ERRORS ] + $sniffer_results[ self::TOTALS ][ self::ERRORS ];
-			$total_warning = $theme_header_checks[ self::TOTALS ][ self::WARNINGS ] + $sniffer_results[ self::TOTALS ][ self::WARNINGS ];
-			$total_fixable = $theme_header_checks[ self::TOTALS ][ self::FIXABLE ] + $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
-			$total_files   = $theme_header_checks[ self::FILES ] + $sniffer_results[ self::FILES ];
+			$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ] + $screenshot_checks[ self::TOTALS ][ self::ERRORS ];
+			$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
+			$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
+			$total_files   += $theme_header_checks[ self::FILES ] + $screenshot_checks[ self::FILES ];
 		}
 
 		// Filtering the files for easier JS handling.
@@ -702,8 +729,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			];
 		}
 
-		$theme_root = get_theme_root( $theme_slug );
-
 		$error_count   = 0;
 		$warning_count = 0;
 		$messages      = [];
@@ -732,7 +757,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 				self::FIXABLE  => $error_count + $warning_count,
 			],
 			self::FILES => [
-				"{$theme_root}/{$theme_slug}/style.css" => [
+				self::$theme_root . "/{$theme_slug}/style.css" => [
 					self::ERRORS   => $error_count,
 					self::WARNINGS => $warning_count,
 					self::MESSAGES => $messages,
@@ -741,6 +766,158 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		];
 
 		return $header_results;
+	}
+
+	/**
+	 * Required Files Check
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param  string $theme_slug          The theme's slug to check for required files.
+	 * @param  bool   $check_php_only      Is checking only PHP files.
+	 *
+	 * @return array  $required_file_check Array to send to reporter.
+	 */
+	protected function required_files_check( $theme_slug, $check_php_only ) {
+
+		$required_files = [ 'comments.php', 'functions.php', 'readme.txt', 'screenshot.png' ];
+
+		if ( $check_php_only ) {
+			$required_files = array_filter(
+				$required_files,
+				function( $file ) {
+					return strpos( $file, '.php' ) !== false;
+				}
+			);
+		}
+
+		$required_file_check = [
+			self::TOTALS => [
+				self::ERRORS   => 0,
+				self::WARNINGS => 0,
+				self::FIXABLE  => 0,
+			],
+			self::FILES  => [],
+		];
+
+		$theme_root = get_theme_root( $theme_slug );
+
+		foreach ( $required_files as $file ) {
+			$required = self::$theme_root . "/{$theme_slug}/{$file}";
+			if ( ! file_exists( $required ) ) {
+				self::$missing_files[] = [ $file => $required ];
+				$required_file_check[ self::TOTALS ][ self::ERRORS ]++;
+				$required_file_check[ self::FILES ][ $required ] = [
+					self::ERRORS   => 1,
+					self::WARNINGS => 0,
+					self::MESSAGES => [
+						[
+							self::MESSAGE  => sprintf(
+								/* translators: The filename that is missing. */
+								esc_html__( 'Theme is missing %s! This file is required for all WordPress themes.', 'theme-sniffer' ),
+								$file
+							),
+							self::SEVERITY => self::ERROR,
+							self::FIXABLE  => false,
+							self::TYPE     => strtoupper( self::ERROR ),
+						],
+					],
+				];
+			}
+		}
+
+		return $required_file_check;
+	}
+
+	/**
+	 * Perform screenshot.png checks.
+	 *
+	 * This will check for:
+	 * - Invalid png image.
+	 * - Valid mime type.
+	 * - Dimensions not exceeeding 1200x900.
+	 *
+	 * @since 1.0.0
+	 */
+	protected function screenshot_check() {
+		$screenshot = 'screenshot.png';
+		if ( isset( self::$missing_files[ $screenshot ] ) ) {
+			return;
+		}
+
+		$file  = implode( '/', [ self::$theme_root, self::$theme_slug, $screenshot ] );
+		$check = [
+			self::TOTALS => [
+				self::ERRORS   => 0,
+				self::WARNINGS => 0,
+				self::FIXABLE  => 0,
+			],
+			self::FILES => [
+				$file => [
+					self::ERRORS   => 0,
+					self::WARNINGS => 0,
+					self::MESSAGES => [],
+				],
+			],
+		];
+
+		$mime_type = wp_get_image_mime( $file );
+
+		// Missing mime type.
+		if ( ! $mime_type ) {
+			$check[ self::TOTALS ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
+				self::MESSAGE  => sprintf(
+					esc_html__( 'Screenshot mime type could not be determined, screenshots must have a mime type of "img/png".', 'theme-sniffer' ),
+					$mime_type
+				),
+				self::SEVERITY => self::ERROR,
+				self::FIXABLE  => false,
+				self::TYPE     => strtoupper( self::ERROR ),
+			];
+
+			return $check;
+		}
+
+		// Valid mime type returned, but not a png.
+		if ( $mime_type !== 'image/png' ) {
+			$check[ self::TOTALS ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
+				self::MESSAGE  => sprintf(
+					/* translators: The screenshot.png's mime type. */
+					esc_html__( 'Screenshot has mime type of "%s", but requires a mimetype of "img/png".', 'theme-sniffer' ),
+					$mime_type
+				),
+				self::SEVERITY => self::ERROR,
+				self::FIXABLE  => false,
+				self::TYPE     => strtoupper( self::ERROR ),
+			];
+
+			return $check;
+		}
+
+		// Screenshot mime validated at this point, so check dimensions - no need for fileinfo.
+		list( $width, $height ) = getimagesize( $file );
+
+		if ( $width > 1200 || $height > 900 ) {
+			$check[ self::TOTALS ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
+			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
+				self::MESSAGE  => sprintf(
+					/* translators: 1: screenshot width 2: screenshot height */
+					esc_html__( 'The size of your screenshot should not exceed 1200x900, but screenshot.png is currently %1$dx%2$d.', 'theme-sniffer' ),
+					$width,
+					$height
+				),
+				self::SEVERITY => self::ERROR,
+				self::FIXABLE  => false,
+				self::TYPE     => strtoupper( self::ERROR ),
+			];
+		}
+
+		return $check;
 	}
 
 	/**
