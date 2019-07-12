@@ -576,7 +576,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$runner->config->standards   = $standards_array;
 		$runner->config->files       = $all_files;
-		$runner->config->annotations = $ignore_annotations;
+		$runner->config->annotations = ! $ignore_annotations; // Annotations should be taken into account or not.
 		$runner->config->parallel    = 8;
 		$runner->config->colors      = false;
 		$runner->config->tabWidth    = 0;
