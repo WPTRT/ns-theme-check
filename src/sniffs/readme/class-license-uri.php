@@ -63,7 +63,7 @@ class License_Uri extends Validate {
 					'message'  => wp_kses(
 						sprintf(
 							/* translators: 1: the user provided License URI in readme.txt 2: the license comparing against in readme.txt 3: a list of suitable license URIs that could be used */
-							__( 'The License URI provided: %1$s, is not a known URI reference for the license %2$s.  All themes must meet this requirement!<br/>These are recognized URIs based on the license provided:<br/>%3$s', 'theme-sniffer' ),
+							__( 'The License URI provided: %1$s, is not a known URI reference for the license %2$s.  These are recognized URIs for the license provided:<br/>%3$s', 'theme-sniffer' ),
 							$this->args->uri,
 							$this->args->primary,
 							implode( '<br/>', $uris )
@@ -74,6 +74,12 @@ class License_Uri extends Validate {
 					),
 				];
 			}
+		} else {
+			// Unable to determine License URI without valid License.
+			$this->results[] = [
+				'severity' => 'error',
+				'message'  => esc_html__( 'Unable to determine License URI with an invalid License supplied in readme.txt!', 'theme-sniffer' ),
+			];
 		}
 	}
 }

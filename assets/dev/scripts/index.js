@@ -15,6 +15,10 @@ $(
 			reportItemHeading: '.js-report-item-heading',
 			reportReportTable: '.js-report-table',
 			reportNoticeType: '.js-report-notice-type',
+			reportNoticeSource: '.js-report-notice-source',
+			reportItemBtn: '.theme-sniffer__report-copy-annotation-btn',
+			reportItemSource: '.theme-sniffer__report-copy-annotation-source',
+
 			reportItemLine: '.js-report-item-line',
 			reportItemType: '.js-report-item-type',
 			reportItemMessage: '.js-report-item-message',

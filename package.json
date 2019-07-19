@@ -6,8 +6,10 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "autoprefixer": "^9.6.0",
+    "clipboard": "^2.0.4",
     "cssnano": "^4.1.10",
     "jquery": "^3.4.1",
+    "primer-tooltips": "^2.0.0",
     "wp-license-compatibility": "^1.0.0"
   },
   "devDependencies": {

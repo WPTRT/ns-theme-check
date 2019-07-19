@@ -360,35 +360,7 @@ class Parser {
 		}
 
 		if ( ! empty( $section_name ) ) {
-
 			$this->sections[ $section_name ] .= trim( $current );
-
-			// Check for resources
-			if ( stripos( $section_name, 'resources' ) !== false ) {
-
-				// Split resources into array.
-				$resources = preg_split( "/\r\n|\n|\r/", $current );
-
-				// Extract each resource's params.
-				foreach ( $resources as $resource ) {
-					if ( ! empty( $resource ) ) {
-						$res = strstr( $resource, ',', true );
-						$resource = str_replace( $res, '', $resource );
-						$license = strrchr( $resource, ',' );
-						$resource = str_replace( $license, '', $resource );
-						$this->resources[ trim( $res, "*, \t\n" ) ] = [
-							'license'   => trim( $license, ", \t\n" ),
-							'attribute' => trim( $resource, ", \t\n" ),
-						];
-					}
-				}
-
-				// Pass in primary license to validate against each resource license.
-				$this->resources['primary_license'] = $license;
-
-				// Cleanup.
-				unset( $this->sections['resources'] );
-			}
 		}
 
 		// Filter out any empty sections.

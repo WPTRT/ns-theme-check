@@ -1,3 +1,5 @@
+@import "primer-tooltips/index.scss";
+
 .theme-sniffer {
 	background-color: $white-color;
 	margin: 20px 20px 0 0;
@@ -124,18 +126,25 @@
 
 		&-table-row {
 			display: block;
-			padding: 5px 15px;
+			padding: 10px 23px 0 23px;
 			background-color: $dirtywhite-color;
 			position: relative;
 
-			&::after {
-				content: "";
-				background-color: $graywhite-color;
-				width: 90%;
-				height: 1px;
-				position: absolute;
-				bottom: 0;
-				left: 5%;
+			&.js-report-notice-source {
+				display: grid;
+				grid-template-columns: 125px auto; // result of calc(55px + 75px + 2px - 7px) table-line + table-type + 2px table border - 7px button padding.
+				padding-top: 4px;
+				padding-bottom: 11px;
+
+				&::after {
+					content: "";
+					background-color: $graywhite-color;
+					width: 90%;
+					height: 1px;
+					position: absolute;
+					bottom: 0;
+					left: 5%;
+				}
 			}
 
 			&.error {
@@ -148,6 +157,7 @@
 			&:last-of-type {
 				border-bottom-left-radius: 5px;
 				border-bottom-right-radius: 5px;
+				padding-bottom: 11px;
 
 				&::after {
 					display: none;
@@ -165,7 +175,6 @@
 		}
 
 		&-table-line {
-			padding: 8px;
 			font-weight: 500;
 			width: 55px;
 		}
@@ -181,6 +190,32 @@
 
 		&.is-raw {
 			white-space: pre-wrap;
+		}
+
+		&-copy-annotation {
+
+			&-source {
+				color: #5c5c5c;
+				font-size: 0.9em;
+				font-style: italic;
+				font-weight: 100;
+			}
+
+			&-btn {
+				background: transparent;
+				border: none;
+				cursor: copy; // Set cursor to copy for cross-OS
+				display: inline-flex;
+				padding: 7px;
+				width: 100%;
+
+				.dashicons-clipboard {
+					width: 16px;
+					height: 16px;
+					font-size: 16px;
+					padding-right: 7px;
+				}
+			}
 		}
 	}
 

@@ -61,6 +61,7 @@ final class Sniff_Page extends Base_Admin_Menu {
 				'checkInProgress' => esc_html__( 'Check in progress', 'theme-sniffer' ),
 				'errorReport'     => esc_html__( 'Error', 'theme-sniffer' ),
 				'ajaxAborted'     => esc_html__( 'Checking stopped', 'theme-sniffer' ),
+				'copySuccess'     => esc_attr__( 'Copied!', 'theme-sniffer' ),
 			]
 		);
 
