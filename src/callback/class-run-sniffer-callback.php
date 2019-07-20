@@ -12,13 +12,12 @@ namespace Theme_Sniffer\Callback;
 
 // We need to use the PHP_CS autoloader to access the Runner and Config.
 require_once dirname( __FILE__, 3 ) . '/vendor/squizlabs/php_codesniffer/autoload.php';
-require_once dirname( __FILE__, 3 ) . '/vendor/wp-coding-standards/wpcs/WordPress/PHPCSHelper.php';
 
 use \PHP_CodeSniffer\Runner;
 use \PHP_CodeSniffer\Config;
 use \PHP_CodeSniffer\Reporter;
 use \PHP_CodeSniffer\Files\DummyFile;
-use \WordPress\PHPCSHelper;
+use \WordPressCS\WordPress\PHPCSHelper;
 
 use Theme_Sniffer\Sniffs\Readme\Validator as Readme;
 use Theme_Sniffer\Sniffs\Screenshot\Validator as Screenshot;
@@ -341,10 +340,10 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$raw_output = true;
 		}
 
-		$ignore_annotations = false;
+		$ignore_annotations = true;
 
 		if ( isset( $_POST[ self::IGNORE_ANNOTATIONS ] ) && $_POST[ self::IGNORE_ANNOTATIONS ] === 'true' ) {
-			$ignore_annotations = true;
+			$ignore_annotations = false;
 		}
 
 		$check_php_only = false;
@@ -657,7 +656,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			];
 		}
 
-		if ( strpos( $theme_slug, 'wordpress' ) || strpos( $theme_slug, 'theme' ) ) { // WPCS: spelling ok.
+		if ( strpos( $theme_slug, 'wordpress' ) || strpos( $theme_slug, 'theme' ) ) { // phpcs:ignore
 			$notices[] = [
 				self::MESSAGE  => esc_html__( 'The theme name cannot contain WordPress or Theme as a part of its name.', 'theme-sniffer' ),
 				self::SEVERITY => self::ERROR,
