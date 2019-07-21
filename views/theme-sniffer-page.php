@@ -103,8 +103,8 @@ $standard_status     = wp_list_pluck( $standards, 'default' );
 					<td class="theme-sniffer__report-table-empty"></td>
 					<td class="theme-sniffer__report-table-source js-report-item-source">
 						<span class="tooltipped tooltipped-w tooltipped-no-delay" aria-label="<?php esc_attr_e( 'Copy Annotation', 'theme-sniffer' ); ?>">
-							<button class="theme-sniffer__report-copy-annotation-btn">
-								<span class="dashicons dashicons-clipboard"></span><span class= "theme-sniffer__report-copy-annotation-source"></span>
+							<button class="theme-sniffer__report-copy-annotation-btn js-annotation-button">
+								<span class="dashicons dashicons-clipboard"></span><span class= "theme-sniffer__report-copy-annotation-source js-annotation-source"></span>
 							</button>
 						</span>
 					</td>
