@@ -29,7 +29,7 @@ The Theme Sniffer requires:
 
 ### For themes development and checking
 
-* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/1.0.0/theme-sniffer.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
+* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/1.1.0/theme-sniffer.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
 * Install this as you normally install a WordPress plugin
 * Activate plugin
 

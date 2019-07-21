@@ -6,6 +6,8 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const ManifestPlugin = require( 'webpack-manifest-plugin' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const CreateFileWebpack = require( 'create-file-webpack' );
+const Licenses = require( 'wp-license-compatibility' );
 
 const DEV = process.env.NODE_ENV !== 'production';
 
@@ -84,11 +86,17 @@ if ( ! DEV ) {
 		new TerserPlugin({
 			cache: true,
 			parallel: true,
-			sourceMap: true,
+			sourceMap: true
 		})
 	];
 
 	allPlugins.push(
+		new CreateFileWebpack({
+			path: './assets/build/',
+			fileName: 'licenses.json',
+			content: JSON.stringify( Licenses, null, 2 )
+		}),
+
 		new FileManagerPlugin({
 			onEnd: [
 				{
@@ -108,7 +116,9 @@ if ( ! DEV ) {
 						'./theme-sniffer/package.json',
 						'./theme-sniffer/package-lock.json',
 						'./theme-sniffer/phpcs.xml.dist',
-						'./theme-sniffer/webpack.config.js'
+						'./theme-sniffer/webpack.config.js',
+						'./theme-sniffer/CODE_OF_CONDUCT.md',
+						'./theme-sniffer/CONTRIBUTING.md'
 					]
 				},
 				{
@@ -129,7 +139,6 @@ if ( ! DEV ) {
 						'./theme-sniffer'
 					]
 				}
-
 			]
 		})
 	);

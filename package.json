@@ -19,6 +19,7 @@
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
+    "create-file-webpack": "^1.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
@@ -40,10 +41,9 @@
     "webpack-manifest-plugin": "^2.0.4"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack --progress --watch --display-error-details --display-modules --display-reasons --mode development",
-    "build": "composer dump-autoload && cross-env NODE_ENV=production webpack -p --progress --mode production && npm run script:licenses",
-    "precommit": "eslint assets/dev/scripts/*.js --fix && stylelint \"assets/dev/styles/**/*.scss\" --syntax scss && ./vendor/bin/phpcs --ignore=*/vendor/*,*/node_modules/* .",
-    "script:licenses": "node bin/build.js"
+    "start": "cross-env NODE_ENV=development && webpack --progress --watch --display-error-details --display-modules --display-reasons --mode development",
+    "build": "composer dump-autoload && cross-env NODE_ENV=production webpack -p --progress --mode production",
+    "precommit": "eslint assets/dev/scripts/*.js --fix && stylelint \"assets/dev/styles/**/*.scss\" --syntax scss && ./vendor/bin/phpcs --ignore=*/vendor/*,*/node_modules/* ."
   },
   "repository": {
     "type": "git",

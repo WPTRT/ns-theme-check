@@ -21,6 +21,7 @@
 			height: 34px !important;
 			padding: 0;
 			margin: 0;
+			margin-right: 10px;
 			display: inline-block;
 			vertical-align: top;
 			border: 1px solid $graywhite-color;
@@ -38,6 +39,21 @@
 			border: 1px solid $graywhite-color;
 			border-radius: 5px;
 			min-width: 200px;
+		}
+
+		&-checkbox {
+			height: 28px !important;
+			width: 28px !important;
+			border: 1px solid $graywhite-color !important;
+			border-radius: 5px;
+			margin-right: 10px !important;
+			margin-bottom: 10px !important;
+			position: relative;
+			top: 4px;
+
+			&::before {
+				font-size: 32px !important;
+			}
 		}
 
 		&-button {
