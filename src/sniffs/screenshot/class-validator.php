@@ -43,6 +43,7 @@ class Validator extends Validate_File {
 	/**
 	 * Runs screenshot validators
 	 *
+	 * @since 1.1.1 Minor bugfix update in calculation of screen image ratio.
 	 * @since 1.1.0
 	 *
 	 * @param string $file File to validate.
@@ -107,7 +108,7 @@ class Validator extends Validate_File {
 		}
 
 		// Aspect Ratio.
-		if ( $width / $height !== 0.75 ) {
+		if ( $height / $width !== 0.75 ) {
 			$this->results[] = [
 				'severity' => 'error',
 				'message'  => esc_html__( 'Screenshot aspect ratio must be 4:3!', 'theme-sniffer' ),
