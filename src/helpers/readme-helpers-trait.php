@@ -128,16 +128,16 @@ trait Readme_Helpers {
 				}
 			} else { // Multiple matches returned, so it's FSF provided critera.
 				$matches          = array_keys( $response->live );
-				$response->status = 'error';
+				$response->status = 'warning';
 				/* translators: %s: listing of license IDs matched. */
 				$response->message = sprintf( esc_html__( 'Found multiple records matching these licenses: %s, it\'s required to use a single SPDX Idenitfier!', 'theme-sniffer' ), implode( ', ', $matches ) );
 			}
 		} elseif ( ! empty( $response->deprecated ) ) { // Deprecated match found.
-			$response->status = 'error';
+			$response->status = 'warning';
 			/* translators: %s: User provided license identifier. */
 			$response->message = sprintf( esc_html__( 'The license identification provided, $s, indicates a deprecated license!  Please use a valid SPDX Identifier!', 'theme-sniffer' ), $response->provided );
 		} else { // No matches found.
-			$response->status = 'error';
+			$response->status = 'warning';
 			/* translators: %s: unrecognized user provided license identifier */
 			$response->message = sprintf( esc_html__( 'No matching license critera could be determined from: %s!', 'theme-sniffer' ), $response->provided );
 		}
