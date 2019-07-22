@@ -29,7 +29,7 @@ The Theme Sniffer requires:
 
 ### For themes development and checking
 
-* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/0.2.0/theme-sniffer.0.2.0.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
+* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/1.1.0/theme-sniffer.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
 * Install this as you normally install a WordPress plugin
 * Activate plugin
 
@@ -40,6 +40,14 @@ The Theme Sniffer requires:
 * Run `npm install`
 * Run `npm run build`
 * Activate plugin
+
+#### On Windows
+
+* When developing on Windows machine you might run into various issues with CLI when not installed globally. Installing following items globally might help, but use it with caution:
+
+    * Run `npm install --global eslint-cli`
+    * Run `npm install --global stylelint`
+    * Run `composer global require "squizlabs/php_codesniffer=*"` & make sure that you have installed [WordPress Coding Standards](https://github.com/WordPress/WordPress-Coding-Standards) and [PHPCompatibility](https://github.com/PHPCompatibility/PHPCompatibility) by running `phpcs -i`. When PHPCS installed globally, you might need clone both repositories and add them to PHPCS with `phpcs --config-set installed_paths /path/to/PHPCompatibility,/path/to/wpcs`
 
 **Note**: If you build the plugin this way you'll have extra `node_modules/` folders which are not required for the plugin to run, and just take up space. They are to be used for the development purposes mainly. Some of the `vendor/` folders are necessary for Theme Sniffer to run
 

@@ -14,9 +14,10 @@
 	}],
 	"require": {
 		"php": ">=7.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+		"michelf/php-markdown": "^1.8",
 		"squizlabs/php_codesniffer": "^3.3.0",
-		"wptrt/wpthemereview": "^0.1.0",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
+		"wptrt/wpthemereview": "^0.2.0"
 	},
 	"require-dev": {
 		"phpcompatibility/php-compatibility": "^9.0",
