@@ -4,7 +4,7 @@ Tags: check, checker, coding standards, theme, tool
 Requires at least: 4.7
 Tested up to: 5.2.2
 Requires PHP: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -73,6 +73,9 @@ Thanks to the TRT for the support.
 The latest upgrade mostly with development changes and some minor improvements in sniff handling.
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixed bug in the screenshot ratio calculation
 
 = 1.1.0 =
 * Added sniff codes that can be copied for easier whitelisting of the false issues

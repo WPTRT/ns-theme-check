@@ -43,6 +43,7 @@ class Validator extends Validate_File {
 	/**
 	 * Runs screenshot validators
 	 *
+	 * @since 1.1.1 Minor bugfix update in calculation of screen image ratio.
 	 * @since 1.1.0
 	 *
 	 * @param string $file File to validate.
