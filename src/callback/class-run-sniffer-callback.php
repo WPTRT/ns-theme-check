@@ -12,13 +12,15 @@ namespace Theme_Sniffer\Callback;
 
 // We need to use the PHP_CS autoloader to access the Runner and Config.
 require_once dirname( __FILE__, 3 ) . '/vendor/squizlabs/php_codesniffer/autoload.php';
-require_once dirname( __FILE__, 3 ) . '/vendor/wp-coding-standards/wpcs/WordPress/PHPCSHelper.php';
 
 use \PHP_CodeSniffer\Runner;
 use \PHP_CodeSniffer\Config;
 use \PHP_CodeSniffer\Reporter;
 use \PHP_CodeSniffer\Files\DummyFile;
-use \WordPress\PHPCSHelper;
+use \WordPressCS\WordPress\PHPCSHelper;
+
+use Theme_Sniffer\Sniffs\Readme\Validator as Readme;
+use Theme_Sniffer\Sniffs\Screenshot\Validator as Screenshot;
 
 use Theme_Sniffer\Helpers\Sniffer_Helpers;
 
@@ -256,18 +258,18 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	const TYPE = 'type';
 
 	/**
-	* Callback privacy
-	*
-	* @var bool
-	*/
+	 * Callback privacy
+	 *
+	 * @var bool
+	 */
 	const CB_PUBLIC = false;
 
 	/**
-	 * Missing Required Files
+	 * Readme file name
 	 *
-	 * @var array
+	 * @var string
 	 */
-	protected static $missing_files = [];
+	const README = 'readme.txt';
 
 	/**
 	 * Theme's slug
@@ -338,10 +340,10 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$raw_output = true;
 		}
 
-		$ignore_annotations = false;
+		$ignore_annotations = true;
 
 		if ( isset( $_POST[ self::IGNORE_ANNOTATIONS ] ) && $_POST[ self::IGNORE_ANNOTATIONS ] === 'true' ) {
-			$ignore_annotations = true;
+			$ignore_annotations = false;
 		}
 
 		$check_php_only = false;
@@ -447,6 +449,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*';
 
 		$results_arguments = [
+			'extensions'          => $check_php_only,
 			'show_warnings'       => $show_warnings,
 			'minimum_php_version' => $minimum_php_version,
 			'args'                => $args,
@@ -475,21 +478,31 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$total_fixable = $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
 		$total_files   = $sniffer_results[ self::FILES ];
 
-		$required_results = $this->required_files_check( self::$theme_slug, $check_php_only );
-
-		$total_errors += $required_results[ self::TOTALS ][ self::ERRORS ];
-		$total_files  += $required_results[ self::FILES ];
-
 		if ( ! $check_php_only ) {
 
 			// Check theme headers.
 			$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
 			$screenshot_checks   = $this->screenshot_check();
+			$readme_checks       = $this->readme_check();
 
-			$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ] + $screenshot_checks[ self::TOTALS ][ self::ERRORS ];
+			foreach ( $screenshot_checks as $file ) {
+				$total_errors  += $file[ self::ERRORS ];
+				$total_warning += $file[ self::WARNINGS ];
+			}
+
+			$total_files += $screenshot_checks;
+
+			foreach ( $readme_checks as $file ) {
+				$total_errors  += $file[ self::ERRORS ];
+				$total_warning += $file[ self::WARNINGS ];
+			}
+
+			$total_files += $readme_checks;
+
+			$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
 			$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
 			$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
-			$total_files   += $theme_header_checks[ self::FILES ] + $screenshot_checks[ self::FILES ];
+			$total_files   += $theme_header_checks[ self::FILES ];
 		}
 
 		// Filtering the files for easier JS handling.
@@ -497,7 +510,9 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$files  = [];
 
 		foreach ( $total_files as $file_path => $file_sniff_results ) {
-			if ( $file_sniff_results[ self::ERRORS ] === 0 && $file_sniff_results[ self::WARNINGS ] === 0 ) {
+
+			// Allow the file list to pass any .js through for further handling, and remove all others with no errors or warnings.
+			if ( substr( $file_path, -3 ) !== '.js' && ( $file_sniff_results[ self::ERRORS ] === 0 && $file_sniff_results[ self::WARNINGS ] === 0 ) ) {
 				continue;
 			}
 
@@ -533,6 +548,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$minimum_php_version = $arguments[0]['minimum_php_version'];
 		$args                = $arguments[0]['args'];
 		$theme_prefixes      = $arguments[0]['theme_prefixes'];
+		$extensions          = $arguments[0]['extensions'];
 		$all_files           = $arguments[0]['all_files'];
 		$standards_array     = $arguments[0]['standards_array'];
 		$ignore_annotations  = $arguments[0]['ignore_annotations'];
@@ -545,12 +561,19 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$config_args = [ '-s', '-p' ];
 
 		if ( $show_warnings === '0' ) {
-			$config_args = [ '-s', '-p', '-n' ];
+			$config_args[] = '-n';
 		}
 
 		$runner->config = new Config( $config_args );
 
 		$all_files = array_values( $all_files );
+
+		if ( $extensions ) {
+			$runner->config->extensions = [
+				'php' => 'PHP',
+				'inc' => 'PHP',
+			];
+		}
 
 		$runner->config->standards   = $standards_array;
 		$runner->config->files       = $all_files;
@@ -633,7 +656,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			];
 		}
 
-		if ( strpos( $theme_slug, 'wordpress' ) || strpos( $theme_slug, 'theme' ) ) { // WPCS: spelling ok.
+		if ( strpos( $theme_slug, 'wordpress' ) || strpos( $theme_slug, 'theme' ) ) { // phpcs:ignore
 			$notices[] = [
 				self::MESSAGE  => esc_html__( 'The theme name cannot contain WordPress or Theme as a part of its name.', 'theme-sniffer' ),
 				self::SEVERITY => self::ERROR,
@@ -769,155 +792,25 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Required Files Check
+	 * Performs readme.txt sniffs.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
-	 * @param  string $theme_slug          The theme's slug to check for required files.
-	 * @param  bool   $check_php_only      Is checking only PHP files.
-	 *
-	 * @return array  $required_file_check Array to send to reporter.
+	 * @return array $check Sniffer file report.
 	 */
-	protected function required_files_check( $theme_slug, $check_php_only ) {
-
-		$required_files = [ 'comments.php', 'functions.php', 'readme.txt', 'screenshot.png' ];
-
-		if ( $check_php_only ) {
-			$required_files = array_filter(
-				$required_files,
-				function( $file ) {
-					return strpos( $file, '.php' ) !== false;
-				}
-			);
-		}
-
-		$required_file_check = [
-			self::TOTALS => [
-				self::ERRORS   => 0,
-				self::WARNINGS => 0,
-				self::FIXABLE  => 0,
-			],
-			self::FILES  => [],
-		];
-
-		$theme_root = get_theme_root( $theme_slug );
-
-		foreach ( $required_files as $file ) {
-			$required = self::$theme_root . "/{$theme_slug}/{$file}";
-			if ( ! file_exists( $required ) ) {
-				self::$missing_files[] = [ $file => $required ];
-				$required_file_check[ self::TOTALS ][ self::ERRORS ]++;
-				$required_file_check[ self::FILES ][ $required ] = [
-					self::ERRORS   => 1,
-					self::WARNINGS => 0,
-					self::MESSAGES => [
-						[
-							self::MESSAGE  => sprintf(
-								/* translators: The filename that is missing. */
-								esc_html__( 'Theme is missing %s! This file is required for all WordPress themes.', 'theme-sniffer' ),
-								$file
-							),
-							self::SEVERITY => self::ERROR,
-							self::FIXABLE  => false,
-							self::TYPE     => strtoupper( self::ERROR ),
-						],
-					],
-				];
-			}
-		}
-
-		return $required_file_check;
+	protected function readme_check() {
+		$validator = new Readme( self::$theme_slug );
+		return $validator->get_results();
 	}
 
 	/**
-	 * Perform screenshot.png checks.
-	 *
-	 * This will check for:
-	 * - Invalid png image.
-	 * - Valid mime type.
-	 * - Dimensions not exceeeding 1200x900.
+	 * Perform screenshot sniffs.
 	 *
 	 * @since 1.0.0
 	 */
 	protected function screenshot_check() {
-		$screenshot = 'screenshot.png';
-		if ( isset( self::$missing_files[ $screenshot ] ) ) {
-			return;
-		}
-
-		$file  = implode( '/', [ self::$theme_root, self::$theme_slug, $screenshot ] );
-		$check = [
-			self::TOTALS => [
-				self::ERRORS   => 0,
-				self::WARNINGS => 0,
-				self::FIXABLE  => 0,
-			],
-			self::FILES => [
-				$file => [
-					self::ERRORS   => 0,
-					self::WARNINGS => 0,
-					self::MESSAGES => [],
-				],
-			],
-		];
-
-		$mime_type = wp_get_image_mime( $file );
-
-		// Missing mime type.
-		if ( ! $mime_type ) {
-			$check[ self::TOTALS ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
-				self::MESSAGE  => sprintf(
-					esc_html__( 'Screenshot mime type could not be determined, screenshots must have a mime type of "img/png".', 'theme-sniffer' ),
-					$mime_type
-				),
-				self::SEVERITY => self::ERROR,
-				self::FIXABLE  => false,
-				self::TYPE     => strtoupper( self::ERROR ),
-			];
-
-			return $check;
-		}
-
-		// Valid mime type returned, but not a png.
-		if ( $mime_type !== 'image/png' ) {
-			$check[ self::TOTALS ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
-				self::MESSAGE  => sprintf(
-					/* translators: The screenshot.png's mime type. */
-					esc_html__( 'Screenshot has mime type of "%s", but requires a mimetype of "img/png".', 'theme-sniffer' ),
-					$mime_type
-				),
-				self::SEVERITY => self::ERROR,
-				self::FIXABLE  => false,
-				self::TYPE     => strtoupper( self::ERROR ),
-			];
-
-			return $check;
-		}
-
-		// Screenshot mime validated at this point, so check dimensions - no need for fileinfo.
-		list( $width, $height ) = getimagesize( $file );
-
-		if ( $width > 1200 || $height > 900 ) {
-			$check[ self::TOTALS ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::ERRORS ]++;
-			$check[ self::FILES ][ $file ][ self::MESSAGES ][] = [
-				self::MESSAGE  => sprintf(
-					/* translators: 1: screenshot width 2: screenshot height */
-					esc_html__( 'The size of your screenshot should not exceed 1200x900, but screenshot.png is currently %1$dx%2$d.', 'theme-sniffer' ),
-					$width,
-					$height
-				),
-				self::SEVERITY => self::ERROR,
-				self::FIXABLE  => false,
-				self::TYPE     => strtoupper( self::ERROR ),
-			];
-		}
-
-		return $check;
+		$validator = new Screenshot( self::$theme_slug );
+		return $validator->get_results();
 	}
 
 	/**

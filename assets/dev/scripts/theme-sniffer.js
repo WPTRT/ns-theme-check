@@ -3,6 +3,9 @@
 import $ from 'jquery';
 import {ajax} from './utils/ajax';
 
+import Clipboard from 'clipboard';
+import SniffJs from './utils/sniff-js';
+
 export default class ThemeSniffer {
 	constructor( options ) {
 		this.SHOW_CLASS     = 'is-shown';
@@ -11,12 +14,15 @@ export default class ThemeSniffer {
 		this.DISABLED_CLASS = 'is-disabled';
 		this.IS_RAW_CLASS   = 'is-raw';
 
-		this.reportItemHeading = options.reportItemHeading;
-		this.reportReportTable = options.reportReportTable;
-		this.reportNoticeType  = options.reportNoticeType;
-		this.reportItemLine    = options.reportItemLine;
-		this.reportItemType    = options.reportItemType;
-		this.reportItemMessage = options.reportItemMessage;
+		this.reportItemHeading  = options.reportItemHeading;
+		this.reportReportTable  = options.reportReportTable;
+		this.reportNoticeType   = options.reportNoticeType;
+		this.reportNoticeSource = options.reportNoticeSource;
+		this.reportItemLine     = options.reportItemLine;
+		this.reportItemType     = options.reportItemType;
+		this.reportItemMessage  = options.reportItemMessage;
+		this.reportItemBtn      = options.reportItemBtn;
+		this.reportItemSource   = options.reportItemSource;
 
 		this.$sniffReport = options.sniffReport;
 		this.$snifferInfo = options.snifferInfo;
@@ -24,6 +30,8 @@ export default class ThemeSniffer {
 		this.$startNotice = options.startNotice;
 		this.$reportItem  = options.reportItem;
 		this.$loader  = options.loader;
+
+		this.clipboardInstance = null;
 
 		this.$startButton  = $( options.startButton );
 		this.$stopButton  = $( options.stopButton );
@@ -33,10 +41,6 @@ export default class ThemeSniffer {
 
 		this.ajaxRequest = [];
 		this.ajaxAllow = true;
-
-		this.renderJSON = this.renderJSON.bind( this );
-		this.showNotices = this.showNotices.bind( this );
-		this.hideNotices = this.hideNotices.bind( this );
 	}
 
 	enableAjax() {
@@ -58,7 +62,6 @@ export default class ThemeSniffer {
 		$.each( this.ajaxRequest, ( idx, jqXHR ) => {
 			jqXHR.abort([ themeSnifferLocalization.ajaxAborted ]);
 		});
-
 	}
 
 	renderRaw( data, element ) {
@@ -66,14 +69,18 @@ export default class ThemeSniffer {
 	}
 
 	renderJSON( json ) {
+		if ( this.clipboardInstance ) {
+			this.clipboardInstance.destroy(); // Kill existing instance.
+		}
+
 		let report;
 
 		report = this.$reportItem.clone().addClass( this.SHOW_CLASS );
 
-		const $reportItemHeading = report.find( this.reportItemHeading );
-		const $reportReportTable = report.find( this.reportReportTable );
-		const $reportNoticeType  = report.find( this.reportNoticeType );
-
+		const $reportItemHeading  = report.find( this.reportItemHeading );
+		const $reportReportTable  = report.find( this.reportReportTable );
+		const $reportNoticeType   = report.find( this.reportNoticeType );
+		const $reportNoticeSource = report.find( this.reportNoticeSource );
 		$reportItemHeading.text( json.filePath.split( '/themes/' )[1]);
 
 		$.each(
@@ -82,22 +89,67 @@ export default class ThemeSniffer {
 				const line        = value.line || 0;
 				const message     = value.message;
 				const type        = value.type;
+				const source      = value.source;
 				const $singleItem = $reportNoticeType.clone().addClass( type.toLowerCase() );
+				const $msgSource  = $reportNoticeSource.clone();
 
 				$singleItem.find( this.reportItemLine ).text( line );
 				$singleItem.find( this.reportItemType ).text( type );
-				if ( message.includes( 'iframe' ) ) {
+				if ( value.source && ! value.source.includes( 'ThemeSniffer' ) ) {
 					$singleItem.find( this.reportItemMessage ).text( message );
 				} else {
-					$singleItem.find( this.reportItemMessage ).html( message );
+					let decoded = $( '<p />' ).html( message ).text();
+					let msg = new DOMParser().parseFromString( decoded, 'text/html' ).body.childNodes;
+					$singleItem.find( this.reportItemMessage ).append( $( msg ) );
 				}
+
 				$singleItem.appendTo( $reportReportTable );
+
+				if ( source ) {
+					$msgSource.find( this.reportItemSource )
+						.text( `// phpcs:ignore ${ source }` );
+
+					$msgSource.appendTo( $reportReportTable );
+				}
 			}
 		);
 
 		$reportNoticeType.remove();
+		$reportNoticeSource.remove();
+
+		// Setup Clipboards.
+		this.setupClipboards();
 
 		return report;
+	}
+
+	setupClipboards() {
+		let clipboards = document.querySelectorAll( this.reportItemBtn );
+
+		// Create clipboard instance.
+		this.clipboardInstance = new Clipboard( clipboards, {
+			target: trigger => {
+				return trigger.lastElementChild;
+			}
+		});
+
+		// Clear selection after copy.
+		this.clipboardInstance.on( 'success', event => {
+
+			// Store current label.
+			let currentLabel = event.trigger.parentElement.getAttribute( 'aria-label' );
+
+			// Set copy success message.
+			event.trigger.parentElement.setAttribute( 'aria-label', themeSnifferLocalization.copySuccess );
+
+			// Restore label.
+			$( event.trigger.parentElement ).mouseleave( () => {
+				event.trigger.parentElement.setAttribute( 'aria-label', currentLabel );
+			});
+
+			// Clear selection text.
+			event.clearSelection();
+		});
 	}
 
 	showNotices( message ) {
@@ -163,11 +215,15 @@ export default class ThemeSniffer {
 					return;
 				}
 
-				$.each(
-					response.files, ( ind, val ) => {
-						this.$sniffReport.append( this.renderJSON( val ) );
-					}
-				);
+				for ( let file of response.files ) {
+					( async() => {
+						if ( file.filePath.substr( file.filePath.length - 3 ) === '.js' ) {
+							let sniffer = new SniffJs( file );
+							file = await sniffer.process();
+						}
+						this.$sniffReport.append( this.renderJSON( file ) );
+					})( file );
+				}
 
 				this.hideNotices( themeSnifferLocalization.checkCompleted, true );
 			} else {

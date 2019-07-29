@@ -1,11 +1,13 @@
 const path = require( 'path' );
 
 const webpack = require( 'webpack' );
-const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
+const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 const ManifestPlugin = require( 'webpack-manifest-plugin' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const CreateFileWebpack = require( 'create-file-webpack' );
+const Licenses = require( 'wp-license-compatibility' );
 
 const DEV = process.env.NODE_ENV !== 'production';
 
@@ -34,7 +36,6 @@ const allModules = {
 		},
 		{
 			test: /\.scss$/,
-			exclude: /node_modules/,
 			use: [
 				MiniCssExtractPlugin.loader,
 				'css-loader', 'sass-loader'
@@ -44,7 +45,7 @@ const allModules = {
 };
 
 const allPlugins = [
-	new CleanWebpackPlugin([ pluginPublicPath ]),
+	new CleanWebpackPlugin(),
 	new MiniCssExtractPlugin(
 		{
 			filename: outputCss
@@ -82,25 +83,20 @@ const allOptimizations = {
 // Use only for production build
 if ( ! DEV ) {
 	allOptimizations.minimizer = [
-		new UglifyJsPlugin(
-			{
-				cache: true,
-				parallel: true,
-				sourceMap: true,
-				uglifyOptions: {
-					output: {
-						comments: false
-					},
-					compress: {
-						warnings: false,
-						drop_console: true // eslint-disable-line camelcase
-					}
-				}
-			}
-		)
+		new TerserPlugin({
+			cache: true,
+			parallel: true,
+			sourceMap: true
+		})
 	];
 
 	allPlugins.push(
+		new CreateFileWebpack({
+			path: './assets/build/',
+			fileName: 'licenses.json',
+			content: JSON.stringify( Licenses, null, 2 )
+		}),
+
 		new FileManagerPlugin({
 			onEnd: [
 				{
@@ -115,16 +111,14 @@ if ( ! DEV ) {
 					delete: [
 						'./theme-sniffer/assets/dev',
 						'./theme-sniffer/node_modules',
-						'./theme-sniffer/tests',
 						'./theme-sniffer/composer.json',
 						'./theme-sniffer/composer.lock',
 						'./theme-sniffer/package.json',
 						'./theme-sniffer/package-lock.json',
 						'./theme-sniffer/phpcs.xml.dist',
-						'./theme-sniffer/phpunit.integration.xml.dist',
-						'./theme-sniffer/phpunit.xml.dist',
-						'./theme-sniffer/phpunit-printer.yml',
-						'./theme-sniffer/webpack.config.js'
+						'./theme-sniffer/webpack.config.js',
+						'./theme-sniffer/CODE_OF_CONDUCT.md',
+						'./theme-sniffer/CONTRIBUTING.md'
 					]
 				},
 				{
@@ -145,7 +139,6 @@ if ( ! DEV ) {
 						'./theme-sniffer'
 					]
 				}
-
 			]
 		})
 	);
@@ -167,7 +160,8 @@ module.exports = [
 		},
 
 		externals: {
-			jquery: 'jQuery'
+			jquery: 'jQuery',
+			esprima: 'esprima'
 		},
 
 		optimization: allOptimizations,

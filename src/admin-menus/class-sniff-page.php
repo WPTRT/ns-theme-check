@@ -48,7 +48,7 @@ final class Sniff_Page extends Base_Admin_Menu {
 		$sniffer_page_script = new Script_Asset(
 			self::JS_HANDLE,
 			self::JS_URI,
-			[ 'jquery' ],
+			[ 'jquery', 'esprima' ],
 			false,
 			Script_Asset::ENQUEUE_FOOTER
 		);
@@ -61,6 +61,7 @@ final class Sniff_Page extends Base_Admin_Menu {
 				'checkInProgress' => esc_html__( 'Check in progress', 'theme-sniffer' ),
 				'errorReport'     => esc_html__( 'Error', 'theme-sniffer' ),
 				'ajaxAborted'     => esc_html__( 'Checking stopped', 'theme-sniffer' ),
+				'copySuccess'     => esc_attr__( 'Copied!', 'theme-sniffer' ),
 			]
 		);
 
@@ -146,8 +147,9 @@ final class Sniff_Page extends Base_Admin_Menu {
 			$atts['error'] = esc_html( $e->getMessage() );
 		}
 
-		$atts['standards']    = $this->get_wpcs_standards();
-		$atts['php_versions'] = $this->get_php_versions();
+		$atts['standards']           = $this->get_wpcs_standards();
+		$atts['php_versions']        = $this->get_php_versions();
+		$atts['minimum_php_version'] = $this->get_minimum_php_version();
 
 		return $atts;
 	}

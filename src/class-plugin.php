@@ -53,6 +53,11 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * @throws Exception\Plugin_Activation_Failure If a condition for plugin activation isn't met.
 	 */
 	public function activate() {
+		if ( ! is_callable( 'shell_exec' ) || false !== stripos( ini_get( 'disable_functions' ), 'shell_exec' ) ) {
+			$error_message = esc_html__( 'Theme Sniffer requires shell_exec to be enabled to function.', 'theme-sniffer' );
+			throw Exception\Plugin_Activation_Failure::activation_message( $error_message );
+		};
+
 		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
 			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}

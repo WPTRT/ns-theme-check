@@ -1,10 +1,10 @@
 === Theme Sniffer ===
-Contributors: dingo_d, rabmalin, grapplerulrich, timph
+Contributors: dingo_d, rabmalin, grapplerulrich, timph, vyskoczilova, abdullahramzan, williampatton
 Tags: check, checker, coding standards, theme, tool
 Requires at least: 4.7
-Tested up to: 5.1.0
+Tested up to: 5.2.2
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.1.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -61,7 +61,12 @@ Go to the official repo on Github (https://github.com/WPTRT/theme-sniffer), fork
 
 = Contributors and testers thanks =
 
-Thanks to Danny Cooper, Liton Arefin and metallicarosetail (slack) for testing the plugin and finding bugs in the development stage. Thanks to the TRT for the support.
+Thanks to Danny Cooper, Liton Arefin and metallicarosetail (slack) for testing the plugin and finding bugs in the development stage.
+
+Thanks to Abdullah Ramzan for fixing minor typos, William Patton for help with the required files checks. Thanks to Karolína Vyskočilová for finding out the issue with cross-env issue.
+
+Thanks to the TRT for the support.
+
 
 == Upgrade Notice ==
 
@@ -69,14 +74,32 @@ The latest upgrade mostly with development changes and some minor improvements i
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed bug in the screenshot ratio calculation
+
+= 1.1.0 =
+* Added sniff codes that can be copied for easier whitelisting of the false issues
+* Added readme validator
+* Added Screenshot validator
+* Added required files checks
+* Added checks for core minimum PHP version
+* Added a license validator
+* Updated WPThemeReview coding standards to the 0.2.0 version
+* Moved JS checking to esprima
+* Moved installation error to admin notice
+* Validation improvements
+* Fixed annotation issue - the ingore annotation checkbox worked counter to what it should
+* Fixed cross-env issue for development on Windows machines
+* Minor fixes
+
 = 1.0.0 =
-* Refactored the code structure to more modern workflow
-* Updated the PHPCS version to the latest one, as well as WPCS version
 * Added the WPThemeReview standard
 * Added the theme prefix checks
 * Added `Check only PHP files`option
-* Theme tags are pulled from the API
 * Added additional functionality
+* Updated the PHPCS version to the latest one, as well as WPCS version
+* Refactored the code structure to more modern workflow
+* Theme tags are pulled from the API
 
 = 0.1.5 =
 * Change the development process
