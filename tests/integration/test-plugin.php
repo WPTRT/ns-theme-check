@@ -8,6 +8,8 @@
 use Theme_Sniffer\Core\Plugin;
 use Theme_Sniffer\Core\Plugin_Factory;
 
+use Theme_Sniffer\Exception;
+
 /**
  * Class that tests the Main plugin functionality.
  */
@@ -27,6 +29,7 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->plugin = new Plugin();
+		$this->plugin->register();
 	}
 
 	/**
@@ -36,6 +39,16 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 		$this->plugin = '';
 
 		parent::tearDown();
+	}
+
+	/**
+	 * Test if all the hooks were registered.
+	 */
+	public function test_registered_hooks() {
+		$this->assertEquals( \has_action( 'plugins_loaded', [ $this->plugin, 'register_services' ] ), 10 );
+		$this->assertEquals( \has_action( 'init', [ $this->plugin, 'register_assets_handler' ] ), 10 );
+		$this->assertEquals( \has_action( 'plugin_action_links_' . PLUGIN_BASENAME, [ $this->plugin, 'plugin_settings_link' ] ), 10 );
+		$this->assertEquals( \has_filter( 'extra_theme_headers', [ $this->plugin, 'add_headers' ] ), 10 );
 	}
 
 	/**
@@ -74,17 +87,6 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Theme_Sniffer\Core\Registerable', $this->plugin );
 		$this->assertInstanceOf( 'Theme_Sniffer\Core\Has_Activation', $this->plugin );
 		$this->assertInstanceOf( 'Theme_Sniffer\Core\Has_Deactivation', $this->plugin );
-	}
-
-	/**
-	 * Tests that register method was called
-	 */
-	public function test_plugin_register() {
-		$this->plugin->register();
-
-		$result = has_action( 'plugins_loaded', 'register_services' );
-
-		$this->assertNotFalse( 'integer', $result );
 	}
 
 	/**
