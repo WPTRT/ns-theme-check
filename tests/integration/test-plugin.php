@@ -13,12 +13,12 @@ use Theme_Sniffer\Exception;
 /**
  * Class that tests the Main plugin functionality.
  */
-class Plugin_Integration_Test extends WP_UnitTestCase {
+class Main_Plugin_Functionality extends WP_UnitTestCase {
 
 	/**
 	 * Plugin class instance
 	 *
-	 * @var object
+	 * @var Plugin
 	 */
 	private $plugin;
 
@@ -28,7 +28,7 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->plugin = new Plugin();
+		$this->plugin = Plugin_Factory::create();
 		$this->plugin->register();
 	}
 
@@ -44,7 +44,7 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	/**
 	 * Test if all the hooks were registered.
 	 */
-	public function test_registered_hooks() {
+	public function test_hooks_are_registered() {
 		$this->assertEquals( \has_action( 'plugins_loaded', [ $this->plugin, 'register_services' ] ), 10 );
 		$this->assertEquals( \has_action( 'init', [ $this->plugin, 'register_assets_handler' ] ), 10 );
 		$this->assertEquals( \has_action( 'plugin_action_links_' . PLUGIN_BASENAME, [ $this->plugin, 'plugin_settings_link' ] ), 10 );
@@ -52,9 +52,9 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Method that tests the activate() method that runs when plugin is activated
+	 * Method that tests the activate() method that runs when plugin is activated.
 	 */
-	public function test_plugin_activate() {
+	public function test_plugin_activate_method_is_called() {
 		$this->user_id = $this->factory()->user->create(
 			[
 				'role' => 'administrator',
@@ -71,9 +71,9 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Method that tests the deactivate() method that runs when ACF plugin is missing
+	 * Method that tests the deactivate() method that runs when plugin is deactivated.
 	 */
-	public function test_plugin_deactivate() {
+	public function test_plugin_deactivate_method_is_called() {
 		$this->user_id = $this->factory()->user->create(
 			[
 				'role' => 'administrator',
@@ -90,9 +90,9 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test register asset manifest failure
+	 * Test register asset manifest failure.
 	 */
-	public function test_register_assets_manifest() {
+	public function test_assets_manifest_is_registered() {
 		$this->plugin->register_assets_manifest_data();
 
 		$this->assertTrue( defined( 'ASSETS_MANIFEST' ) );
@@ -101,7 +101,7 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	/**
 	 * Test for plugin settings link
 	 */
-	public function test_plugin_settings_link() {
+	public function test_plugin_settings_link_works() {
 		$links = $this->plugin->plugin_settings_link( [] );
 
 		$this->assertTrue( gettype( $links ) === 'array' );
@@ -111,7 +111,7 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 	/**
 	 * Test for extra headers added
 	 */
-	public function test_extra_headers() {
+	public function test_extra_headers_are_set() {
 		$headers = $this->plugin->add_headers( [] );
 
 		$theme_object = wp_get_theme();
@@ -131,5 +131,24 @@ class Plugin_Integration_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'License', $theme_headers_added );
 		$this->assertArrayHasKey( 'License URI', $theme_headers_added );
 		$this->assertArrayHasKey( 'Template Version', $theme_headers_added );
+	}
+
+	/**
+	 * Test the getter for the assets handler instance
+	 */
+	public function test_assets_handler_getter() {
+		$assets_handler = $this->plugin->get_assets_handler();
+
+		$this->assertTrue( class_exists( get_class( $assets_handler ) ) );
+	}
+
+	/**
+	 * Test the setter for the assets handler instance
+	 */
+	public function test_assets_handler_setter() {
+		$this->plugin->register_assets_handler();
+		$assets_handler = $this->plugin->get_assets_handler();
+
+		$this->assertTrue( class_exists( get_class( $assets_handler ) ) );
 	}
 }
