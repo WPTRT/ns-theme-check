@@ -58,6 +58,11 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			throw Exception\Plugin_Activation_Failure::activation_message( $error_message );
 		};
 
+		if ( ! is_callable( 'simplexml_load_string' ) || false !== stripos( ini_get( 'disable_functions' ), 'simplexml_load_string' ) ) {
+			$error_message = esc_html__( 'Theme Sniffer requires libxml extension to function.', 'theme-sniffer' );
+			throw Exception\Plugin_Activation_Failure::activation_message( $error_message );
+		};
+
 		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
 			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}
