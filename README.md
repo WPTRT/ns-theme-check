@@ -94,7 +94,13 @@ This will run webpack in the watch mode, so your changes will be saved in the bu
 
 `npm run build`
 
-This will create the `assets/build/` folder with js and css files that the plugin will use.
+This will create the `assets/build/` folder with js and css files that the plugin will use and a zip file for installation.
+
+If you want to skip creating the zip file, you can use
+
+`npm run dev`
+
+This command behaves like the build one, but it skips creation of the zip file.
 
 When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for imporvement, so if you notice something that could be improved we incurage you to make a PR.
 
