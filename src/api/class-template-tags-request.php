@@ -44,6 +44,8 @@ class Template_Tags_Request implements Service {
 	 * Calls and returns the list of template tags, categorized like in the API
 	 * response.
 	 *
+	 * @since 1.1.2 Return empty array when fetching fails.
+	 *
 	 * @return array Array of allowed template tags.
 	 */
 	private function get_template_tags() {
@@ -53,7 +55,7 @@ class Template_Tags_Request implements Service {
 			$this->error = $tags_response->get_error_message();
 			add_action( 'admin_notices', [ $this, 'notice' ] );
 
-			return false;
+			return [];
 		}
 
 		$tags_decoded = json_decode( wp_remote_retrieve_body( $tags_response ), true );

@@ -131,7 +131,6 @@ trait Sniffer_Helpers {
 	 * @return array Theme tags array.
 	 */
 	public function get_theme_tags() : array {
-
 		return get_transient( Template_Tags_Request::TEMPLATE_TRANSIENT );
 	}
 
