@@ -59,6 +59,10 @@ final class Di_Container {
 	private function get_di_container( array $services ) {
 		$builder = new ContainerBuilder();
 
+		if ( is_readable( __DIR__ . '/CompiledContainer.php' ) ) {
+			$builder->enableCompilation( __DIR__ );
+		}
+
 		$definitions = [];
 
 		foreach ( $services as $service_name => $service_dependencies ) {
