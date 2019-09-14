@@ -31,9 +31,8 @@
 		]
 	},
 	"scripts": {
-		"phpcs-i": "@php ./vendor/bin/phpcs -i",
-		"check-cs": "@php ./vendor/bin/phpcs --ignore=*/vendor/*,*/node_modules/*",
-		"fix-cs": "@php ./vendor/bin/phpcbf --ignore=*/vendor/*,*/node_modules/*"
+		"checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs",
+		"fixcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
 	},
 	"config": {
     	"sort-packages": true,
