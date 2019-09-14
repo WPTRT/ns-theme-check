@@ -2,13 +2,23 @@
 <ruleset name="WordPress Theme Sniffer">
 	<description>Coding standard for the WordPress Theme Sniffer plugin.</description>
 
+	<!-- Check the entire plugin. -->
+  	<file>.</file>
+
+  	<!-- Additional arguments. -->
 	<arg value="sp"/>
+	<arg name="basepath" value="."/>
+	<arg name="parallel" value="8"/>
+	<arg name="cache"/>
 	<arg name="extensions" value="php"/>
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
+
+	<exclude-pattern>/src/CompiledContainer.php</exclude-pattern>
+
 
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress-Docs"/>
