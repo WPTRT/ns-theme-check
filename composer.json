@@ -5,7 +5,7 @@
 	"description": "Theme Sniffer plugin which uses PHP_CodeSniffer for automatic theme checking.",
 	"license": "MIT",
 	"authors": [{
-			"name"    : "Contributors",
+			"name": "Contributors",
 			"homepage": "https://github.com/WPTRT/theme-sniffer/graphs/contributors"
 		}, {
 			"name": "Denis Žoljom",
@@ -16,12 +16,15 @@
 		"php": ">=7.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
 		"michelf/php-markdown": "^1.8",
+    "pcov/clobber": "^2.0",
 		"squizlabs/php_codesniffer": "^3.3.0",
 		"wptrt/wpthemereview": "^0.2.0"
 	},
 	"require-dev": {
+		"codedungeon/phpunit-result-printer": "^0.20.1",
 		"phpcompatibility/php-compatibility": "^9.0",
-		"roave/security-advisories"         : "dev-master"
+		"phpunit/phpunit": "^7",
+		"roave/security-advisories": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -30,13 +33,20 @@
 		]
 	},
 	"scripts": {
-		"phpcs-i": "@php ./vendor/bin/phpcs -i",
-		"check-cs": "@php ./vendor/bin/phpcs --ignore=*/vendor/*,*/node_modules/*",
-		"fix-cs": "@php ./vendor/bin/phpcbf --ignore=*/vendor/*,*/node_modules/*"
+		"phpcs-i": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs -i",
+		"check-cs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs",
+		"fix-cs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf",
+		"run-tests-unit": "@php ./vendor/phpunit/phpunit/phpunit -c phpunit.xml.dist --no-coverage --colors=always --testdox",
+		"run-tests-unit-cov": "@php ./vendor/phpunit/phpunit/phpunit -c phpunit.xml.dist --colors=always",
+		"run-tests-integ": "@php ./vendor/phpunit/phpunit/phpunit -c phpunit.integration.xml.dist --no-coverage --colors=always --testdox",
+		"run-tests-integ-cov": "@php ./vendor/phpunit/phpunit/phpunit -c phpunit.integration.xml.dist --colors=always",
+    "clobber": "@php ./vendor/pcov/clobber/bin/pcov clobber",
+    "unclobber": "@php ./vendor/pcov/clobber/bin/pcov unclobber"
 	},
 	"config": {
-    	"sort-packages": true,
-    	"optimize-autoloader": true
+		"sort-packages": true,
+		"optimize-autoloader": true,
+		"process-timeout": 2000
 	},
 	"support": {
 		"issues": "https://github.com/WPTRT/theme-sniffer/issues",

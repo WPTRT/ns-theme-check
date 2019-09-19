@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	bootstrap="tests/bootstrap-unit.php"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false"
+	verbose="true"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+	>
+	<testsuites>
+		<testsuite name="unit">
+			<directory prefix="test-" suffix=".php">./tests/unit/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="false">
+			<directory>./</directory>
+			<exclude>
+				<directory>./node_modules</directory>
+				<directory>./vendor</directory>
+				<directory>./tests</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-html" target="tests/_reports/coverage-unit" lowUpperBound="35" highLowerBound="75" />
+		<log type="coverage-clover" target="tests/_reports/logs/clover-unit.xml"/>
+		<log type="coverage-php" target="tests/_reports/logs/coverage-unit.cov"/>
+		<log type="junit" target="tests/_reports/logs/logfile-unit.xml"/>
+	</logging>
+</phpunit>

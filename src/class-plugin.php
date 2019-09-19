@@ -177,7 +177,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 *
 	 * @return array List of extra headers.
 	 */
-	public static function add_headers( array $extra_headers ) : array {
+	public function add_headers( array $extra_headers ) : array {
 		$extra_headers[] = 'License';
 		$extra_headers[] = 'License URI';
 		$extra_headers[] = 'Template Version';
@@ -205,7 +205,9 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			throw Exception\Missing_Manifest::message( $error_message );
 		}
 
-		define( 'ASSETS_MANIFEST', (string) $response );
+		if ( ! defined( 'ASSETS_MANIFEST' ) ) {
+			define( 'ASSETS_MANIFEST', (string) $response );
+		}
 	}
 
 	/**

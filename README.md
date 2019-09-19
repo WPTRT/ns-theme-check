@@ -106,4 +106,72 @@ When developing JavaScript code keep in mind the separation of concerns principl
 
 The same is valid for PHP code. The business logic is stored in the `src/` folder, the JS and CSS are located in `assets/` folder and the views are located in the `views/` folder.
 
+## Running unit or integration tests
 
+Before running unit tests, you'll need to install a local test environment. You can do this by running:
+
+```bash
+bash bin/install-wp-tests.sh wordpress_test root '' localhost latest
+```
+
+in your terminal.
+
+After this has been installed you can run
+
+```bash
+composer punit
+```
+
+to run unit tests (without coverage). To generate code coverage report you can run
+
+```bash
+composer punit-cov
+```
+
+In order for coverage to be generated, you'll need to have Xdebug installed.
+
+To run integration tests you can run
+
+```bash
+composer pint
+```
+
+To generate code coverage report you can run
+
+```bash
+composer pint-cov
+```
+
+The output should look like this:
+
+```bash
+> @php ./vendor/bin/phpunit -c phpunit.integration.xml.dist --no-coverage --colors=always
+Installing...
+Running as single site... To run multisite, use -c tests/phpunit/multisite.xml
+Not running ajax tests. To execute these, use --group ajax.
+Not running ms-files tests. To execute these, use --group ms-files.
+Not running external-http tests. To execute these, use --group external-http.
+
+PHPUnit Pretty Result Printer 0.20.3 by Codedungeon and contributors.
+==> Configuration: .../wp-content/plugins/theme-sniffer/vendor/codedungeon/phpunit-result-printer/phpunit-printer.yml
+
+PHPUnit 6.5.14 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 7.2.14 with Xdebug 2.6.1
+Configuration: .../wp-content/plugins/theme-sniffer/phpunit.integration.xml.dist
+
+
+ ==> Plugin_Integration_Test                    ✓  ✓  ✓  ✓  ✓  ✓
+
+Time: 4.43 seconds, Memory: 32.00MB
+```
+
+## Helpful Composer commands
+
+The plugin offers few additional helpful commands, but you'll mostly be interested in this one
+
+```bash
+composer check-cs .
+```
+
+It will run `phpcs` check on the entire code base.
