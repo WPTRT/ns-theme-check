@@ -48,6 +48,7 @@ trait Readme_Helpers {
 	public function set_license_data() : array {
 		$licenses_path = WP_PLUGIN_DIR . plugin_dir_path( '/theme-sniffer/assets/build/licenses.json' );
 		$licenses_file = file_get_contents( $licenses_path . 'licenses.json' );
+
 		return json_decode( $licenses_file, true );
 	}
 

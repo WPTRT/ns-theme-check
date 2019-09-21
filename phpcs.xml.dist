@@ -3,13 +3,14 @@
 	<description>Coding standard for the WordPress Theme Sniffer plugin.</description>
 
 	<!-- Check the entire plugin. -->
-	<file>.</file>
+  	<file>.</file>
 
 	<!-- Exclude patterns. -->
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>/src/CompiledContainer.php</exclude-pattern>
 
 	<!-- Additional arguments. -->
 	<arg value="sp" />

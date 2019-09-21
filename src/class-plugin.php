@@ -89,9 +89,31 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 		$this->register_assets_manifest_data();
 
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-		add_action( 'init', [ $this, 'register_assets_handler' ] );
 		add_action( 'plugin_action_links_' . PLUGIN_BASENAME, [ $this, 'plugin_settings_link' ] );
 		add_filter( 'extra_theme_headers', [ $this, 'add_headers' ] );
+	}
+
+	/**
+	 * Register bundled asset manifest
+	 *
+	 * @throws Exception\Missing_Manifest Throws error if manifest is missing.
+	 * @return void
+	 */
+	public function register_assets_manifest_data() {
+
+		// phpcs:disable
+		$response = file_get_contents(
+			rtrim( plugin_dir_path( __DIR__ ), '/' ) . '/assets/build/manifest.json'
+		);
+
+		// phpcs:enable
+
+		if ( ! $response ) {
+			$error_message = esc_html__( 'manifest.json is missing. Bundle the plugin before using it.', 'developer-portal' );
+			throw Exception\Missing_Manifest::message( $error_message );
+		}
+
+		define( 'ASSETS_MANIFEST', (string) $response );
 	}
 
 	/**
@@ -152,29 +174,6 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 		$extra_headers[] = 'Template Version';
 
 		return $extra_headers;
-	}
-
-	/**
-	 * Register bundled asset manifest
-	 *
-	 * @throws Exception\Missing_Manifest Throws error if manifest is missing.
-	 * @return void
-	 */
-	public function register_assets_manifest_data() {
-
-		// phpcs:disable
-		$response = file_get_contents(
-			rtrim( plugin_dir_path( __DIR__ ), '/' ) . '/assets/build/manifest.json'
-		);
-
-		// phpcs:enable
-
-		if ( ! $response ) {
-			$error_message = esc_html__( 'manifest.json is missing. Bundle the plugin before using it.', 'developer-portal' );
-			throw Exception\Missing_Manifest::message( $error_message );
-		}
-
-		define( 'ASSETS_MANIFEST', (string) $response );
 	}
 
 	/**
