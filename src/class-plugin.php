@@ -5,17 +5,16 @@
  * @package Theme_Sniffer\Core
  */
 
+declare( strict_types=1 );
+
 namespace Theme_Sniffer\Core;
 
-use Theme_Sniffer\Assets\Assets_Aware;
-use Theme_Sniffer\Assets\Assets_Handler;
-
-use Theme_Sniffer\Api;
 use Theme_Sniffer\Admin_Menus;
-use Theme_Sniffer\i18n;
+use Theme_Sniffer\Api;
 use Theme_Sniffer\Callback;
-
+use Theme_Sniffer\Enqueue;
 use Theme_Sniffer\Exception;
+use Theme_Sniffer\i18n;
 
 /**
  * Plugins main class that handles plugins object composition,
@@ -25,28 +24,12 @@ use Theme_Sniffer\Exception;
  */
 final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	/**
-	 * Assets handler instance.
-	 *
-	 * @var Assets_Handler
-	 */
-	private $assets_handler;
-
-	/**
 	 * Array of instantiated services.
 	 *
 	 * @var Service[]
 	 */
 	private $services = [];
 
-	/**
-	 * Instantiate a Plugin object.
-	 *
-	 * @param Assets_Handler|null $assets_handler Optional. Instance of the
-	 *                                           assets handler to use.
-	 */
-	public function __construct( Assets_Handler $assets_handler = null ) {
-		$this->assets_handler = $assets_handler ?: new Assets_Handler();
-	}
 	/**
 	 * Activate the plugin.
 	 *
@@ -106,9 +89,31 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 		$this->register_assets_manifest_data();
 
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-		add_action( 'init', [ $this, 'register_assets_handler' ] );
 		add_action( 'plugin_action_links_' . PLUGIN_BASENAME, [ $this, 'plugin_settings_link' ] );
 		add_filter( 'extra_theme_headers', [ $this, 'add_headers' ] );
+	}
+
+	/**
+	 * Register bundled asset manifest
+	 *
+	 * @throws Exception\Missing_Manifest Throws error if manifest is missing.
+	 * @return void
+	 */
+	public function register_assets_manifest_data() {
+
+		// phpcs:disable
+		$response = file_get_contents(
+			rtrim( plugin_dir_path( __DIR__ ), '/' ) . '/assets/build/manifest.json'
+		);
+
+		// phpcs:enable
+
+		if ( ! $response ) {
+			$error_message = esc_html__( 'manifest.json is missing. Bundle the plugin before using it.', 'developer-portal' );
+			throw Exception\Missing_Manifest::message( $error_message );
+		}
+
+		define( 'ASSETS_MANIFEST', (string) $response );
 	}
 
 	/**
@@ -122,36 +127,22 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			return;
 		}
 
-		$classes = $this->get_service_classes();
+		$container = new Di_Container();
 
-		$this->services = array_map(
-			[ $this, 'instantiate_service' ],
-			$classes
-		);
+		$this->services = $container->get_di_services( $this->get_service_classes() );
 
 		array_walk(
 			$this->services,
-			function( Service $service ) {
-				$service->register();
+			function( $class ) {
+				if ( ! $class instanceof Registerable ) {
+					return;
+				}
+
+				$class->register();
 			}
 		);
 	}
 
-	/**
-	 * Register the assets handler.
-	 */
-	public function register_assets_handler() {
-		$this->assets_handler->register();
-	}
-
-	/**
-	 * Return the instance of the assets handler in use.
-	 *
-	 * @return Assets_Handler
-	 */
-	public function get_assets_handler() {
-		return $this->assets_handler;
-	}
 	/**
 	 * Add go to theme check page link on plugin page.
 	 *
@@ -186,65 +177,17 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	}
 
 	/**
-	 * Register bundled asset manifest
-	 *
-	 * @throws Exception\Missing_Manifest Throws error if manifest is missing.
-	 * @return void
-	 */
-	public function register_assets_manifest_data() {
-
-		// phpcs:disable
-		$response = file_get_contents(
-			rtrim( plugin_dir_path( __DIR__ ), '/' ) . '/assets/build/manifest.json'
-		);
-
-		// phpcs:enable
-
-		if ( ! $response ) {
-			$error_message = esc_html__( 'manifest.json is missing. Bundle the plugin before using it.', 'developer-portal' );
-			throw Exception\Missing_Manifest::message( $error_message );
-		}
-
-		define( 'ASSETS_MANIFEST', (string) $response );
-	}
-
-	/**
-	 * Instantiate a single service.
-	 *
-	 * @param string $class Service class to instantiate.
-	 *
-	 * @return Service
-	 * @throws Exception\Invalid_Service If the service is not valid.
-	 */
-	private function instantiate_service( $class ) {
-		if ( ! class_exists( $class ) ) {
-			throw Exception\Invalid_Service::from_service( $class );
-		}
-
-		$service = new $class();
-
-		if ( ! $service instanceof Service ) {
-			throw Exception\Invalid_Service::from_service( $service );
-		}
-
-		if ( $service instanceof Assets_Aware ) {
-			$service->with_assets_handler( $this->assets_handler );
-		}
-
-		return $service;
-	}
-
-	/**
 	 * Get the list of services to register.
 	 *
 	 * @return array<string> Array of fully qualified class names.
 	 */
 	private function get_service_classes() : array {
 		return [
-			Api\Template_Tags_Request::class,
-			i18n\Internationalization::class,
 			Admin_Menus\Sniff_Page::class,
+			Api\Template_Tags_Request::class,
 			Callback\Run_Sniffer_Callback::class,
+			Enqueue\Enqueue_Resources::class,
+			i18n\Internationalization::class,
 		];
 	}
 }

@@ -10,8 +10,6 @@ declare( strict_types=1 );
 
 namespace Theme_Sniffer\Admin_Menus;
 
-use Theme_Sniffer\Assets\Assets_Aware;
-use Theme_Sniffer\Assets\Assets_Awareness;
 use Theme_Sniffer\Core\Renderable;
 use Theme_Sniffer\Core\Service;
 use Theme_Sniffer\View\Escaped_View;
@@ -22,16 +20,11 @@ use Theme_Sniffer\View\Templated_View;
  *
  * This abstract class can be extended to add new admin menus
  */
-abstract class Base_Admin_Menu implements Renderable, Service, Assets_Aware {
-
-	use Assets_Awareness;
-
+abstract class Base_Admin_Menu implements Renderable, Service {
 	/**
 	 * Register the admin menu.
 	 */
 	public function register() {
-		$this->register_assets();
-
 		add_action(
 			'admin_menu',
 			function() {
@@ -75,8 +68,6 @@ abstract class Base_Admin_Menu implements Renderable, Service, Assets_Aware {
 	 */
 	public function render( array $context = [] ) : string {
 		try {
-			$this->enqueue_assets();
-
 			$view = new Escaped_View(
 				new Templated_View( $this->get_view_uri() )
 			);
