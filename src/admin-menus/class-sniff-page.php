@@ -102,6 +102,8 @@ final class Sniff_Page extends Base_Admin_Menu {
 		$atts['standards']           = $this->get_wpcs_standards();
 		$atts['php_versions']        = $this->get_php_versions();
 		$atts['minimum_php_version'] = $this->get_minimum_php_version();
+		$atts['current_theme']       = \get_stylesheet();
+		$atts['standard_status']     = wp_list_pluck( $this->get_wpcs_standards(), 'default' );
 
 		return $atts;
 	}
