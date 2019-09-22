@@ -10,7 +10,6 @@ declare( strict_types=1 );
 namespace Theme_Sniffer\Core;
 
 use Theme_Sniffer\Admin_Menus;
-use Theme_Sniffer\Api;
 use Theme_Sniffer\Callback;
 use Theme_Sniffer\Enqueue;
 use Theme_Sniffer\Exception;
@@ -34,6 +33,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Activate the plugin.
 	 *
 	 * @throws Exception\Plugin_Activation_Failure If a condition for plugin activation isn't met.
+	 * @throws \Exception
 	 */
 	public function activate() {
 		if ( ! is_callable( 'shell_exec' ) || false !== stripos( ini_get( 'disable_functions' ), 'shell_exec' ) ) {
@@ -50,7 +50,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}
 
-		if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
+		if ( version_compare( PHP_VERSION_ID, '70000', '<' ) ) {
 			\deactivate_plugins( PLUGIN_BASENAME );
 
 			$error_message = esc_html__( 'Theme Sniffer requires PHP 7.0 or greater to function.', 'theme-sniffer' );
@@ -66,11 +66,13 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			}
 		}
 
-		flush_rewrite_rules();
+		\flush_rewrite_rules();
 	}
 
 	/**
 	 * Deactivate the plugin.
+	 *
+	 * @throws \Exception
 	 */
 	public function deactivate() {
 		$this->register_services();
@@ -82,7 +84,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			}
 		}
 
-		flush_rewrite_rules();
+		\flush_rewrite_rules();
 	}
 
 	/**
@@ -106,12 +108,9 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 */
 	public function register_assets_manifest_data() {
 
-		// phpcs:disable
 		$response = file_get_contents(
 			rtrim( plugin_dir_path( __DIR__ ), '/' ) . '/assets/build/manifest.json'
 		);
-
-		// phpcs:enable
 
 		if ( ! $response ) {
 			$error_message = esc_html__( 'manifest.json is missing. Bundle the plugin before using it.', 'developer-portal' );
@@ -125,6 +124,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Register the individual services of this plugin.
 	 *
 	 * @throws Exception\Invalid_Service If a service is not valid.
+	 * @throws \Exception
 	 */
 	public function register_services() {
 		// Bail early so we don't instantiate services twice.
@@ -138,7 +138,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 
 		array_walk(
 			$this->services,
-			function( $class ) {
+			static function($class ) {
 				if ( ! $class instanceof Registerable ) {
 					return;
 				}
@@ -189,7 +189,6 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	private function get_service_classes() : array {
 		return [
 			Admin_Menus\Sniff_Page::class,
-			Api\Template_Tags_Request::class,
 			Callback\Run_Sniffer_Callback::class,
 			Enqueue\Enqueue_Resources::class,
 			i18n\Internationalization::class,

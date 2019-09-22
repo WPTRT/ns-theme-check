@@ -11,6 +11,7 @@ declare( strict_types=1 );
 
 namespace Theme_Sniffer\Core;
 
+use \DI\Container;
 use \DI\ContainerBuilder;
 
 /**
@@ -25,18 +26,19 @@ final class Di_Container {
 	/**
 	 * Returns a prepared list of services with definitions for DI container
 	 *
-	 * @since 1.2.0
-	 *
 	 * @param array $services List of service classes.
 	 *
 	 * @return array Definition list of services for DI container.
+	 * @throws \Exception
+	 * @since 1.2.0
+	 *
 	 */
 	public function get_di_services( array $services ) : array {
 		$di_services = $this->get_prepared_service_array( $services );
 		$container   = $this->get_di_container( $di_services );
 
 		return array_map(
-			function( $class ) use ( $container ) {
+			static function( $class ) use ( $container ) {
 				return $container->get( $class );
 			},
 			array_keys( $di_services )
@@ -50,26 +52,20 @@ final class Di_Container {
 	 * Wire all the dependencies automatically, based on the provided array of
 	 * class => dependencies from the get_di_services().
 	 *
-	 * @since 1.2.0
-	 *
 	 * @param array $services Array of service.
 	 *
 	 * @return Container
+	 * @throws \Exception
+	 * @since 1.2.0
 	 */
 	private function get_di_container( array $services ) {
 		$builder = new ContainerBuilder();
 
-		if ( is_readable( __DIR__ . '/CompiledContainer.php' ) ) {
-			$builder->enableCompilation( __DIR__ );
-		}
+		$builder->enableCompilation( __DIR__ );
 
 		$definitions = [];
 
 		foreach ( $services as $service_name => $service_dependencies ) {
-			if ( gettype( $service_dependencies ) !== 'array' ) {
-				continue;
-			}
-
 			$definitions[ $service_name ] = \DI\create()->constructor( ...$this->get_di_dependencies( $service_dependencies ) );
 		}
 
@@ -90,7 +86,7 @@ final class Di_Container {
 	 */
 	private function get_di_dependencies( array $dependencies ) : array {
 		return array_map(
-			function( $dependency ) {
+			static function($dependency ) {
 				if ( class_exists( $dependency ) ) {
 					return \DI\get( $dependency );
 				}
@@ -119,7 +115,7 @@ final class Di_Container {
 		$prepared_services = [];
 
 		foreach ( $services as $class => $dependencies ) {
-			if ( gettype( $dependencies ) !== 'array' ) {
+			if ( ! is_array( $dependencies ) ) {
 				$prepared_services[ $dependencies ] = [];
 			} else {
 				$prepared_services[ $class ] = $dependencies;
