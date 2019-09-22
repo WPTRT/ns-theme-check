@@ -29,9 +29,9 @@ final class Di_Container {
 	 * @param array $services List of service classes.
 	 *
 	 * @return array Definition list of services for DI container.
-	 * @throws \Exception
-	 * @since 1.2.0
 	 *
+	 * @throws \Exception Throws exception if container cannot be created.
+	 * @since 1.2.0
 	 */
 	public function get_di_services( array $services ) : array {
 		$di_services = $this->get_prepared_service_array( $services );
@@ -55,7 +55,8 @@ final class Di_Container {
 	 * @param array $services Array of service.
 	 *
 	 * @return Container
-	 * @throws \Exception
+	 *
+	 * @throws \Exception Throws exception if container cannot be created.
 	 * @since 1.2.0
 	 */
 	private function get_di_container( array $services ) {
@@ -86,7 +87,7 @@ final class Di_Container {
 	 */
 	private function get_di_dependencies( array $dependencies ) : array {
 		return array_map(
-			static function($dependency ) {
+			static function( $dependency ) {
 				if ( class_exists( $dependency ) ) {
 					return \DI\get( $dependency );
 				}

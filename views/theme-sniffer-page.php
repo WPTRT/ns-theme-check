@@ -38,10 +38,10 @@ $minimum_php_version = $this->minimum_php_version;
 $standard_status     = $this->standard_status;
 
 // Defaults.
-$hide_warning        = 0;
-$raw_output          = 0;
-$ignore_annotations  = 0;
-$check_php_only      = 0;
+$hide_warning       = 0;
+$raw_output         = 0;
+$ignore_annotations = 0;
+$check_php_only     = 0;
 ?>
 
 <div class="wrap theme-sniffer">

@@ -33,7 +33,6 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Activate the plugin.
 	 *
 	 * @throws Exception\Plugin_Activation_Failure If a condition for plugin activation isn't met.
-	 * @throws \Exception
 	 */
 	public function activate() {
 		if ( ! is_callable( 'shell_exec' ) || false !== stripos( ini_get( 'disable_functions' ), 'shell_exec' ) ) {
@@ -71,8 +70,6 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 
 	/**
 	 * Deactivate the plugin.
-	 *
-	 * @throws \Exception
 	 */
 	public function deactivate() {
 		$this->register_services();
@@ -124,7 +121,6 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Register the individual services of this plugin.
 	 *
 	 * @throws Exception\Invalid_Service If a service is not valid.
-	 * @throws \Exception
 	 */
 	public function register_services() {
 		// Bail early so we don't instantiate services twice.
@@ -138,7 +134,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 
 		array_walk(
 			$this->services,
-			static function($class ) {
+			static function( $class ) {
 				if ( ! $class instanceof Registerable ) {
 					return;
 				}
