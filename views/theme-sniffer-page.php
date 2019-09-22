@@ -22,23 +22,26 @@ if ( ! empty( $this->error ) ) {
 }
 
 // Use attributes passed from the page creation class.
-$standards    = $this->standards;
-$themes       = $this->themes;
-$php_versions = $this->php_versions;
-$nonce        = $this->nonce_field;
+$themes = $this->themes;
 
 if ( empty( $themes ) ) {
 	return;
 }
 
+$standards     = $this->standards;
+$php_versions  = $this->php_versions;
+$nonce         = $this->nonce_field;
+$current_theme = $this->current_theme;
+
 // Predefined values.
-$current_theme       = get_stylesheet();
 $minimum_php_version = $this->minimum_php_version;
+$standard_status     = $this->standard_status;
+
+// Defaults.
 $hide_warning        = 0;
 $raw_output          = 0;
 $ignore_annotations  = 0;
 $check_php_only      = 0;
-$standard_status     = wp_list_pluck( $standards, 'default' );
 ?>
 
 <div class="wrap theme-sniffer">
@@ -89,29 +92,7 @@ $standard_status     = wp_list_pluck( $standards, 'default' );
 			</label>
 		</div>
 	</div>
-	<div class="theme-sniffer__start-notice js-start-notice"></div>
-	<div class="theme-sniffer__report js-sniff-report">
-		<div class="theme-sniffer__report-item js-report-item">
-			<div class="theme-sniffer__report-heading js-report-item-heading"></div>
-			<table class="theme-sniffer__report-table js-report-table">
-				<tr class="theme-sniffer__report-table-row js-report-notice-type">
-					<td class="theme-sniffer__report-table-line js-report-item-line"></td>
-					<td class="theme-sniffer__report-table-type js-report-item-type"></td>
-					<td class="theme-sniffer__report-table-message js-report-item-message"></td>
-				</tr>
-				<tr class="theme-sniffer__report-table-row js-report-notice-source">
-					<td class="theme-sniffer__report-table-empty"></td>
-					<td class="theme-sniffer__report-table-source js-report-item-source">
-						<span class="tooltipped tooltipped-w tooltipped-no-delay" aria-label="<?php esc_attr_e( 'Copy Annotation', 'theme-sniffer' ); ?>">
-							<button class="theme-sniffer__report-copy-annotation-btn js-annotation-button">
-								<span class="dashicons dashicons-clipboard"></span><span class= "theme-sniffer__report-copy-annotation-source js-annotation-source"></span>
-							</button>
-						</span>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+	<?php echo $this->render_partial( 'views/partials/report-notice' ); // phpcs:ignore ?>
 	<div class="theme-sniffer__loader js-loader"></div>
 	<div class="theme-sniffer__info js-sniffer-info"></div>
 	<div class="theme-sniffer__check-done-notice js-check-done"><?php esc_html_e( 'All done!', 'theme-sniffer' ); ?></div>
