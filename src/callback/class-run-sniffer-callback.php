@@ -97,13 +97,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	const IGNORE_ANNOTATIONS = 'ignoreAnnotations';
 
 	/**
-	 * The checkPhpOnly $_POST key
-	 *
-	 * @var string
-	 */
-	const CHECK_PHP_ONLY = 'checkPhpOnly';
-
-	/**
 	 * The minimumPHPVersion $_POST key
 	 *
 	 * @var string
@@ -346,12 +339,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$ignore_annotations = false;
 		}
 
-		$check_php_only = false;
-
-		if ( isset( $_POST[ self::CHECK_PHP_ONLY ] ) && $_POST[ self::CHECK_PHP_ONLY ] === 'true' ) {
-			$check_php_only = true;
-		}
-
 		if ( isset( $_POST[ self::MINIMUM_PHP_VERSION ] ) && ! empty( $_POST[ self::MINIMUM_PHP_VERSION ] ) ) {
 			$minimum_php_version = sanitize_text_field( wp_unslash( $_POST[ self::MINIMUM_PHP_VERSION ] ) );
 		}
@@ -380,10 +367,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$all_files = [ 'php' ];
 
-		if ( ! $check_php_only ) {
-			$all_files = array_merge( $all_files, [ 'css', 'js' ] );
-		}
-
 		$theme     = wp_get_theme( self::$theme_slug );
 		$all_files = $theme->get_files( $all_files, -1, false );
 
@@ -396,8 +379,9 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 			// Check for Frameworks.
 			$allowed_frameworks = [
-				'kirki'       => 'kirki.php',
-				'hybrid-core' => 'hybrid.php',
+				'kirki'           => 'kirki.php',
+				'hybrid-core'     => 'hybrid.php',
+				'redux-framework' => 'redux-framework.php',
 			];
 
 			foreach ( $allowed_frameworks as $framework_textdomain => $identifier ) {
@@ -411,45 +395,11 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 				unset( $all_files[ $file_name ] );
 				break;
 			}
-
-			// Check CSS/JS.
-			if ( ! $check_php_only && ( strpos( $file_name, '.js' ) !== false || strpos( $file_name, '.css' ) !== false ) ) {
-
-				// Check if files have .min in the file name.
-				if ( strpos( $file_name, '.min.' ) !== false ) {
-					unset( $all_files[ $file_name ] );
-					break;
-				}
-
-				// Check for minified/css not follow standard naming conventions.
-				try {
-					$file_contents = file_get_contents( $file_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					$file_lines    = explode( "\n", $file_contents );
-
-					$row = 0;
-					foreach ( $file_lines as $line ) {
-						if ( $row <= 10 && strlen( $line ) > 1000 ) {
-							unset( $all_files[ $file_name ] );
-							break;
-						}
-					}
-				} catch ( Exception $e ) {
-					new \WP_Error(
-						'error_reading_file',
-						sprintf(
-							/* translators: %s: Name of the file */
-							esc_html__( 'There was an error reading the file %s', 'theme-sniffer' ),
-							$file_name
-						)
-					);
-				}
-			}
 		}
 
 		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*';
 
 		$results_arguments = [
-			'extensions'          => $check_php_only,
 			'show_warnings'       => $show_warnings,
 			'minimum_php_version' => $minimum_php_version,
 			'args'                => $args,
@@ -478,32 +428,29 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$total_fixable = $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
 		$total_files   = $sniffer_results[ self::FILES ];
 
-		if ( ! $check_php_only ) {
+		// Check theme headers.
+		$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
+		$screenshot_checks   = $this->screenshot_check();
+		$readme_checks       = $this->readme_check();
 
-			// Check theme headers.
-			$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
-			$screenshot_checks   = $this->screenshot_check();
-			$readme_checks       = $this->readme_check();
-
-			foreach ( $screenshot_checks as $file ) {
-				$total_errors  += $file[ self::ERRORS ];
-				$total_warning += $file[ self::WARNINGS ];
-			}
-
-			$total_files += $screenshot_checks;
-
-			foreach ( $readme_checks as $file ) {
-				$total_errors  += $file[ self::ERRORS ];
-				$total_warning += $file[ self::WARNINGS ];
-			}
-
-			$total_files += $readme_checks;
-
-			$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
-			$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
-			$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
-			$total_files   += $theme_header_checks[ self::FILES ];
+		foreach ( $screenshot_checks as $file ) {
+			$total_errors  += $file[ self::ERRORS ];
+			$total_warning += $file[ self::WARNINGS ];
 		}
+
+		$total_files += $screenshot_checks;
+
+		foreach ( $readme_checks as $file ) {
+			$total_errors  += $file[ self::ERRORS ];
+			$total_warning += $file[ self::WARNINGS ];
+		}
+
+		$total_files += $readme_checks;
+
+		$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
+		$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
+		$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
+		$total_files   += $theme_header_checks[ self::FILES ];
 
 		// Filtering the files for easier JS handling.
 		$file_i = 0;
@@ -537,23 +484,24 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Method that retunrs the reuslts based on a custom PHPCS Runner
+	 * Method that returns the results based on a custom PHPCS Runner
 	 *
-	 * @param  array ...$arguments Array of passed arguments.
+	 * @param array ...$arguments Array of passed arguments.
 	 * @return string              Sniff results string.
+	 *
+	 * @throws \PHP_CodeSniffer\Exceptions\DeepExitException Exception thrown in the case of error.
 	 */
-	protected function get_sniff_results( ...$arguments ) {
+	protected function get_sniff_results( ...$arguments ): string {
 		// Unpack the arguments.
-		$show_warnings       = $arguments[0]['show_warnings'];
-		$minimum_php_version = $arguments[0]['minimum_php_version'];
-		$args                = $arguments[0]['args'];
-		$theme_prefixes      = $arguments[0]['theme_prefixes'];
-		$extensions          = $arguments[0]['extensions'];
-		$all_files           = $arguments[0]['all_files'];
-		$standards_array     = $arguments[0]['standards_array'];
-		$ignore_annotations  = $arguments[0]['ignore_annotations'];
-		$ignored             = $arguments[0]['ignored'];
-		$raw_output          = $arguments[0]['raw_output'];
+		$show_warnings       = $arguments[0]['show_warnings'] ?? '';
+		$minimum_php_version = $arguments[0]['minimum_php_version'] ?? '';
+		$args                = $arguments[0]['args'] ?? '';
+		$theme_prefixes      = $arguments[0]['theme_prefixes'] ?? '';
+		$all_files           = $arguments[0]['all_files'] ?? '';
+		$standards_array     = $arguments[0]['standards_array'] ?? '';
+		$ignore_annotations  = $arguments[0]['ignore_annotations'] ?? '';
+		$ignored             = $arguments[0]['ignored'] ?? '';
+		$raw_output          = $arguments[0]['raw_output'] ?? '';
 
 		// Create a custom runner.
 		$runner = new Runner();
@@ -568,22 +516,20 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$all_files = array_values( $all_files );
 
-		if ( $extensions ) {
-			$runner->config->extensions = [
-				'php' => 'PHP',
-				'inc' => 'PHP',
-			];
-		}
+		$runner->config->extensions = [
+			'php' => 'PHP',
+			'inc' => 'PHP',
+		];
 
 		$runner->config->standards   = $standards_array;
 		$runner->config->files       = $all_files;
 		$runner->config->annotations = $ignore_annotations;
-		$runner->config->parallel    = 8;
+		$runner->config->parallel    = 10;
 		$runner->config->colors      = false;
 		$runner->config->tabWidth    = 0;
 		$runner->config->reportWidth = 110;
 		$runner->config->interactive = false;
-		$runner->config->cache       = false;
+		$runner->config->cache       = true;
 		$runner->config->ignored     = $ignored;
 
 		if ( ! $raw_output ) {
