@@ -177,7 +177,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Helper method that returns the default stnadard
+	 * Helper method that returns the default standard
 	 *
 	 * @since 1.0.0
 	 * @return string Name of the default standard.
@@ -192,7 +192,7 @@ trait Sniffer_Helpers {
 	 * @since 1.0.0
 	 * @return array List of required headers.
 	 */
-	public function get_required_headers() {
+	public function get_required_headers() : array {
 		return [
 			'Name',
 			'Description',
@@ -205,19 +205,75 @@ trait Sniffer_Helpers {
 	}
 
 	/**
+	 * Helper method to get the minimum PHP version supplied by theme
+	 * or the WP core default.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Minimum PHP Version String.
+	 */
+	public function get_minimum_php_version() {
+
+		// WP Core minimum PHP version - only used for fallback if API fails, and no transient stored.
+		$minimum_php_version = '5.6';
+
+		// Check API for minimum WP core version supported.
+		$php_check = $this->get_wp_minimum_php_version();
+
+		// Checks response success or transient data.
+		if ( $php_check !== false ) {
+			$minimum_php_version = $php_check;
+		}
+
+		$readme = wp_normalize_path( get_template_directory() . '/readme.txt' );
+
+		if ( file_exists( $readme ) ) {
+
+			// Check if theme has set minimum PHP version in it's readme.txt file.
+			$theme_php_version = get_file_data( $readme, [ 'minimum_php_version' => 'Requires PHP' ] );
+
+			// Theme has provided an override to minimum PHP version defined by WP Core.
+			if ( ! empty( $theme_php_version['minimum_php_version'] ) ) {
+				$minimum_php_version = $theme_php_version['minimum_php_version'];
+			}
+		}
+
+		// Theme Sniffer's supported PHP version strings are X.X format.
+		$minimum_php_version = substr( $minimum_php_version, 0, 3 );
+
+		// Check Theme Sniffer's supported PHP Versions and find closest PHP version.
+		$supported_php_version  = null;
+		$theme_sniffer_versions = $this->get_php_versions();
+
+		foreach ( $theme_sniffer_versions as $php_version ) {
+			if ( $supported_php_version === null || abs( $minimum_php_version - $supported_php_version ) > abs( $php_version - $minimum_php_version ) ) {
+				$supported_php_version = $php_version;
+			}
+		}
+
+		// Ensure a supported version was found or just use the minimum PHP version determined appropriate.
+		if ( $supported_php_version !== null ) {
+			$minimum_php_version = $supported_php_version;
+		}
+
+		return $minimum_php_version;
+	}
+
+	/**
 	 * Check WP Core's Required PHP Version
 	 *
 	 * The functionality to check WP core wasn't added until 5.1.0, so this will
-	 * address users who are on older WP versions and fetch from the API.  The
+	 * address users who are on older WP versions and fetch from the API. The
 	 * code is copied from the core function wp_check_php_version.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/wp_check_php_version/
 	 *
+	 * @since 1.2.0 Changed to private since it's not used in a public space.
 	 * @since 1.1.0
 	 *
 	 * @return string|false $response String containing minimum PHP version required for user's install of WP. False on failure.
 	 */
-	public function get_wp_minimum_php_version() {
+	private function get_wp_minimum_php_version() {
 		if ( function_exists( 'wp_check_php_version' ) ) {
 			$response = wp_check_php_version();
 		} else {
@@ -278,60 +334,5 @@ trait Sniffer_Helpers {
 		}
 
 		return $response['minimum_version'];
-	}
-
-	/**
-	 * Helper method to get the minimum PHP version supplied by theme
-	 * or the WP core default.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return string Minimum PHP Version String.
-	 */
-	public function get_minimum_php_version() {
-
-		// WP Core minimum PHP version - only used for fallback if API fails, and no transient stored.
-		$minimum_php_version = '5.2';
-
-		// Check API for minimum WP core version supported.
-		$php_check = $this->get_wp_minimum_php_version();
-
-		// Checks response success or transient data.
-		if ( $php_check !== false ) {
-			$minimum_php_version = $php_check;
-		}
-
-		$readme = wp_normalize_path( get_template_directory() . '/readme.txt' );
-
-		if ( file_exists( $readme ) ) {
-
-			// Check if theme has set minimum PHP version in it's readme.txt file.
-			$theme_php_version = get_file_data( $readme, [ 'minimum_php_version' => 'Requires PHP' ] );
-
-			// Theme has provided an override to minimum PHP version defined by WP Core.
-			if ( ! empty( $theme_php_version['minimum_php_version'] ) ) {
-				$minimum_php_version = $theme_php_version['minimum_php_version'];
-			}
-		}
-
-		// Theme Sniffer's supported PHP version strings are X.X format.
-		$minimum_php_version = substr( $minimum_php_version, 0, 3 );
-
-		// Check Theme Sniffer's supported PHP Versions and find closest PHP version.
-		$supported_php_version  = null;
-		$theme_sniffer_versions = $this->get_php_versions();
-
-		foreach ( $theme_sniffer_versions as $php_version ) {
-			if ( $supported_php_version === null || abs( $minimum_php_version - $supported_php_version ) > abs( $php_version - $minimum_php_version ) ) {
-				$supported_php_version = $php_version;
-			}
-		}
-
-		// Ensure a supported version was found or just use the minimum PHP version determined appropriate.
-		if ( $supported_php_version !== null ) {
-			$minimum_php_version = $supported_php_version;
-		}
-
-		return $minimum_php_version;
 	}
 }
