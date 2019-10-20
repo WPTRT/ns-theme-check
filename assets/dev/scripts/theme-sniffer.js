@@ -231,8 +231,8 @@ export default class ThemeSniffer {
 				this.hideNotices( themeSnifferLocalization.errorReport, false );
 				this.$snifferInfo.addClass( this.SHOW_CLASS ).addClass( this.ERROR_CLASS ).text( response.data[0].message );
 			}
-		}, ( xhr, textStatus, errorThrown ) => {
-			throw new Error( `Error: ${errorThrown}: ${xhr} ${textStatus}` );
+		}, ( xhr, textStatus ) => {
+			throw new Error( `Error: ${xhr.status}: ${xhr.responseText} ${textStatus}` );
 		}
 		);
 	}
