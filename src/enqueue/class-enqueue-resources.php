@@ -20,10 +20,10 @@ use Developer_Portal\Custom_Post_Type\Documentation;
 class Enqueue_Resources implements Assets {
 
 	const JS_HANDLE = 'theme-sniffer-js';
-	const JS_URI    = 'themeSniffer.js';
+	const JS_URI    = 'application.js';
 
 	const CSS_HANDLE = 'theme-sniffer-css';
-	const CSS_URI    = 'themeSniffer.css';
+	const CSS_URI    = 'application.css';
 
 	const VERSION   = false;
 	const IN_FOOTER = false;
