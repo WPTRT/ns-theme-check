@@ -177,7 +177,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Helper method that returns the default stnadard
+	 * Helper method that returns the default standard
 	 *
 	 * @since 1.0.0
 	 * @return string Name of the default standard.
