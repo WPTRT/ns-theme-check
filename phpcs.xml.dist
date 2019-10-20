@@ -15,7 +15,7 @@
 	<!-- Additional arguments. -->
 	<arg value="sp" />
 	<arg name="basepath" value="." />
-	<arg name="parallel" value="8" />
+	<arg name="parallel" value="10" />
 	<arg name="cache" />
 	<arg name="extensions" value="php" />
 
