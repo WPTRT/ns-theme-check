@@ -257,6 +257,13 @@
 					font-size: 16px;
 					padding-right: 7px;
 				}
+
+				&:focus,
+				&:active {
+					border-color: $wordpress-blue-color;
+					box-shadow: 0 0 0 2px $wordpress-blue-color;
+					outline: 0;
+				}
 			}
 		}
 	}
