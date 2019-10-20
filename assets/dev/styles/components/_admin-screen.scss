@@ -24,11 +24,18 @@
 			margin-right: 10px;
 			display: inline-block;
 			vertical-align: top;
-			border: 1px solid $graywhite-color;
+			border: 1px solid $darkgray-color;
 			border-radius: 5px;
 
 			&--spaced {
-				margin-right: 5px;
+				margin-right: 10px;
+			}
+
+			&:focus,
+			&:active {
+				border-color: $wordpress-blue-color !important;
+				box-shadow: 0 0 0 1px $wordpress-blue-color !important; // To override the default.
+				outline: 0;
 			}
 		}
 
@@ -36,15 +43,22 @@
 			height: 34px;
 			padding: 10px;
 			margin: 0;
-			border: 1px solid $graywhite-color;
+			border: 1px solid $darkgray-color !important; // To override the default input[type="text"].
 			border-radius: 5px;
 			min-width: 200px;
+
+			&:focus,
+			&:active {
+				border-color: $wordpress-blue-color !important;
+				box-shadow: 0 0 0 1px $wordpress-blue-color !important; // To override the default.
+				outline: 0;
+			}
 		}
 
 		&-checkbox {
 			height: 28px !important;
 			width: 28px !important;
-			border: 1px solid $graywhite-color !important;
+			border: 1px solid $darkgray-color !important;
 			border-radius: 5px;
 			margin-right: 10px !important;
 			margin-bottom: 10px !important;
@@ -54,6 +68,13 @@
 			&::before {
 				font-size: 32px !important;
 			}
+
+			&:focus,
+			&:active {
+				border-color: $wordpress-blue-color !important;
+				box-shadow: 0 0 0 1px $wordpress-blue-color !important; // To override the default.
+				outline: 0;
+			}
 		}
 
 		&-button {
@@ -62,31 +83,36 @@
 			vertical-align: top;
 			text-transform: uppercase;
 			color: $white-color;
+			font-weight: 600;
 			border-radius: 5px;
-			transition: background-color 300ms ease-in-out;
+			transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out;
 			cursor: pointer;
-			margin-right: 5px;
+			margin-right: 10px;
 
 			&--primary {
 				background-color: $green-color;
+				border-color: $green-color;
 
 				&:hover {
 					background-color: darken($green-color, 20%);
+					border-color: darken($green-color, 20%);
 				}
 			}
 
 			&--secondary {
 				background-color: $red-color;
+				border-color: $red-color;
 
 				&:hover {
 					background-color: darken($red-color, 20%);
+					border-color: darken($red-color, 20%);
 				}
 			}
 
 			&:focus,
 			&:active {
-				border-color: $blue-color;
-				box-shadow: 0 0 2px rgba($darkblue-color, 0.8);
+				border-color: $wordpress-blue-color;
+				box-shadow: 0 0 0 1px $wordpress-blue-color;
 				outline: 0;
 			}
 

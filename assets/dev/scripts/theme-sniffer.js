@@ -219,6 +219,7 @@ export default class ThemeSniffer {
 					( async() => {
 						if ( file.filePath.substr( file.filePath.length - 3 ) === '.js' ) {
 							let sniffer = new SniffJs( file );
+							// eslint-disable-next-line require-atomic-updates
 							file = await sniffer.process();
 						}
 						this.$sniffReport.append( this.renderJSON( file ) );
