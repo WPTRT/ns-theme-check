@@ -103,6 +103,7 @@ trait Sniffer_Helpers {
 	/**
 	 * Returns PHP versions.
 	 *
+	 * @since 1.2.0 Removed versions lower than 5.6, as this is the minimum required version.
 	 * @since 1.0.0 Added PHP 7.x versions. Moved to a trait.
 	 * @since 0.1.3
 	 *
@@ -110,10 +111,6 @@ trait Sniffer_Helpers {
 	 */
 	public function get_php_versions() : array {
 		return [
-			'5.2',
-			'5.3',
-			'5.4',
-			'5.5',
 			'5.6',
 			'7.0',
 			'7.1',
@@ -125,17 +122,62 @@ trait Sniffer_Helpers {
 	/**
 	 * Returns theme tags.
 	 *
+	 * @since 1.2.0 Removed the API calls as they are prone to failure.
 	 * @since 1.0.0 Moved to a trait and refactored to use tags from API.
 	 * @since 0.1.3
 	 *
 	 * @return array Theme tags array.
 	 */
 	public function get_theme_tags() : array {
-		return get_transient( Template_Tags_Request::TEMPLATE_TRANSIENT );
+		return [
+			'subject_tags' => [
+				'blog',
+				'e-commerce',
+				'education',
+				'entertainment',
+				'food-and-drink',
+				'holiday',
+				'news',
+				'photography',
+				'portfolio',
+			],
+			'allowed_tags' => [
+				'grid-layout',
+				'one-column',
+				'two-columns',
+				'three-columns',
+				'four-columns',
+				'left-sidebar',
+				'right-sidebar',
+				'wide-blocks',
+				'accessibility-ready',
+				'block-styles',
+				'buddypress',
+				'custom-background',
+				'custom-colors',
+				'custom-header',
+				'custom-logo',
+				'custom-menu',
+				'editor-style',
+				'featured-image-header',
+				'featured-images',
+				'flexible-header',
+				'footer-widgets',
+				'front-page-post-form',
+				'full-width-template',
+				'microformats',
+				'post-formats',
+				'rtl-language-support',
+				'sticky-post',
+				'theme-options',
+				'threaded-comments',
+				'translation-ready',
+			],
+		];
 	}
 
 	/**
-	 * Helper method that returns the default stnadard
+	 * Helper method that returns the default standard
 	 *
 	 * @since 1.0.0
 	 * @return string Name of the default standard.
