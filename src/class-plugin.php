@@ -14,6 +14,13 @@ use Theme_Sniffer\Callback;
 use Theme_Sniffer\Enqueue;
 use Theme_Sniffer\Exception;
 use Theme_Sniffer\i18n;
+use Theme_Sniffer\Sniffer;
+use Theme_Sniffer\Sniffs;
+// use Theme_Sniffer\Sniffs\Readme;
+use Theme_Sniffer\Sniffs\Screenshot;
+
+use function deactivate_plugins;
+use function flush_rewrite_rules;
 
 /**
  * Plugins main class that handles plugins object composition,
@@ -33,6 +40,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Activate the plugin.
 	 *
 	 * @throws Exception\Plugin_Activation_Failure If a condition for plugin activation isn't met.
+	 * @throws \Exception
 	 */
 	public function activate() {
 		if ( ! is_callable( 'shell_exec' ) || false !== stripos( ini_get( 'disable_functions' ), 'shell_exec' ) ) {
@@ -50,7 +58,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 		}
 
 		if ( version_compare( (string) PHP_VERSION_ID, '70000', '<' ) ) {
-			\deactivate_plugins( PLUGIN_BASENAME );
+			deactivate_plugins( PLUGIN_BASENAME );
 
 			$error_message = esc_html__( 'Theme Sniffer requires PHP 7.0 or greater to function.', 'theme-sniffer' );
 			throw Exception\Plugin_Activation_Failure::activation_message( $error_message );
@@ -65,11 +73,13 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			}
 		}
 
-		\flush_rewrite_rules();
+		flush_rewrite_rules();
 	}
 
 	/**
 	 * Deactivate the plugin.
+	 *
+	 * @throws \Exception
 	 */
 	public function deactivate() {
 		$this->register_services();
@@ -81,7 +91,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			}
 		}
 
-		\flush_rewrite_rules();
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -121,6 +131,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * Register the individual services of this plugin.
 	 *
 	 * @throws Exception\Invalid_Service If a service is not valid.
+	 * @throws \Exception
 	 */
 	public function register_services() {
 		// Bail early so we don't instantiate services twice.
@@ -185,9 +196,10 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	private function get_service_classes() : array {
 		return [
 			Admin_Menus\Sniff_Page::class,
-			Callback\Run_Sniffer_Callback::class,
+			Callback\Run_Sniffer_Callback::class => [ Sniffer\Php_Code_Sniffer::class, Screenshot\Screenshot_Validator::class ],
 			Enqueue\Enqueue_Resources::class,
 			i18n\Internationalization::class,
+			Screenshot\Screenshot_Validator::class,
 		];
 	}
 }

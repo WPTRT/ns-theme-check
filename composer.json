@@ -28,8 +28,13 @@
 	"autoload": {
 		"classmap": [
 			"src/",
-			"views/"
-		]
+			"views/",
+      "vendor/squizlabs/php_codesniffer/"
+		],
+    "exclude-from-classmap": [
+      "vendor/squizlabs/php_codesniffer/tests",
+      "vendor/squizlabs/php_codesniffer/src/Standards/*/Tests/"
+    ]
 	},
 	"scripts": {
 		"checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs",

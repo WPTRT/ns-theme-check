@@ -4,33 +4,59 @@
  */
 class CompiledContainer extends DI\CompiledContainer{
     const METHOD_MAPPING = array (
-  'Theme_Sniffer\\Admin_Menus\\Sniff_Page' => 'get5d873921285f3695255794',
-  'Theme_Sniffer\\Callback\\Run_Sniffer_Callback' => 'get5d8739212b488781548526',
-  'Theme_Sniffer\\Enqueue\\Enqueue_Resources' => 'get5d8739212b6ef442585473',
-  'Theme_Sniffer\\i18n\\Internationalization' => 'get5d8739212b7c5480981663',
+  'Theme_Sniffer\\Admin_Menus\\Sniff_Page' => 'get1',
+  'Theme_Sniffer\\Callback\\Run_Sniffer_Callback' => 'get2',
+  'subEntry1' => 'get3',
+  'subEntry2' => 'get4',
+  'Theme_Sniffer\\Enqueue\\Enqueue_Resources' => 'get5',
+  'Theme_Sniffer\\i18n\\Internationalization' => 'get6',
+  'Theme_Sniffer\\Sniffs\\Screenshot\\Screenshot_Validator' => 'get7',
+  'Theme_Sniffer\\Sniffer\\Php_Code_Sniffer' => 'get8',
 );
 
-    protected function get5d873921285f3695255794()
+    protected function get1()
     {
         $object = new Theme_Sniffer\Admin_Menus\Sniff_Page();
         return $object;
     }
 
-    protected function get5d8739212b488781548526()
+    protected function get3()
     {
-        $object = new Theme_Sniffer\Callback\Run_Sniffer_Callback();
+        return $this->delegateContainer->get('Theme_Sniffer\\Sniffer\\Php_Code_Sniffer');
+    }
+
+    protected function get4()
+    {
+        return $this->delegateContainer->get('Theme_Sniffer\\Sniffs\\Screenshot\\Screenshot_Validator');
+    }
+
+    protected function get2()
+    {
+        $object = new Theme_Sniffer\Callback\Run_Sniffer_Callback($this->get3(), $this->get4());
         return $object;
     }
 
-    protected function get5d8739212b6ef442585473()
+    protected function get5()
     {
         $object = new Theme_Sniffer\Enqueue\Enqueue_Resources();
         return $object;
     }
 
-    protected function get5d8739212b7c5480981663()
+    protected function get6()
     {
         $object = new Theme_Sniffer\i18n\Internationalization();
+        return $object;
+    }
+
+    protected function get7()
+    {
+        $object = new Theme_Sniffer\Sniffs\Screenshot\Screenshot_Validator();
+        return $object;
+    }
+
+    protected function get8()
+    {
+        $object = new Theme_Sniffer\Sniffer\Php_Code_Sniffer();
         return $object;
     }
 

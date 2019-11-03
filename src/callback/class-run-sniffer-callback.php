@@ -10,19 +10,15 @@ declare( strict_types=1 );
 
 namespace Theme_Sniffer\Callback;
 
-// We need to use the PHP_CS autoloader to access the Runner and Config.
-require_once dirname( __FILE__, 3 ) . '/vendor/squizlabs/php_codesniffer/autoload.php';
-
-use \PHP_CodeSniffer\Runner;
-use \PHP_CodeSniffer\Config;
-use \PHP_CodeSniffer\Reporter;
-use \PHP_CodeSniffer\Files\DummyFile;
-use \WordPressCS\WordPress\PHPCSHelper;
-
-use Theme_Sniffer\Sniffs\Readme\Validator as Readme;
-use Theme_Sniffer\Sniffs\Screenshot\Validator as Screenshot;
-
+use Theme_Sniffer\Sniffer\Sniffer;
+use Theme_Sniffer\Sniffs\Validator;
 use Theme_Sniffer\Helpers\Sniffer_Helpers;
+
+use WP_Error;
+use WP_Theme;
+use function sanitize_key;
+use function wp_send_json;
+use function wp_verify_nonce;
 
 /**
 * Class Run_Sniffer_Callback.
@@ -109,48 +105,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	 * @var string
 	 */
 	const TEXT_DOMAINS = 'text_domains';
-
-	/**
-	 * The default_standard config key
-	 *
-	 * @var string
-	 */
-	const DEFAULT_STANDARD = 'default_standard';
-
-	/**
-	 * The ignore_warnings_on_exit config key
-	 *
-	 * @var string
-	 */
-	const IGNORE_WARNINGS_ON_EXIT = 'ignore_warnings_on_exit';
-
-	/**
-	 * The show_warnings config key
-	 *
-	 * @var string
-	 */
-	const SHOW_WARNINGS = 'show_warnings';
-
-	/**
-	 * The testVersion config key
-	 *
-	 * @var string
-	 */
-	const TEST_VERSION = 'testVersion';
-
-	/**
-	 * The text_domain config key
-	 *
-	 * @var string
-	 */
-	const TEXT_DOMAIN = 'text_domain';
-
-	/**
-	 * The prefixes config key
-	 *
-	 * @var string
-	 */
-	const PREFIXES = 'prefixes';
 
 	/**
 	 * The totals key value
@@ -258,13 +212,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	const CB_PUBLIC = false;
 
 	/**
-	 * Readme file name
-	 *
-	 * @var string
-	 */
-	const README = 'readme.txt';
-
-	/**
 	 * Theme's slug
 	 *
 	 * @var string
@@ -279,29 +226,60 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	private static $theme_root;
 
 	/**
+	 * PHPCS instance
+	 *
+	 * @var Sniffer
+	 */
+	protected $sniffer;
+
+	/**
+	 * Screenshot validator instance
+	 *
+	 * @var Validator
+	 */
+	protected $screenshot_validator;
+
+	/**
+	 * Run_Sniffer_Callback constructor.
+	 *
+	 * @param Sniffer   $sniffer              PHPCodeSniffer instance.
+	 * @param Validator $screenshot_validator Screenshot validator instance.
+	 */
+	public function __construct( Sniffer $sniffer, Validator $screenshot_validator ) {
+		$this->sniffer              = $sniffer;
+		$this->screenshot_validator = $screenshot_validator;
+	}
+
+	/**
 	 * Callback method of the current class.
 	 */
 	public function callback() {
 		// Permissions check.
 		if ( ! current_user_can( 'create_users' ) ) {
 			$message = esc_html__( 'You don\'t have high enough permission.', 'theme-sniffer' );
-			$error   = new \WP_Error( '403', $message );
+			$error   = new WP_Error( '403', $message );
 			wp_send_json_error( $error );
 		}
 
 		// Nonce check.
 		if ( ! isset( $_POST[ self::NONCE ] ) ||
-			! \wp_verify_nonce( \sanitize_key( $_POST[ self::NONCE ] ), self::NONCE_ACTION )
+			! wp_verify_nonce( sanitize_key( $_POST[ self::NONCE ] ), self::NONCE_ACTION )
 		) {
 			$message = esc_html__( 'Nonce error.', 'theme-sniffer' );
-			$error   = new \WP_Error( '400', $message );
+			$error   = new WP_Error( '400', $message );
 			wp_send_json_error( $error );
 		}
 
 		// Bail if theme wasn't selected.
 		if ( empty( $_POST[ self::THEME_NAME ] ) ) {
 			$message = esc_html__( 'Theme name not selected.', 'theme-sniffer' );
-			$error   = new \WP_Error( '404', $message );
+			$error   = new WP_Error( '404', $message );
+			wp_send_json_error( $error );
+		}
+
+		if ( empty( $_POST[ self::WP_RULESETS ] ) ) {
+			$message = esc_html__( 'Please select at least one standard.', 'theme-sniffer' );
+			$error   = new WP_Error( '404', $message );
 			wp_send_json_error( $error );
 		}
 
@@ -310,12 +288,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		if ( isset( $_POST[ self::THEME_PREFIXES ] ) && $_POST[ self::THEME_PREFIXES ] !== '' ) {
 			$theme_prefixes = sanitize_text_field( wp_unslash( $_POST[ self::THEME_PREFIXES ] ) );
-		}
-
-		if ( empty( $_POST[ self::WP_RULESETS ] ) ) {
-			$message = esc_html__( 'Please select at least one standard.', 'theme-sniffer' );
-			$error   = new \WP_Error( '404', $message );
-			wp_send_json_error( $error );
 		}
 
 		self::$theme_slug = sanitize_text_field( wp_unslash( $_POST[ self::THEME_NAME ] ) );
@@ -352,7 +324,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		);
 
 		$standards_array = array_map(
-			function( $standard ) use ( $standards ) {
+			static function($standard ) use ( $standards ) {
 				if ( ! empty( $standards[ $standard ] ) ) {
 					return $standards[ $standard ]['label'];
 				}
@@ -371,9 +343,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$all_files = $theme->get_files( $all_files, -1, false );
 
 		/**
-		 * Check if a file is minified.
-		 * Loops through all the files and checks if it's minified. If it is, skip it
-		 * because it will break phpcs.
+		 * Check for frameworks, node_modules and vendor folders
 		 */
 		foreach ( $all_files as $file_name => $file_path ) {
 
@@ -391,10 +361,11 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			}
 
 			// Check if node_modules and vendor folders are present and skip those.
-			if ( strpos( $file_path, 'node_modules' ) !== false || strpos( $file_path, 'vendor' ) !== false ) {
+			if ( stripos( $file_path, 'node_modules' ) !== false || stripos( $file_path, 'vendor' ) !== false ) {
 				unset( $all_files[ $file_name ] );
 				break;
 			}
+
 		}
 
 		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*';
@@ -411,14 +382,15 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			'raw_output'          => $raw_output,
 		];
 
-		$sniff_results = $this->get_sniff_results( $results_arguments );
+		$sniff_results = $this->sniffer->get_sniff_results( $results_arguments );
+
 		if ( $raw_output ) {
 			$results_raw = [
 				self::SUCCESS => true,
 				self::DATA    => $sniff_results,
 			];
 
-			\wp_send_json( $results_raw, 200 );
+			wp_send_json( $results_raw, 200 );
 		}
 
 		$sniffer_results = json_decode( $sniff_results, true );
@@ -430,8 +402,9 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		// Check theme headers.
 		$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
-		$screenshot_checks   = $this->screenshot_check();
-		$readme_checks       = $this->readme_check();
+
+		// $readme_checks       = $this->readme_check();
+		$screenshot_checks = $this->screenshot_validator->validate( $theme );
 
 		foreach ( $screenshot_checks as $file ) {
 			$total_errors  += $file[ self::ERRORS ];
@@ -440,12 +413,12 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$total_files += $screenshot_checks;
 
-		foreach ( $readme_checks as $file ) {
-			$total_errors  += $file[ self::ERRORS ];
-			$total_warning += $file[ self::WARNINGS ];
-		}
+		// foreach ( $readme_checks as $file ) {
+		// 	$total_errors  += $file[ self::ERRORS ];
+		// 	$total_warning += $file[ self::WARNINGS ];
+		// }
 
-		$total_files += $readme_checks;
+		// $total_files += $readme_checks;
 
 		$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
 		$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
@@ -480,95 +453,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			self::FILES   => $files,
 		];
 
-		\wp_send_json( $results, 200 );
-	}
-
-	/**
-	 * Method that returns the results based on a custom PHPCS Runner
-	 *
-	 * @param array ...$arguments Array of passed arguments.
-	 * @return string              Sniff results string.
-	 *
-	 * @throws \PHP_CodeSniffer\Exceptions\DeepExitException Exception thrown in the case of error.
-	 */
-	protected function get_sniff_results( ...$arguments ): string {
-		// Unpack the arguments.
-		$show_warnings       = $arguments[0]['show_warnings'] ?? '';
-		$minimum_php_version = $arguments[0]['minimum_php_version'] ?? '';
-		$args                = $arguments[0]['args'] ?? '';
-		$theme_prefixes      = $arguments[0]['theme_prefixes'] ?? '';
-		$all_files           = $arguments[0]['all_files'] ?? '';
-		$standards_array     = $arguments[0]['standards_array'] ?? '';
-		$ignore_annotations  = $arguments[0]['ignore_annotations'] ?? '';
-		$ignored             = $arguments[0]['ignored'] ?? '';
-		$raw_output          = $arguments[0]['raw_output'] ?? '';
-
-		// Create a custom runner.
-		$runner = new Runner();
-
-		$config_args = [ '-s', '-p' ];
-
-		if ( $show_warnings === '0' ) {
-			$config_args[] = '-n';
-		}
-
-		$runner->config = new Config( $config_args );
-
-		$all_files = array_values( $all_files );
-
-		$runner->config->extensions = [
-			'php' => 'PHP',
-			'inc' => 'PHP',
-		];
-
-		$runner->config->standards   = $standards_array;
-		$runner->config->files       = $all_files;
-		$runner->config->annotations = $ignore_annotations;
-		$runner->config->parallel    = 10;
-		$runner->config->colors      = false;
-		$runner->config->tabWidth    = 0;
-		$runner->config->reportWidth = 110;
-		$runner->config->interactive = false;
-		$runner->config->cache       = true;
-		$runner->config->ignored     = $ignored;
-
-		if ( ! $raw_output ) {
-			$runner->config->reports = [ 'json' => null ];
-		}
-
-		$runner->init();
-
-		// Set default standard.
-		PHPCSHelper::set_config_data( self::DEFAULT_STANDARD, $this->get_default_standard(), true );
-
-		// Ignoring warnings when generating the exit code.
-		PHPCSHelper::set_config_data( self::IGNORE_WARNINGS_ON_EXIT, true, true );
-
-		// Set minimum supported PHP version.
-		PHPCSHelper::set_config_data( self::TEST_VERSION, $minimum_php_version . '-', true );
-
-		// Set text domains.
-		PHPCSHelper::set_config_data( self::TEXT_DOMAIN, implode( ',', $args[ self::TEXT_DOMAINS ] ), true );
-
-		if ( $theme_prefixes !== '' ) {
-			// Set prefix.
-			PHPCSHelper::set_config_data( self::PREFIXES, $theme_prefixes, true );
-		}
-
-		$runner->reporter = new Reporter( $runner->config );
-
-		foreach ( $all_files as $file_path ) {
-			$file       = new DummyFile( file_get_contents( $file_path ), $runner->ruleset, $runner->config );
-			$file->path = $file_path;
-
-			$runner->processFile( $file );
-		}
-
-		ob_start();
-		$runner->reporter->printReports();
-		$report = ob_get_clean();
-
-		return $report;
+		wp_send_json( $results, 200 );
 	}
 
 	/**
@@ -577,12 +462,12 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	 * @since 0.3.0
 	 *
 	 * @param string    $theme_slug    Theme slug.
-	 * @param \WP_Theme $theme         WP_Theme Theme object.
+	 * @param WP_Theme $theme         WP_Theme Theme object.
 	 * @param bool      $show_warnings Show warnings.
 	 *
-	 * @return bool
+	 * @return array
 	 */
-	protected function style_headers_check( $theme_slug, \WP_Theme $theme, $show_warnings ) {
+	protected function style_headers_check( $theme_slug, WP_Theme $theme, $show_warnings ) {
 		$required_headers = $this->get_required_headers();
 
 		$notices = [];
@@ -640,7 +525,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		}
 
 		$registered_tags    = $this->get_theme_tags();
-		$tags               = array_map( 'strtolower', $theme->get( 'Tags' ) );
+		$tags               = array_map( 'strtolower', (array) $theme->get('Tags'));
 		$tags_count         = array_count_values( $tags );
 		$subject_tags_names = [];
 
@@ -737,27 +622,35 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		return $header_results;
 	}
 
-	/**
-	 * Performs readme.txt sniffs.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return array $check Sniffer file report.
-	 */
-	protected function readme_check() {
-		$validator = new Readme( self::$theme_slug );
-		return $validator->get_results();
-	}
-
-	/**
-	 * Perform screenshot sniffs.
-	 *
-	 * @since 1.0.0
-	 */
-	protected function screenshot_check() {
-		$validator = new Screenshot( self::$theme_slug );
-		return $validator->get_results();
-	}
+	// /**
+	//  * Performs readme.txt sniffs.
+	//  *
+	//  * @since 1.1.0
+	//  * @since 1.2.0 Added a validator using dependency injection.
+	//  *
+	//  * @return array $check Sniffer file report.
+	//  */
+	// protected function readme_check() {
+	// 	$readme_validator = $this->readme_validator;
+	// 	$readme_validator->set_theme_slug( self::$theme_slug );
+	// 	$readme_validator->set_theme_root();
+	//
+	// 	return $readme_validator->get_results();
+	// }
+	//
+	// /**
+	//  * Perform screenshot sniffs.
+	//  *
+	//  * @since 1.0.0
+	//  * @since 1.2.0 Added a validator using dependency injection.
+	//  */
+	// protected function screenshot_check() {
+	// 	$screenshot_validator = $this->screenshot_validator;
+	// 	$screenshot_validator->set_theme_slug( self::$theme_slug );
+	// 	$screenshot_validator->set_theme_root();
+	//
+	// 	return $screenshot_validator->get_results();
+	// }
 
 	/**
 	 * Returns true if the callback should be public

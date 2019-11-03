@@ -22,6 +22,7 @@ export class SniffJs {
 	 */
 	constructor( fileObject ) {
 		this.fileObject = fileObject;
+
 		// Seems like syntax errors or empty results cause phpcs to provide a non-number for error count.
 		this.fileObject.errors = isNaN( this.fileObject.errors ) ? 0 : parseInt( this.fileObject.errors, 10 );
 		this.path = this.getPath();
