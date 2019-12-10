@@ -8,33 +8,33 @@ import SniffJs from './utils/sniff-js';
 
 export default class ThemeSniffer {
 	constructor( options ) {
-		this.SHOW_CLASS     = 'is-shown';
-		this.ERROR_CLASS    = 'is-error';
-		this.WARNING_CLASS  = 'is-warning';
+		this.SHOW_CLASS = 'is-shown';
+		this.ERROR_CLASS = 'is-error';
+		this.WARNING_CLASS = 'is-warning';
 		this.DISABLED_CLASS = 'is-disabled';
-		this.IS_RAW_CLASS   = 'is-raw';
+		this.IS_RAW_CLASS = 'is-raw';
 
-		this.reportItemHeading  = options.reportItemHeading;
-		this.reportReportTable  = options.reportReportTable;
-		this.reportNoticeType   = options.reportNoticeType;
+		this.reportItemHeading = options.reportItemHeading;
+		this.reportReportTable = options.reportReportTable;
+		this.reportNoticeType = options.reportNoticeType;
 		this.reportNoticeSource = options.reportNoticeSource;
-		this.reportItemLine     = options.reportItemLine;
-		this.reportItemType     = options.reportItemType;
-		this.reportItemMessage  = options.reportItemMessage;
-		this.reportItemBtn      = options.reportItemBtn;
-		this.reportItemSource   = options.reportItemSource;
+		this.reportItemLine = options.reportItemLine;
+		this.reportItemType = options.reportItemType;
+		this.reportItemMessage = options.reportItemMessage;
+		this.reportItemBtn = options.reportItemBtn;
+		this.reportItemSource = options.reportItemSource;
 
 		this.$sniffReport = options.sniffReport;
 		this.$snifferInfo = options.snifferInfo;
 		this.$checkNotice = options.checkNotice;
 		this.$startNotice = options.startNotice;
-		this.$reportItem  = options.reportItem;
-		this.$loader  = options.loader;
+		this.$reportItem = options.reportItem;
+		this.$loader = options.loader;
 
 		this.clipboardInstance = null;
 
-		this.$startButton  = $( options.startButton );
-		this.$stopButton  = $( options.stopButton );
+		this.$startButton = $( options.startButton );
+		this.$stopButton = $( options.stopButton );
 
 		this.nonce     = options.nonce;
 		this.runAction = options.runAction;
@@ -219,6 +219,7 @@ export default class ThemeSniffer {
 					( async() => {
 						if ( file.filePath.substr( file.filePath.length - 3 ) === '.js' ) {
 							let sniffer = new SniffJs( file );
+							// eslint-disable-next-line require-atomic-updates
 							file = await sniffer.process();
 						}
 						this.$sniffReport.append( this.renderJSON( file ) );
@@ -230,8 +231,8 @@ export default class ThemeSniffer {
 				this.hideNotices( themeSnifferLocalization.errorReport, false );
 				this.$snifferInfo.addClass( this.SHOW_CLASS ).addClass( this.ERROR_CLASS ).text( response.data[0].message );
 			}
-		}, ( xhr, textStatus, errorThrown ) => {
-			throw new Error( `Error: ${errorThrown}: ${xhr} ${textStatus}` );
+		}, ( xhr, textStatus ) => {
+			throw new Error( `Error: ${xhr.status}: ${xhr.responseText} ${textStatus}` );
 		}
 		);
 	}
