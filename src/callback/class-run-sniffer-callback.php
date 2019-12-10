@@ -324,7 +324,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		);
 
 		$standards_array = array_map(
-			static function($standard ) use ( $standards ) {
+			static function( $standard ) use ( $standards ) {
 				if ( ! empty( $standards[ $standard ] ) ) {
 					return $standards[ $standard ]['label'];
 				}
@@ -355,7 +355,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			];
 
 			foreach ( $allowed_frameworks as $framework_textdomain => $identifier ) {
-				if ( strrpos( $file_name, $identifier ) !== false && ! in_array( $framework_textdomain, $args[ self::TEXT_DOMAINS ], true ) ) {
+				if ( ! isset( $args[ self::TEXT_DOMAINS ][ $framework_textdomain ] ) && strrpos( $file_name, $identifier ) !== false ) {
 					$args[ self::TEXT_DOMAINS ][] = $framework_textdomain;
 				}
 			}
@@ -365,7 +365,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 				unset( $all_files[ $file_name ] );
 				break;
 			}
-
 		}
 
 		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*';
@@ -403,7 +402,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		// Check theme headers.
 		$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
 
-		// $readme_checks       = $this->readme_check();
 		$screenshot_checks = $this->screenshot_validator->validate( $theme );
 
 		foreach ( $screenshot_checks as $file ) {
@@ -414,8 +412,8 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$total_files += $screenshot_checks;
 
 		// foreach ( $readme_checks as $file ) {
-		// 	$total_errors  += $file[ self::ERRORS ];
-		// 	$total_warning += $file[ self::WARNINGS ];
+		// $total_errors  += $file[ self::ERRORS ];
+		// $total_warning += $file[ self::WARNINGS ];
 		// }
 
 		// $total_files += $readme_checks;
@@ -461,9 +459,9 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	 *
 	 * @since 0.3.0
 	 *
-	 * @param string    $theme_slug    Theme slug.
+	 * @param string   $theme_slug    Theme slug.
 	 * @param WP_Theme $theme         WP_Theme Theme object.
-	 * @param bool      $show_warnings Show warnings.
+	 * @param bool     $show_warnings Show warnings.
 	 *
 	 * @return array
 	 */
@@ -525,7 +523,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		}
 
 		$registered_tags    = $this->get_theme_tags();
-		$tags               = array_map( 'strtolower', (array) $theme->get('Tags'));
+		$tags               = array_map( 'strtolower', (array) $theme->get( 'Tags' ) );
 		$tags_count         = array_count_values( $tags );
 		$subject_tags_names = [];
 
@@ -623,33 +621,33 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	// /**
-	//  * Performs readme.txt sniffs.
-	//  *
-	//  * @since 1.1.0
-	//  * @since 1.2.0 Added a validator using dependency injection.
-	//  *
-	//  * @return array $check Sniffer file report.
-	//  */
+	// * Performs readme.txt sniffs.
+	// *
+	// * @since 1.1.0
+	// * @since 1.2.0 Added a validator using dependency injection.
+	// *
+	// * @return array $check Sniffer file report.
+	// */
 	// protected function readme_check() {
-	// 	$readme_validator = $this->readme_validator;
-	// 	$readme_validator->set_theme_slug( self::$theme_slug );
-	// 	$readme_validator->set_theme_root();
+	// $readme_validator = $this->readme_validator;
+	// $readme_validator->set_theme_slug( self::$theme_slug );
+	// $readme_validator->set_theme_root();
 	//
-	// 	return $readme_validator->get_results();
+	// return $readme_validator->get_results();
 	// }
 	//
 	// /**
-	//  * Perform screenshot sniffs.
-	//  *
-	//  * @since 1.0.0
-	//  * @since 1.2.0 Added a validator using dependency injection.
-	//  */
+	// * Perform screenshot sniffs.
+	// *
+	// * @since 1.0.0
+	// * @since 1.2.0 Added a validator using dependency injection.
+	// */
 	// protected function screenshot_check() {
-	// 	$screenshot_validator = $this->screenshot_validator;
-	// 	$screenshot_validator->set_theme_slug( self::$theme_slug );
-	// 	$screenshot_validator->set_theme_root();
+	// $screenshot_validator = $this->screenshot_validator;
+	// $screenshot_validator->set_theme_slug( self::$theme_slug );
+	// $screenshot_validator->set_theme_root();
 	//
-	// 	return $screenshot_validator->get_results();
+	// return $screenshot_validator->get_results();
 	// }
 
 	/**
