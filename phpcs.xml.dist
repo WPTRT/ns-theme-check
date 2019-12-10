@@ -33,6 +33,7 @@
 	<!-- Don't use Yoda conditions, they are not useful. -->
 	<rule ref="WordPress.PHP">
 		<exclude name="WordPress.PHP.YodaConditions" />
+    	<exclude name="WordPress.PHP.DisallowShortTernary" />
 	</rule>
 
 	<!-- Ignore flagging file_get_contents as 'evil' -->
@@ -53,7 +54,11 @@
   		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
 	</rule>
 
-	<!-- Set the minimum version to check against in the PHPcompatibility. -->
+	<!-- Set the minimum version to check against in the PHPCompatibility. -->
 	<config name="testVersion" value="7.0-" />
 	<rule ref="PHPCompatibility" />
+
+	<rule ref="Generic.Arrays">
+    	<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+	</rule>
 </ruleset>

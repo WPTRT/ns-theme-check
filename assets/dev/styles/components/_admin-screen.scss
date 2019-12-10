@@ -66,7 +66,9 @@
 			top: 4px;
 
 			&::before {
-				font-size: 32px !important;
+				margin: 0 !important;
+				width: 100% !important;
+				height: 100% !important;
 			}
 
 			&:focus,
