@@ -15,8 +15,6 @@ use Theme_Sniffer\Enqueue;
 use Theme_Sniffer\Exception;
 use Theme_Sniffer\i18n;
 use Theme_Sniffer\Sniffer;
-use Theme_Sniffer\Sniffs;
-// use Theme_Sniffer\Sniffs\Readme;
 use Theme_Sniffer\Sniffs\Screenshot;
 
 use function deactivate_plugins;
