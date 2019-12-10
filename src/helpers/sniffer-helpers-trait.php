@@ -283,7 +283,7 @@ trait Sniffer_Helpers {
 			$response = get_site_transient( 'php_check_' . $key );
 			if ( false === $response ) {
 				$url = 'http://api.wordpress.org/core/serve-happy/1.0/';
-				if ( wp_http_supports( array( 'ssl' ) ) ) {
+				if ( wp_http_supports( [ 'ssl' ] ) ) {
 					$url = set_url_scheme( $url, 'https' );
 				}
 
