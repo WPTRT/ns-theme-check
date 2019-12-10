@@ -193,7 +193,7 @@ class Php_Code_Sniffer implements Sniffer {
 	/**
 	 * A dummy file represents a chunk of text that does not have a file system location.
 	 *
-	 * @param string                   $file_content The content of the file.
+	 * @param string  $file_content The content of the file.
 	 * @param Ruleset $ruleset      The ruleset used for the run.
 	 * @param Config  $config       The config data for the run.
 	 *
