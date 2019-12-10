@@ -34,15 +34,15 @@ abstract class Validate_File implements Validator {
 	/**
 	 * Check if the file to check exists
 	 *
- 	 * @since 1.2.0
+	 * @since 1.2.0
 	 *
-	 * @param string $file
+	 * @param string $file File to check.
 	 *
 	 * @return bool
 	 */
 	protected function file_exists( string $file ) : bool {
 		try {
-			$this->get_file_path($file);
+			$this->get_file_path( $file );
 
 			return true;
 		} catch ( RuntimeException $e ) {
@@ -59,7 +59,7 @@ abstract class Validate_File implements Validator {
 	 * @param string $file File to check if it exists.
 	 *
 	 * @return string Path to file.
-	 * @throws RuntimeException
+	 * @throws RuntimeException Error in the case the file doesn't exist.
 	 */
 	protected function get_file_path( string $file ) : string {
 		if ( file_exists( $file ) ) {
@@ -68,12 +68,12 @@ abstract class Validate_File implements Validator {
 
 		$lowerfile = strtolower( $file );
 
-		foreach( glob( dirname( $file ) . '/*' ) as $new_file ) {
+		foreach ( glob( dirname( $file ) . '/*' ) as $new_file ) {
 			if ( strtolower( $new_file ) === $lowerfile ) {
 				return $new_file;
 			}
 		}
-
+		// translators: Name of the file passed from the function.
 		throw new RuntimeException( sprintf( esc_html__( 'File %s does not exist', 'theme-sniffer' ), $file ) );
 	}
 }
