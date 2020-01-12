@@ -89,7 +89,7 @@ class Validator extends Validate_File {
 		}
 
 		// Screenshot validated at this point, so check dimensions - no need for fileinfo.
-		// props @Otto42(WP.org, Github) for aspect ratio logic from Theme Check: https://github.com/WordPress/theme-check/blob/master/checks/screenshot.php.
+		// props @Otto42(WP.org, GitHub) for aspect ratio logic from Theme Check: https://github.com/WordPress/theme-check/blob/master/checks/screenshot.php.
 		list( $width, $height ) = getimagesize( $file );
 
 		// Screenshot too big.
