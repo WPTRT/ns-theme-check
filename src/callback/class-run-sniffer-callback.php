@@ -537,7 +537,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Method that retunrs the reuslts based on a custom PHPCS Runner
+	 * Method that returns the results based on a custom PHPCS Runner
 	 *
 	 * @param  array ...$arguments Array of passed arguments.
 	 * @return string              Sniff results string.

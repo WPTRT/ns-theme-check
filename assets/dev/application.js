@@ -1,5 +1,5 @@
-// Load Styles
+// Load Styles.
 import './styles/application.scss';
 
-// Load Scripts
+// Load Scripts.
 import './scripts/index';
