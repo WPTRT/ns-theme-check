@@ -1,6 +1,6 @@
 <?php
 /**
- * Registerable interface file
+ * Registrable interface file
  *
  * @since 1.0.0
  * @package Theme_Sniffer\Core
@@ -13,7 +13,7 @@ namespace Theme_Sniffer\Core;
  */
 interface Registerable {
 	/**
-	 * Register the registerable element with the system (hooks for instance).
+	 * Register the registrable element with the system (hooks for instance).
 	 *
 	 * @return void
 	 */

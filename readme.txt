@@ -1,5 +1,5 @@
 === Theme Sniffer ===
-Contributors: dingo_d, rabmalin, grapplerulrich, timph, vyskoczilova, abdullahramzan, williampatton
+Contributors: dingo_d, rabmalin, grapplerulrich, timph, vyskoczilova, abdullahramzan, williampatton, passoniate
 Tags: check, checker, coding standards, theme, tool
 Requires at least: 4.7
 Tested up to: 5.2.2
@@ -63,7 +63,7 @@ Go to the official repo on Github (https://github.com/WPTRT/theme-sniffer), fork
 
 Thanks to Danny Cooper, Liton Arefin and metallicarosetail (slack) for testing the plugin and finding bugs in the development stage.
 
-Thanks to Abdullah Ramzan for fixing minor typos, William Patton for help with the required files checks. Thanks to Karolína Vyskočilová for finding out the issue with cross-env issue.
+Thanks to Arslan Ahmed and Abdullah Ramzan for fixing minor typos, William Patton for help with the required files checks. Thanks to Karolína Vyskočilová for finding out the issue with cross-env issue.
 
 Thanks to the TRT for the support.
 
@@ -88,7 +88,7 @@ The latest upgrade mostly with development changes and some minor improvements i
 * Moved JS checking to esprima
 * Moved installation error to admin notice
 * Validation improvements
-* Fixed annotation issue - the ingore annotation checkbox worked counter to what it should
+* Fixed annotation issue - the ignore annotation checkbox worked counter to what it should
 * Fixed cross-env issue for development on Windows machines
 * Minor fixes
 

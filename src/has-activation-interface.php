@@ -6,7 +6,7 @@
  * @package Theme_Sniffer\Core
  */
 
-declare( strict_types=1 );
+declare( strict_types = 1 );
 
 namespace Theme_Sniffer\Core;
 
