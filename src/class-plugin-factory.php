@@ -20,7 +20,7 @@ final class Plugin_Factory {
 	 *
 	 * This always returns a shared instance.
 	 *
-	 * @return Plugin Plugin instance.
+	 * @return Plugin instance.
 	 */
 	public static function create() {
 		/**
