@@ -13,13 +13,13 @@ const DEV = process.env.NODE_ENV !== 'production';
 
 const appPath = __dirname;
 
-// Entry
+// Entry.
 const pluginPath = '/assets';
 const pluginFullPath = `${appPath}${pluginPath}`;
 const pluginEntry = `${pluginFullPath}/dev/application.js`;
 const pluginPublicPath = `${pluginFullPath}/build`;
 
-// Outputs
+// Outputs.
 const outputJs = 'scripts/[name]-[hash].js';
 const outputCss = 'styles/[name]-[hash].css';
 
@@ -80,7 +80,7 @@ const allOptimizations = {
 	}
 };
 
-// Use only for production build
+// Use only for production build.
 if ( ! DEV ) {
 	allOptimizations.minimizer = [
 		new TerserPlugin({

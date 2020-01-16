@@ -102,7 +102,7 @@ If you want to skip creating the zip file, you can use
 
 This command behaves like the build one, but it skips creation of the zip file.
 
-When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for imporvement, so if you notice something that could be improved we incurage you to make a PR.
+When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for improvement, so if you notice something that could be improved we encourage you to make a PR.
 
 The same is valid for PHP code. The business logic is stored in the `src/` folder, the JS and CSS are located in `assets/` folder and the views are located in the `views/` folder.
 
