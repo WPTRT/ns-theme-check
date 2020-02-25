@@ -12,7 +12,7 @@ declare( strict_types=1 );
 namespace Theme_Sniffer\Helpers;
 
 /**
- * File helpers trait
+ * File helpers trait.
  *
  * This trait contains some helper methods for filesystem.
  *

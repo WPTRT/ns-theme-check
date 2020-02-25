@@ -2,7 +2,7 @@ Hi, thank you for your interest in contributing to the Theme Sniffer plugin! We 
 
 # Reporting Bugs
 
-Please search the repo to see if your issue has been reported already and if so, comment in that issue instead of opening a new one.
+Please search the repo to see if your issue has been reported already and if so, comment on that issue instead of opening a new one.
 
 Include as much detail as possible when describing the bug. This helps us solve your problem more quickly. Also, be sure to fill in the details in the issue template.
 

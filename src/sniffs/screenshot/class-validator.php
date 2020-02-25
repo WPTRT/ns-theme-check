@@ -41,7 +41,7 @@ class Validator extends Validate_File {
 	public $extensions = [ 'png', 'jpg' ];
 
 	/**
-	 * Runs screenshot validators
+	 * Runs screenshot validators.
 	 *
 	 * @since 1.1.1 Minor bugfix update in calculation of screen image ratio.
 	 * @since 1.1.0

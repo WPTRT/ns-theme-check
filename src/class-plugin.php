@@ -98,7 +98,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	}
 
 	/**
-	 * Register bundled asset manifest
+	 * Register bundled asset manifest.
 	 *
 	 * @throws Exception\Missing_Manifest Throws error if manifest is missing.
 	 * @return void

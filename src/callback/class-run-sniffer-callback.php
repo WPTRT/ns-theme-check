@@ -34,252 +34,252 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	use Sniffer_Helpers;
 
 	/**
-	 * Callback name
+	 * Callback name.
 	 *
 	 * @var string
 	 */
 	const CALLBACK_ACTION = 'run_sniffer';
 
 	/**
-	 * Nonce action string
+	 * Nonce action string.
 	 *
 	 * @var string
 	 */
 	const NONCE_ACTION = 'theme-sniffer_action';
 
 	/**
-	 * Nonce $_POST key
+	 * Nonce $_POST key.
 	 *
 	 * @var string
 	 */
 	const NONCE = 'nonce';
 
 	/**
-	 * The themeName $_POST key
+	 * The themeName $_POST key.
 	 *
 	 * @var string
 	 */
 	const THEME_NAME = 'themeName';
 
 	/**
-	 * The themePrefixes $_POST key
+	 * The themePrefixes $_POST key.
 	 *
 	 * @var string
 	 */
 	const THEME_PREFIXES = 'themePrefixes';
 
 	/**
-	 * The wpRulesets $_POST key
+	 * The wpRulesets $_POST key.
 	 *
 	 * @var string
 	 */
 	const WP_RULESETS = 'wpRulesets';
 
 	/**
-	 * The hideWarning $_POST key
+	 * The hideWarning $_POST key.
 	 *
 	 * @var string
 	 */
 	const HIDE_WARNING = 'hideWarning';
 
 	/**
-	 * The rawOutput $_POST key
+	 * The rawOutput $_POST key.
 	 *
 	 * @var string
 	 */
 	const RAW_OUTPUT = 'rawOutput';
 
 	/**
-	 * The ignoreAnnotations $_POST key
+	 * The ignoreAnnotations $_POST key.
 	 *
 	 * @var string
 	 */
 	const IGNORE_ANNOTATIONS = 'ignoreAnnotations';
 
 	/**
-	 * The checkPhpOnly $_POST key
+	 * The checkPhpOnly $_POST key.
 	 *
 	 * @var string
 	 */
 	const CHECK_PHP_ONLY = 'checkPhpOnly';
 
 	/**
-	 * The minimumPHPVersion $_POST key
+	 * The minimumPHPVersion $_POST key.
 	 *
 	 * @var string
 	 */
 	const MINIMUM_PHP_VERSION = 'minimumPHPVersion';
 
 	/**
-	 * The text_domains argument key
+	 * The text_domains argument key.
 	 *
 	 * @var string
 	 */
 	const TEXT_DOMAINS = 'text_domains';
 
 	/**
-	 * The default_standard config key
+	 * The default_standard config key.
 	 *
 	 * @var string
 	 */
 	const DEFAULT_STANDARD = 'default_standard';
 
 	/**
-	 * The ignore_warnings_on_exit config key
+	 * The ignore_warnings_on_exit config key.
 	 *
 	 * @var string
 	 */
 	const IGNORE_WARNINGS_ON_EXIT = 'ignore_warnings_on_exit';
 
 	/**
-	 * The show_warnings config key
+	 * The show_warnings config key.
 	 *
 	 * @var string
 	 */
 	const SHOW_WARNINGS = 'show_warnings';
 
 	/**
-	 * The testVersion config key
+	 * The testVersion config key.
 	 *
 	 * @var string
 	 */
 	const TEST_VERSION = 'testVersion';
 
 	/**
-	 * The text_domain config key
+	 * The text_domain config key.
 	 *
 	 * @var string
 	 */
 	const TEXT_DOMAIN = 'text_domain';
 
 	/**
-	 * The prefixes config key
+	 * The prefixes config key.
 	 *
 	 * @var string
 	 */
 	const PREFIXES = 'prefixes';
 
 	/**
-	 * The totals key value
+	 * The totals key value.
 	 *
 	 * @var string
 	 */
 	const TOTALS = 'totals';
 
 	/**
-	 * The errors key value
+	 * The errors key value.
 	 *
 	 * @var string
 	 */
 	const ERRORS = 'errors';
 
 	/**
-	 * The warnings key value
+	 * The warnings key value.
 	 *
 	 * @var string
 	 */
 	const WARNINGS = 'warnings';
 
 	/**
-	 * The fixable key value
+	 * The fixable key value.
 	 *
 	 * @var string
 	 */
 	const FIXABLE = 'fixable';
 
 	/**
-	 * The files key value
+	 * The files key value.
 	 *
 	 * @var string
 	 */
 	const FILES = 'files';
 
 	/**
-	 * The success key value
+	 * The success key value.
 	 *
 	 * @var string
 	 */
 	const SUCCESS = 'success';
 
 	/**
-	 * The data key value
+	 * The data key value.
 	 *
 	 * @var string
 	 */
 	const DATA = 'data';
 
 	/**
-	 * The messages key value
+	 * The messages key value.
 	 *
 	 * @var string
 	 */
 	const MESSAGES = 'messages';
 
 	/**
-	 * The filePath key value
+	 * The filePath key value.
 	 *
 	 * @var string
 	 */
 	const FILE_PATH = 'filePath';
 
 	/**
-	 * The message key value
+	 * The message key value.
 	 *
 	 * @var string
 	 */
 	const MESSAGE = 'message';
 
 	/**
-	 * The severity key value
+	 * The severity key value.
 	 *
 	 * @var string
 	 */
 	const SEVERITY = 'severity';
 
 	/**
-	 * The error key value
+	 * The error key value.
 	 *
 	 * @var string
 	 */
 	const ERROR = 'error';
 
 	/**
-	 * The warning key value
+	 * The warning key value.
 	 *
 	 * @var string
 	 */
 	const WARNING = 'warning';
 
 	/**
-	 * The type key value
+	 * The type key value.
 	 *
 	 * @var string
 	 */
 	const TYPE = 'type';
 
 	/**
-	 * Callback privacy
+	 * Callback privacy.
 	 *
 	 * @var bool
 	 */
 	const CB_PUBLIC = false;
 
 	/**
-	 * Readme file name
+	 * Readme file name.
 	 *
 	 * @var string
 	 */
 	const README = 'readme.txt';
 
 	/**
-	 * Theme's slug
+	 * Theme's slug.
 	 *
 	 * @var string
 	 */
 	private static $theme_slug;
 
 	/**
-	 * Theme's root
+	 * Theme's root.
 	 *
 	 * @var string
 	 */
@@ -389,8 +389,8 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		/**
 		 * Check if a file is minified.
-		 * Loops through all the files and checks if it's minified. If it is, skip it
-		 * because it will break phpcs.
+		 * Loops through all the files and checks if it's minified.
+		 * If it is, skip it because it will break phpcs.
 		 */
 		foreach ( $all_files as $file_name => $file_path ) {
 
@@ -537,7 +537,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Method that returns the results based on a custom PHPCS Runner
+	 * Method that returns the results based on a custom PHPCS Runner.
 	 *
 	 * @param  array ...$arguments Array of passed arguments.
 	 * @return string              Sniff results string.
@@ -814,7 +814,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Returns true if the callback should be public
+	 * Returns true if the callback should be public.
 	 *
 	 * @return boolean true if callback is public.
 	 */
@@ -823,7 +823,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Get name of the callback action
+	 * Get name of the callback action.
 	 *
 	 * @return string Name of the callback action.
 	 */
