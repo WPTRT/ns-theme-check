@@ -10,7 +10,7 @@ declare( strict_types=1 );
 namespace Theme_Sniffer\Core;
 
 /**
- * Class Plugin_Factory.
+ * Class Plugin_Factory
  *
  * Used for creating the plugin instance.
  */
@@ -24,7 +24,7 @@ final class Plugin_Factory {
 	 */
 	public static function create() {
 		/**
-		 * Plugin instance variable.
+		 * Plugin instance variable
 		 *
 		 * @var null
 		 */
