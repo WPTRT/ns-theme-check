@@ -13,7 +13,7 @@ namespace Theme_Sniffer\Enqueue;
 use Developer_Portal\Custom_Post_Type\Documentation;
 
 /**
- * Enqueue resources class.
+ * Enqueue resources class
  *
  * Class that will handle enqueueing and registering scripts and styles
  */
@@ -35,7 +35,7 @@ class Enqueue_Resources implements Assets {
 	const LOCALIZATION_HANDLE = 'themeSnifferLocalization';
 
 	/**
-	 * Register the enqueue actions.
+	 * Register the enqueue actions
 	 */
 	public function register() {
 		add_action(
@@ -50,7 +50,7 @@ class Enqueue_Resources implements Assets {
 	}
 
 	/**
-	 * Register admin area styles.
+	 * Register admin area styles
 	 *
 	 * @since 1.2.0
 	 *
@@ -73,7 +73,7 @@ class Enqueue_Resources implements Assets {
 	}
 
 	/**
-	 * Register admin area scripts.
+	 * Register admin area scripts
 	 *
 	 * @since 1.2.0
 	 *
@@ -100,7 +100,7 @@ class Enqueue_Resources implements Assets {
 	}
 
 	/**
-	 * Get script dependencies.
+	 * Get script dependencies
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/wp_enqueue_script/#default-scripts-included-and-registered-by-wordpress
 	 *
@@ -114,7 +114,7 @@ class Enqueue_Resources implements Assets {
 	}
 
 	/**
-	 * Get script localizations.
+	 * Get script localizations
 	 *
 	 * @return array Key value pair of different localizations
 	 */

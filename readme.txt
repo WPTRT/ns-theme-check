@@ -23,13 +23,13 @@ Theme Sniffer is a plugin utilizing custom sniffs for [PHP_CodeSniffer](https://
 3. Click Install Now
 4. When it’s finished, activate the plugin via the prompt. A message will show confirming activation was successful.
 
-Make sure that your server has PHP version greater or equal to 7.0, otherwise, the plugin won't activate.
+Make sure that your server has php version greater or equal to 7.0, otherwise, the plugin won't activate.
 
 = Uploading the .zip file: =
 
 1. From the dashboard of your site, navigate to Plugins –> Add New.
 2. Select the Upload option and hit "Choose File."
-3. When the pop-up appears to select the theme-sniffer.x.x.zip file from your desktop. (The ‘x.x’ will change depending on the current version number).
+3. When the pop-up appears select the theme-sniffer.x.x.zip file from your desktop. (The ‘x.x’ will change depending on the current version number).
 4. Follow the on-screen instructions and wait as the upload completes.
 When it’s finished, activate the plugin via the prompt. A message will show confirming activation was successful.
 
@@ -50,20 +50,20 @@ When it’s finished, activate the plugin via the prompt. A message will show co
 
 * `Select Standard` - Select the standard with which you would like to sniff the theme
 * `Hide Warning` - Enable this to hide warnings
-* `Raw Output` - Enable this to display sniff report in plain text format. Suitable to copy/paste report to the trac ticket
+* `Raw Output` - Enable this to display sniff report in plain text format. Suitable to copy/paste report to trac ticket
 * `Ignore annotations` - Ignores any comment annotation that might disable the sniff
 * `Check only PHP files` - Only checks PHP files, not CSS and JS - use this to prevent any possible memory leaks
-* `Minimum PHP version` - Select the minimum PHP version to check if your theme will work with that version
+* `Minimum PHP version` - Select the minimum PHP Version to check if your theme will work with that version
 
 = How can I help with the development of the plugin? =
 
-Go to the official repo on Github (https://github.com/WPTRT/theme-sniffer), fork the plugin, read the readme and go through the issues. Any kind of help is appreciated. Either manually testing or writing code is invaluable for the open-source project such as this.
+Go to the official repo on Github (https://github.com/WPTRT/theme-sniffer), fork the plugin, read the readme and go through the issues. Any kind of help is appreciated. Either manually testing or writing code is invaluable for the open source project such as this.
 
 = Contributors and testers thanks =
 
 Thanks to Danny Cooper, Liton Arefin and metallicarosetail (slack) for testing the plugin and finding bugs in the development stage.
 
-Thanks to Abdullah Ramzan, FahimMurshed and Arslan Ahmed, for fixing minor typos, William Patton for help with the required files checks. Thanks to Karolína Vyskočilová for finding out the issue with the cross-env issue.
+Thanks to Abdullah Ramzan and Arslan Ahmed for fixing minor typos, William Patton for help with the required files checks. Thanks to Karolína Vyskočilová for finding out the issue with cross-env issue.
 
 Thanks to the TRT for the support.
 
@@ -88,7 +88,7 @@ The latest upgrade mostly with development changes and some minor improvements i
 * Moved JS checking to esprima
 * Moved installation error to admin notice
 * Validation improvements
-* Fixed annotation issue - the ignore annotation checkbox worked counter to what it should
+* Fixed annotation issue - the ingore annotation checkbox worked counter to what it should
 * Fixed cross-env issue for development on Windows machines
 * Minor fixes
 

@@ -21,7 +21,7 @@ use Theme_Sniffer\Core\Service;
 abstract class Base_Ajax_Callback implements Invokable, Service {
 
 	/**
-	 * Register ajax callback.
+	 * Register ajax callback
 	 */
 	public function register() {
 
@@ -41,14 +41,14 @@ abstract class Base_Ajax_Callback implements Invokable, Service {
 	abstract public function callback();
 
 	/**
-	 * Returns true if the callback should be public.
+	 * Returns true if the callback should be public
 	 *
 	 * @return boolean true if callback is public.
 	 */
 	abstract protected function is_public() : bool;
 
 	/**
-	 * Get name of the callback action.
+	 * Get name of the callback action
 	 *
 	 * @return string Name of the callback action.
 	 */

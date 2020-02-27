@@ -17,14 +17,14 @@ use Theme_Sniffer\Core\Registerable;
 /**
  * Assets interface.
  *
- * Interface used for enqueueing assets.
+ * Interface used for enqueueing assets
  *
  * @since 1.2.0
  */
 interface Assets extends Registerable {
 
 	/**
-	 * Enqueue styles.
+	 * Enqueue styles
 	 *
 	 * @since 1.2.0
 	 *
@@ -33,7 +33,7 @@ interface Assets extends Registerable {
 	public function enqueue_styles( $hook );
 
 	/**
-	 * Enqueue scripts.
+	 * Enqueue scripts
 	 *
 	 * @since 1.2.0
 	 * @param string $hook Hook suffix for the current admin page.
