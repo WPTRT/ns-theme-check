@@ -12,7 +12,7 @@ declare( strict_types=1 );
 namespace Theme_Sniffer\Helpers;
 
 /**
- * Sniffer helpers trait
+ * Sniffer helpers trait.
  *
  * This trait contains some helper methods.
  *

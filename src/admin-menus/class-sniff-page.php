@@ -14,7 +14,7 @@ use Theme_Sniffer\Helpers\Sniffer_Helpers;
 use Theme_Sniffer\Exception\No_Themes_Present;
 
 /**
-* Theme sniffer page menu class
+* Theme sniffer page menu class.
 *
 * Class that renders the Theme sniffer menu page
 */
@@ -65,7 +65,7 @@ final class Sniff_Page extends Base_Admin_Menu {
 	}
 
 	/**
-	 * Get the URL to the icon to be used for this menu
+	 * Get the URL to the icon to be used for this menu.
 	 *
 	 * @return string The URL to the icon to be used for this menu.
 	 */

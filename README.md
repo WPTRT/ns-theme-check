@@ -49,7 +49,7 @@ The Theme Sniffer requires:
     * Run `npm install --global stylelint`
     * Run `composer global require "squizlabs/php_codesniffer=*"` & make sure that you have installed [WordPress Coding Standards](https://github.com/WordPress/WordPress-Coding-Standards) and [PHPCompatibility](https://github.com/PHPCompatibility/PHPCompatibility) by running `phpcs -i`. When PHPCS installed globally, you might need clone both repositories and add them to PHPCS with `phpcs --config-set installed_paths /path/to/PHPCompatibility,/path/to/wpcs`
 
-**Note**: If you build the plugin this way you'll have extra `node_modules/` folders which are not required for the plugin to run, and just take up space. They are to be used for the development purposes mainly. Some of the `vendor/` folders are necessary for Theme Sniffer to run
+**Note**: If you build the plugin this way you'll have extra `node_modules/` folders which are not required for the plugin to run, and just take up space. They are to be used for development purposes mainly. Some of the `vendor/` folders are necessary for Theme Sniffer to run
 
 ![Screenshot](screenshot.png?raw=true)
 
@@ -67,7 +67,7 @@ The Theme Sniffer requires:
 * `Raw Output` - Enable this to display sniff report in plain text format. Suitable to copy/paste report to trac ticket
 * `Ignore annotations` - Ignores any comment annotation that might disable the sniff
 * `Check only PHP files` - Only checks PHP files, not CSS and JS - use this to prevent any possible memory leaks
-* `Minimum PHP version` - Select the minimum PHP Version to check if your theme will work with that version
+* `Minimum PHP version` - Select the minimum PHP version to check if your theme will work with that version
 
 ## Development
 
@@ -90,19 +90,19 @@ Then you can run:
 
 `npm run start`
 
-This will run webpack in the watch mode, so your changes will be saved in the build folder on the fly. After you're done making changes, run:
+This will run a webpack in the watch mode, so your changes will be saved in the build folder on the fly. After you're done making changes, run:
 
 `npm run build`
 
-This will create the `assets/build/` folder with js and css files that the plugin will use and a zip file for installation.
+This will create the `assets/build/` folder with JS and CSS files that the plugin will use and a zip file for installation.
 
 If you want to skip creating the zip file, you can use
 
 `npm run dev`
 
-This command behaves like the build one, but it skips creation of the zip file.
+This command behaves like the build one, but it skips the creation of the zip file.
 
-When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for improvement, so if you notice something that could be improved we encourage you to make a PR.
+When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the JS code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for improvement, so if you notice something that could be improved we encourage you to make a PR.
 
 The same is valid for PHP code. The business logic is stored in the `src/` folder, the JS and CSS are located in `assets/` folder and the views are located in the `views/` folder.
 

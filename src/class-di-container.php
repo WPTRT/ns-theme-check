@@ -15,7 +15,7 @@ use \DI\Container;
 use \DI\ContainerBuilder;
 
 /**
- * A dependency injection container class
+ * A dependency injection container class.
  *
  * @package Theme_Sniffer\Core
  *
@@ -24,7 +24,7 @@ use \DI\ContainerBuilder;
 final class Di_Container {
 
 	/**
-	 * Returns a prepared list of services with definitions for DI container
+	 * Returns a prepared list of services with definitions for DI container.
 	 *
 	 * @param array $services List of service classes.
 	 *

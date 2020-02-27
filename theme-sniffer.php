@@ -30,7 +30,7 @@ if ( is_readable( $autoloader ) ) {
 }
 
 /**
-* Plugin URL const
+* Plugin URL const.
 */
 define( 'PLUGIN_BASE_URL', plugin_dir_url( __FILE__ ) );
 define( 'PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

@@ -23,7 +23,7 @@ use Theme_Sniffer\Sniffs\Validate;
 class Contributors extends Validate {
 
 	/**
-	 * Check Contributors field from readme.txt
+	 * Check Contributors field from readme.txt.
 	 *
 	 * @since 1.1.0
 	 */
@@ -67,7 +67,7 @@ class Contributors extends Validate {
 				continue;
 			}
 
-			// Catch all error if something beyond this..
+			// Catch all error if something beyond this.
 			$this->results[] = [
 				'severity' => 'warning',
 				'message'  => esc_html__( 'Something went wrong when validating readme.txt\'s contributors list!', 'theme-sniffer' ),

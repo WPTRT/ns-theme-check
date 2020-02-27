@@ -14,13 +14,13 @@ use Theme_Sniffer\Api\Template_Tags_Request;
 use Theme_Sniffer\Exception\No_Themes_Present;
 
 /**
- * Sniffer helpers trait
+ * Sniffer helpers trait.
  *
- * This trait contains some helper methods
+ * This trait contains some helper methods.
  */
 trait Sniffer_Helpers {
 	/**
-	 * Returns standards
+	 * Returns standards.
 	 *
 	 * Includes a 'theme_sniffer_add_standards' filter, so that user can add their own standard. The standard has to be added
 	 * in the composer before bundling the plugin.
@@ -67,7 +67,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Return all the active themes
+	 * Return all the active themes.
 	 *
 	 * @since  1.0.0 Moved to a trait.
 	 *
@@ -116,6 +116,7 @@ trait Sniffer_Helpers {
 			'7.1',
 			'7.2',
 			'7.3',
+			'7.4',
 		];
 	}
 
@@ -177,7 +178,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Helper method that returns the default standard
+	 * Helper method that returns the default standard.
 	 *
 	 * @since 1.0.0
 	 * @return string Name of the default standard.
@@ -187,7 +188,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Helper method to get a list of required headers
+	 * Helper method to get a list of required headers.
 	 *
 	 * @since 1.0.0
 	 * @return array List of required headers.
@@ -205,11 +206,11 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Check WP Core's Required PHP Version
+	 * Check WP Core's Required PHP Version.
 	 *
-	 * The functionality to check WP core wasn't added until 5.1.0, so this will
-	 * address users who are on older WP versions and fetch from the API.  The
-	 * code is copied from the core function wp_check_php_version.
+	 * The functionality to check WP core wasn't added until 5.1.0,
+	 * so this will address users who are on older WP versions and fetch from the API.
+	 * The code is copied from the core function wp_check_php_version.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/wp_check_php_version/
 	 *
@@ -281,7 +282,7 @@ trait Sniffer_Helpers {
 	}
 
 	/**
-	 * Helper method to get the minimum PHP version supplied by theme
+	 * Helper method to get the minimum PHP version supplied by theme.
 	 * or the WP core default.
 	 *
 	 * @since 1.1.0
