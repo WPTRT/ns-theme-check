@@ -1,10 +1,10 @@
 === Theme Sniffer ===
 Contributors: dingo_d, rabmalin, grapplerulrich, timph, vyskoczilova, abdullahramzan, williampatton
 Tags: check, checker, coding standards, theme, tool
-Requires at least: 4.7
-Tested up to: 5.2.2
+Requires at least: 5.0
+Tested up to: 5.3.2
 Requires PHP: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -73,6 +73,12 @@ Thanks to the TRT for the support.
 The latest upgrade mostly with development changes and some minor improvements in sniff handling.
 
 == Changelog ==
+
+= 1.1.2 =
+* Added a way to remove node_modules, vendor, and test folders in the theme prior to sniffing
+  * This fixes out of memory issues when large files are found
+* Fixed minor styling issue
+* Removed option to check JS files
 
 = 1.1.1 =
 * Fixed bug in the screenshot ratio calculation
