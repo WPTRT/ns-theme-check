@@ -1,6 +1,6 @@
 {
   "name": "theme-sniffer",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Theme Sniffer plugin using sniffs. `WordPress-Theme` standard is used from WPTRT/WordPress-Coding-Standards.",
   "main": "",
   "dependencies": {

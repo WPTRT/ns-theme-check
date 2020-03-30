@@ -33,14 +33,13 @@ $(
 				const warningHide       = $( 'input[name=hide_warning]' ).is( ':checked' );
 				const outputRaw         = $( 'input[name=raw_output]' ).is( ':checked' );
 				const ignoreAnnotations = $( 'input[name=ignore_annotations]' ).is( ':checked' );
-				const checkPhpOnly      = $( 'input[name=check_php_only]' ).is( ':checked' );
 				const minPHPVersion     = $( 'select[name=minimum_php_version]' ).val();
 				const themePrefixes     = $( 'input[name=theme_prefixes]' ).val();
 
 				const selectedRulesets = $( 'input[name="selected_ruleset[]"]:checked' ).map( ( ind, el ) => el.value ).toArray();
 
 				themeSniffer.enableAjax();
-				themeSniffer.themeCheckRunPHPCS( theme, warningHide, outputRaw, ignoreAnnotations, checkPhpOnly, minPHPVersion, selectedRulesets, themePrefixes );
+				themeSniffer.themeCheckRunPHPCS( theme, warningHide, outputRaw, ignoreAnnotations, minPHPVersion, selectedRulesets, themePrefixes );
 			}
 		);
 

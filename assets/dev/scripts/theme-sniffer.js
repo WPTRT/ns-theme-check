@@ -4,7 +4,6 @@ import $ from 'jquery';
 import {ajax} from './utils/ajax';
 
 import Clipboard from 'clipboard';
-import SniffJs from './utils/sniff-js';
 
 export default class ThemeSniffer {
 	constructor( options ) {
@@ -170,14 +169,13 @@ export default class ThemeSniffer {
 		}
 	}
 
-	themeCheckRunPHPCS( theme, warningHide, outputRaw, ignoreAnnotations, checkPhpOnly, minPHPVersion, selectedRulesets, themePrefixes ) {
+	themeCheckRunPHPCS( theme, warningHide, outputRaw, ignoreAnnotations, minPHPVersion, selectedRulesets, themePrefixes ) {
 
 		const snifferRunData = {
 			themeName: theme,
 			hideWarning: warningHide,
 			rawOutput: outputRaw,
 			ignoreAnnotations: ignoreAnnotations,
-			checkPhpOnly: checkPhpOnly,
 			minimumPHPVersion: minPHPVersion,
 			wpRulesets: selectedRulesets,
 			themePrefixes: themePrefixes,
@@ -217,10 +215,6 @@ export default class ThemeSniffer {
 
 				for ( let file of response.files ) {
 					( async() => {
-						if ( file.filePath.substr( file.filePath.length - 3 ) === '.js' ) {
-							let sniffer = new SniffJs( file );
-							file = await sniffer.process();
-						}
 						this.$sniffReport.append( this.renderJSON( file ) );
 					})( file );
 				}

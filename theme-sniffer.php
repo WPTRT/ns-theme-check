@@ -3,7 +3,7 @@
  * Plugin Name: Theme Sniffer
  * Plugin URI:  https://github.com/WPTRT/theme-sniffer
  * Description: Theme Sniffer plugin which uses PHP_CodeSniffer for automatic theme checking.
- * Version:     1.1.1
+ * Version:     1.1.2
  * Author:      WPTRT
  * Author URI:  https://make.wordpress.org/themes/
  * Text Domain: theme-sniffer
