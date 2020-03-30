@@ -45,13 +45,13 @@ class License_Uri extends Validate {
 		$license = $this->find_license( $this->args->primary );
 
 		// Still report errors when license status is warning (or success of course).
-		if ( $license->status !== 'error' ) {
+		if ( $license->status !== 'warning' ) {
 			$uris = $this->license_data[ $license->id ]['uris'];
 
-			// Missing License URI field error.
+			// Missing License URI field warning.
 			if ( empty( $this->args->uri ) ) {
 				$this->results[] = [
-					'severity' => 'error',
+					'severity' => 'warning',
 					'message'  => esc_html__( 'All themes are required to provide a License URI in their readme.txt!', 'theme-sniffer' ),
 				];
 			}
@@ -59,11 +59,11 @@ class License_Uri extends Validate {
 			// URI field is invalid.
 			if ( empty( preg_grep( '/^' . preg_quote( $this->args->uri, '/' ) . '$/i', $uris ) ) ) {
 				$this->results[] = [
-					'severity' => 'error',
+					'severity' => 'warning',
 					'message'  => wp_kses(
 						sprintf(
 							/* translators: 1: the user provided License URI in readme.txt 2: the license comparing against in readme.txt 3: a list of suitable license URIs that could be used */
-							__( 'The License URI provided: %1$s, is not a known URI reference for the license %2$s.  All themes must meet this requirement!<br/>These are recognized URIs based on the license provided:<br/>%3$s', 'theme-sniffer' ),
+							__( 'The License URI provided: %1$s, is not a known URI reference for the license %2$s.  These are recognized URIs for the license provided:<br/>%3$s', 'theme-sniffer' ),
 							$this->args->uri,
 							$this->args->primary,
 							implode( '<br/>', $uris )
@@ -74,6 +74,12 @@ class License_Uri extends Validate {
 					),
 				];
 			}
+		} else {
+			// Unable to determine License URI without valid License.
+			$this->results[] = [
+				'severity' => 'warning',
+				'message'  => esc_html__( 'Unable to determine License URI with an invalid License supplied in readme.txt!', 'theme-sniffer' ),
+			];
 		}
 	}
 }

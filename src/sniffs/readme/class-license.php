@@ -53,9 +53,9 @@ class License extends Validate {
 		}
 
 		// Check if GPLv2 compatible if no errors found with License Identifier so far.
-		if ( $license_data->status !== 'error' && ! $this->is_gpl2_or_later_compatible( $license_data ) ) {
+		if ( $license_data->status !== 'warning' && ! $this->is_gpl2_or_later_compatible( $license_data ) ) {
 			$this->results[] = [
-				'severity' => 'error',
+				'severity' => 'warning',
 				'message'  => sprintf(
 					/* translators: %s: the license specified in readme.txt */
 					esc_html__( 'The license specified, %s is not compatible with WordPress\' license of GPL-2.0-or-later.  All themes must meet this requirement!' ),

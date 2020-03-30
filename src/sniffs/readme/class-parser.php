@@ -109,7 +109,7 @@ class Parser {
 	public $resources = [];
 
 	/**
-	 * Warning flags which indicate specific parsing failures have occured.
+	 * Warning flags which indicate specific parsing failures have occurred.
 	 *
 	 * @var array
 	 */
@@ -206,12 +206,12 @@ class Parser {
 		$line       = $this->get_first_nonwhitespace( $contents );
 		$this->name = $this->sanitize_text( trim( $line, "#= \t\0\x0B" ) );
 
-		// Strip Github style header\n==== underlines.
+		// Strip GitHub style header\n==== underlines.
 		if ( ! empty( $contents ) && '' === trim( $contents[0], '=-' ) ) {
 			array_shift( $contents );
 		}
 
-		// Handle readme's which do `=== Plugin Name ===\nMy SuperAwesomePlugin Name\n...`
+		// Handle readme's which do `=== Plugin Name ===\nMy SuperAwesomePlugin Name\n...`.
 		if ( 'plugin name' == strtolower( $this->name ) ) {
 			$this->name = $line = $this->get_first_nonwhitespace( $contents );
 
@@ -281,7 +281,7 @@ class Parser {
 
 		if ( ! empty( $headers['license'] ) ) {
 
-			// Handle the many cases of "License: GPLv2 - http://..."
+			// Handle the many cases of "License: GPLv2 - http://...".
 			if ( empty( $headers['license_uri'] ) && preg_match( '!(https?://\S+)!i', $headers['license'], $url ) ) {
 				$headers['license_uri'] = $url[1];
 				$headers['license']     = trim( str_replace( $url[1], '', $headers['license'] ), " -*\t\n\r\n" );
@@ -360,35 +360,7 @@ class Parser {
 		}
 
 		if ( ! empty( $section_name ) ) {
-
 			$this->sections[ $section_name ] .= trim( $current );
-
-			// Check for resources
-			if ( stripos( $section_name, 'resources' ) !== false ) {
-
-				// Split resources into array.
-				$resources = preg_split( "/\r\n|\n|\r/", $current );
-
-				// Extract each resource's params.
-				foreach ( $resources as $resource ) {
-					if ( ! empty( $resource ) ) {
-						$res = strstr( $resource, ',', true );
-						$resource = str_replace( $res, '', $resource );
-						$license = strrchr( $resource, ',' );
-						$resource = str_replace( $license, '', $resource );
-						$this->resources[ trim( $res, "*, \t\n" ) ] = [
-							'license'   => trim( $license, ", \t\n" ),
-							'attribute' => trim( $resource, ", \t\n" ),
-						];
-					}
-				}
-
-				// Pass in primary license to validate against each resource license.
-				$this->resources['primary_license'] = $license;
-
-				// Cleanup.
-				unset( $this->sections['resources'] );
-			}
 		}
 
 		// Filter out any empty sections.
@@ -685,7 +657,7 @@ class Parser {
 				// x.y or x.y.z version number.
 				! preg_match( '!^\d+\.\d(\.\d+)?$!', $version ) ||
 
-				// Allow plugins to mark themselves as requireing Stable+0.1 (trunk/master) but not higher.
+				// Allow plugins to mark themselves as requiring Stable+0.1 (trunk/master) but not higher.
 				defined( 'WP_CORE_STABLE_BRANCH' ) && ( (float) $version > (float) WP_CORE_STABLE_BRANCH + 0.1 )
 			) {
 				$this->warnings['requires_header_ignored'] = true;

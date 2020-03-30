@@ -43,6 +43,7 @@ class Validator extends Validate_File {
 	/**
 	 * Runs screenshot validators
 	 *
+	 * @since 1.1.1 Minor bugfix update in calculation of screen image ratio.
 	 * @since 1.1.0
 	 *
 	 * @param string $file File to validate.
@@ -88,7 +89,7 @@ class Validator extends Validate_File {
 		}
 
 		// Screenshot validated at this point, so check dimensions - no need for fileinfo.
-		// props @Otto42(WP.org, Github) for aspect ratio logic from Theme Check: https://github.com/WordPress/theme-check/blob/master/checks/screenshot.php.
+		// props @Otto42(WP.org, GitHub) for aspect ratio logic from Theme Check: https://github.com/WordPress/theme-check/blob/master/checks/screenshot.php.
 		list( $width, $height ) = getimagesize( $file );
 
 		// Screenshot too big.
@@ -107,7 +108,7 @@ class Validator extends Validate_File {
 		}
 
 		// Aspect Ratio.
-		if ( $width / $height !== 0.75 ) {
+		if ( $height / $width !== 0.75 ) {
 			$this->results[] = [
 				'severity' => 'error',
 				'message'  => esc_html__( 'Screenshot aspect ratio must be 4:3!', 'theme-sniffer' ),

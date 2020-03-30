@@ -48,6 +48,7 @@ trait Readme_Helpers {
 	public function set_license_data() : array {
 		$licenses_path = WP_PLUGIN_DIR . plugin_dir_path( '/theme-sniffer/assets/build/licenses.json' );
 		$licenses_file = file_get_contents( $licenses_path . 'licenses.json' );
+
 		return json_decode( $licenses_file, true );
 	}
 
@@ -56,9 +57,9 @@ trait Readme_Helpers {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param string $id License identififier.
+	 * @param string $id License identifier.
 	 *
-	 * @return object $reponse Object containing license critera and match information.
+	 * @return object $reponse Object containing license criteria and match information.
 	 */
 	public function find_license( $id ) {
 		$response             = (object) [];
@@ -97,9 +98,9 @@ trait Readme_Helpers {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param Object $response Object containing license critera and match information.
+	 * @param Object $response Object containing license criteria and match information.
 	 *
-	 * @return Object $response Object containing license critera and match information.
+	 * @return Object $response Object containing license criteria and match information.
 	 */
 	public function get_response_message( $response ) {
 
@@ -121,38 +122,38 @@ trait Readme_Helpers {
 				} elseif ( $response->provided === $details['licenseId'] ) { // A Valid SPDX ID was found, no message required.
 					$response->status  = 'success';
 					$response->message = null;
-				} else { // A single match was found for FSF critera.
+				} else { // A single match was found for FSF criteria.
 					$response->status = 'warning';
 					/* translators: 1: a SPDX license name. 2: the recommended SPDX ID to use instead. */
 					$response->message = sprintf( esc_html__( 'Found valid license information based on FSF naming: %1$s, but it is better to use the SPDX ID: %2$s', 'theme-sniffer' ), $response->provided, $details['licenseId'] );
 				}
-			} else { // Multiple matches returned, so it's FSF provided critera.
+			} else { // Multiple matches returned, so it's FSF provided criteria.
 				$matches          = array_keys( $response->live );
-				$response->status = 'error';
+				$response->status = 'warning';
 				/* translators: %s: listing of license IDs matched. */
 				$response->message = sprintf( esc_html__( 'Found multiple records matching these licenses: %s, it\'s required to use a single SPDX Idenitfier!', 'theme-sniffer' ), implode( ', ', $matches ) );
 			}
 		} elseif ( ! empty( $response->deprecated ) ) { // Deprecated match found.
-			$response->status = 'error';
+			$response->status = 'warning';
 			/* translators: %s: User provided license identifier. */
 			$response->message = sprintf( esc_html__( 'The license identification provided, $s, indicates a deprecated license!  Please use a valid SPDX Identifier!', 'theme-sniffer' ), $response->provided );
 		} else { // No matches found.
-			$response->status = 'error';
+			$response->status = 'warning';
 			/* translators: %s: unrecognized user provided license identifier */
-			$response->message = sprintf( esc_html__( 'No matching license critera could be determined from: %s!', 'theme-sniffer' ), $response->provided );
+			$response->message = sprintf( esc_html__( 'No matching license criteria could be determined from: %s!', 'theme-sniffer' ), $response->provided );
 		}
 
 		return $response;
 	}
 
 	/**
-	 * Check if a license critera object is gpl compatible.
+	 * Check if a license criteria object is gpl compatible.
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param Object $license A license critera object.
+	 * @param Object $license A license criteria object.
 	 *
-	 * @return bool License critera is GPLv2 compatible.
+	 * @return bool License criteria is GPLv2 compatible.
 	 */
 	public function is_gpl2_or_later_compatible( $license ) {
 		$gpl = false;

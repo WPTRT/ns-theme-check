@@ -5,6 +5,8 @@
  * @package Theme_Sniffer\Core
  */
 
+declare( strict_types=1 );
+
 namespace Theme_Sniffer\Core;
 
 /**
@@ -18,7 +20,7 @@ final class Plugin_Factory {
 	 *
 	 * This always returns a shared instance.
 	 *
-	 * @return Plugin Plugin instance.
+	 * @return Plugin instance.
 	 */
 	public static function create() {
 		/**

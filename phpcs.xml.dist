@@ -2,31 +2,58 @@
 <ruleset name="WordPress Theme Sniffer">
 	<description>Coding standard for the WordPress Theme Sniffer plugin.</description>
 
-	<arg value="sp"/>
-	<arg name="extensions" value="php"/>
+	<!-- Check the entire plugin. -->
+  	<file>.</file>
 
+	<!-- Exclude patterns. -->
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>/src/CompiledContainer.php</exclude-pattern>
 
-	<rule ref="WordPress-Extra"/>
-	<rule ref="WordPress-Docs"/>
+	<!-- Additional arguments. -->
+	<arg value="sp" />
+	<arg name="basepath" value="." />
+	<arg name="parallel" value="8" />
+	<arg name="cache" />
+	<arg name="extensions" value="php" />
 
+	<!-- Include the WordPress rulesets. -->
+	<rule ref="WordPress-Extra" />
+	<rule ref="WordPress-Docs" />
+
+	<!-- Handle array alignments. -->
 	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
 		<properties>
-			<property name="alignMultilineItems" value="!=100"/>
+			<property name="alignMultilineItems" value="!=100" />
 		</properties>
 	</rule>
 
-	<rule ref="WordPress">
+	<!-- Don't use Yoda conditions, they are not useful. -->
+	<rule ref="WordPress.PHP">
 		<exclude name="WordPress.PHP.YodaConditions" />
 	</rule>
 
-	<rule ref="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents">
-    	<severity>0</severity>
+	<!-- Ignore flagging file_get_contents as 'evil' -->
+	<rule ref="WordPress.WP.AlternativeFunctions">
+    	<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
   	</rule>
 
-	<config name="testVersion" value="7.0-"/>
-	<rule ref="PHPCompatibility"/>
+	<!-- Allow multiple parameters on one line for multi-line function calls. -->
+	<rule ref="PEAR.Functions.FunctionCallSignature">
+		<properties>
+		   <property name="allowMultipleArguments" value="true" />
+		</properties>
+	</rule>
+
+	<!-- Improve code readability by allowing the arguments after function call. -->
+  	<rule ref="PEAR.Functions.FunctionCallSignature">
+  		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+  		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+	</rule>
+
+	<!-- Set the minimum version to check against in the PHPcompatibility. -->
+	<config name="testVersion" value="7.0-" />
+	<rule ref="PHPCompatibility" />
 </ruleset>

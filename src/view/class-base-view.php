@@ -76,7 +76,7 @@ class Base_View implements View {
 		$this->internal_context = $context;
 
 		// Save current buffering level so we can backtrack in case of an error.
-		// This is needed because the view itself might also add an unknown
+		// This is needed because the view itself might also add an unknown.
 		// number of output buffering levels.
 		$buffer_level = ob_get_level();
 		ob_start();

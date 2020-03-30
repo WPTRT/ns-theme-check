@@ -22,23 +22,26 @@ if ( ! empty( $this->error ) ) {
 }
 
 // Use attributes passed from the page creation class.
-$standards    = $this->standards;
-$themes       = $this->themes;
-$php_versions = $this->php_versions;
-$nonce        = $this->nonce_field;
+$themes = $this->themes;
 
 if ( empty( $themes ) ) {
 	return;
 }
 
+$standards     = $this->standards;
+$php_versions  = $this->php_versions;
+$nonce         = $this->nonce_field;
+$current_theme = $this->current_theme;
+
 // Predefined values.
-$current_theme       = get_stylesheet();
 $minimum_php_version = $this->minimum_php_version;
-$hide_warning        = 0;
-$raw_output          = 0;
-$ignore_annotations  = 0;
-$check_php_only      = 0;
-$standard_status     = wp_list_pluck( $standards, 'default' );
+$standard_status     = $this->standard_status;
+
+// Defaults.
+$hide_warning       = 0;
+$raw_output         = 0;
+$ignore_annotations = 0;
+$check_php_only     = 0;
 ?>
 
 <div class="wrap theme-sniffer">
@@ -68,19 +71,19 @@ $standard_status     = wp_list_pluck( $standards, 'default' );
 			<h2><?php esc_html_e( 'Select Standard', 'theme-sniffer' ); ?></h2>
 		<?php foreach ( $standards as $key => $standard ) : ?>
 				<label for="<?php echo esc_attr( $key ); ?>" title="<?php echo esc_attr( $standard['description'] ); ?>">
-					<input type="checkbox" name="selected_ruleset[]" id="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $standard_status[ $key ], 1 ); ?> tabindex="3" />
+					<input type="checkbox" class="theme-sniffer__form-checkbox" name="selected_ruleset[]" id="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $standard_status[ $key ], 1 ); ?> tabindex="3" />
 			<?php echo '<strong>' , esc_html( $standard['label'] ) , '</strong>: ' , esc_html( $standard['description'] ); ?>
 				</label><br>
 		<?php endforeach; ?>
 		</div>
 		<div class="theme-sniffer__form-options">
 			<h2><?php esc_html_e( 'Options', 'theme-sniffer' ); ?></h2>
-			<label for="hide_warning"><input type="checkbox" name="hide_warning" id="hide_warning" value="1" <?php checked( $hide_warning, 1 ); ?> tabindex="4"/><?php esc_html_e( 'Hide Warnings', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
-			<label for="raw_output"><input type="checkbox" name="raw_output" id="raw_output" value="1" <?php checked( $raw_output, 1 ); ?> tabindex="5"/><?php esc_html_e( 'Raw Output', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
-			<label for="ignore_annotations"><input type="checkbox" name="ignore_annotations" id="ignore_annotations" value="1" <?php checked( $ignore_annotations, 1 ); ?> tabindex="6"/><?php esc_html_e( 'Ignore annotations', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
-			<label for="check_php_only"><input type="checkbox" name="check_php_only" id="check_php_only" value="1" <?php checked( $check_php_only, 1 ); ?> tabindex="6"/><?php esc_html_e( 'Check only PHP files', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
+			<label for="hide_warning"><input type="checkbox" class="theme-sniffer__form-checkbox" name="hide_warning" id="hide_warning" value="1" <?php checked( $hide_warning, 1 ); ?> tabindex="4"/><?php esc_html_e( 'Hide Warnings', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
+			<label for="raw_output"><input type="checkbox" class="theme-sniffer__form-checkbox" name="raw_output" id="raw_output" value="1" <?php checked( $raw_output, 1 ); ?> tabindex="5"/><?php esc_html_e( 'Raw Output', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
+			<label for="ignore_annotations"><input type="checkbox" class="theme-sniffer__form-checkbox" name="ignore_annotations" id="ignore_annotations" value="1" <?php checked( $ignore_annotations, 1 ); ?> tabindex="6"/><?php esc_html_e( 'Ignore annotations', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
+			<label for="check_php_only"><input type="checkbox" class="theme-sniffer__form-checkbox" name="check_php_only" id="check_php_only" value="1" <?php checked( $check_php_only, 1 ); ?> tabindex="6"/><?php esc_html_e( 'Check only PHP files', 'theme-sniffer' ); ?></label>&nbsp;&nbsp;
 			<label for="minimum_php_version">
-				<select name="minimum_php_version" id="minimum_php_version" tabindex="7">
+				<select name="minimum_php_version" id="minimum_php_version" class="theme-sniffer__form-select" tabindex="7">
 					<?php foreach ( $php_versions as $version ) : ?>
 					<option value="<?php echo esc_attr( $version ); ?>" <?php selected( $minimum_php_version, $version ); ?>><?php echo esc_html( $version ); ?></option>
 					<?php endforeach; ?>
@@ -89,19 +92,7 @@ $standard_status     = wp_list_pluck( $standards, 'default' );
 			</label>
 		</div>
 	</div>
-	<div class="theme-sniffer__start-notice js-start-notice"></div>
-	<div class="theme-sniffer__report js-sniff-report">
-		<div class="theme-sniffer__report-item js-report-item">
-			<div class="theme-sniffer__report-heading js-report-item-heading"></div>
-			<table class="theme-sniffer__report-table js-report-table">
-				<tr class="theme-sniffer__report-table-row js-report-notice-type">
-					<td class="theme-sniffer__report-table-line js-report-item-line"></td>
-					<td class="theme-sniffer__report-table-type js-report-item-type"></td>
-					<td class="theme-sniffer__report-table-message js-report-item-message"></td>
-				</tr>
-			</table>
-		</div>
-	</div>
+	<?php echo $this->render_partial( 'views/partials/report-notice' ); // phpcs:ignore ?>
 	<div class="theme-sniffer__loader js-loader"></div>
 	<div class="theme-sniffer__info js-sniffer-info"></div>
 	<div class="theme-sniffer__check-done-notice js-check-done"><?php esc_html_e( 'All done!', 'theme-sniffer' ); ?></div>

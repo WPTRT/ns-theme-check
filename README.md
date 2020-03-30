@@ -29,7 +29,7 @@ The Theme Sniffer requires:
 
 ### For themes development and checking
 
-* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/1.0.0/theme-sniffer.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
+* Download [zip file](https://github.com/WPTRT/theme-sniffer/releases/download/1.1.0/theme-sniffer.zip). **Note**: Please use this distribution plugin zip. GitHub provided zip will not work.
 * Install this as you normally install a WordPress plugin
 * Activate plugin
 
@@ -94,9 +94,15 @@ This will run webpack in the watch mode, so your changes will be saved in the bu
 
 `npm run build`
 
-This will create the `assets/build/` folder with js and css files that the plugin will use.
+This will create the `assets/build/` folder with js and css files that the plugin will use and a zip file for installation.
 
-When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for imporvement, so if you notice something that could be improved we incurage you to make a PR.
+If you want to skip creating the zip file, you can use
+
+`npm run dev`
+
+This command behaves like the build one, but it skips creation of the zip file.
+
+When developing JavaScript code keep in mind the separation of concerns principle - data access and business logic should be separate from the presentation. If you 'sniff' (no pun intended) through the js code, you'll see that `index.js` holds all event triggers and calls the method for sniff start that is located in the separate `ThemeSniffer` class. Business logic modules should contain plain JavaScript (no framework), which makes it reusable. Of course, there is still room for improvement, so if you notice something that could be improved we encourage you to make a PR.
 
 The same is valid for PHP code. The business logic is stored in the `src/` folder, the JS and CSS are located in `assets/` folder and the views are located in the `views/` folder.
 
