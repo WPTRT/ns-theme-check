@@ -97,13 +97,6 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	const IGNORE_ANNOTATIONS = 'ignoreAnnotations';
 
 	/**
-	 * The checkPhpOnly $_POST key
-	 *
-	 * @var string
-	 */
-	const CHECK_PHP_ONLY = 'checkPhpOnly';
-
-	/**
 	 * The minimumPHPVersion $_POST key
 	 *
 	 * @var string
@@ -287,6 +280,8 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 	/**
 	 * Callback method of the current class.
+	 *
+	 * @throws \PHP_CodeSniffer\Exceptions\DeepExitException Sniffer error.
 	 */
 	public function callback() {
 		// Permissions check.
@@ -346,11 +341,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$ignore_annotations = false;
 		}
 
-		$check_php_only = false;
-
-		if ( isset( $_POST[ self::CHECK_PHP_ONLY ] ) && $_POST[ self::CHECK_PHP_ONLY ] === 'true' ) {
-			$check_php_only = true;
-		}
+		$minimum_php_version = '5.6';
 
 		if ( isset( $_POST[ self::MINIMUM_PHP_VERSION ] ) && ! empty( $_POST[ self::MINIMUM_PHP_VERSION ] ) ) {
 			$minimum_php_version = sanitize_text_field( wp_unslash( $_POST[ self::MINIMUM_PHP_VERSION ] ) );
@@ -380,18 +371,14 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		$all_files = [ 'php' ];
 
-		if ( ! $check_php_only ) {
-			$all_files = array_merge( $all_files, [ 'css', 'js' ] );
-		}
-
 		$theme     = wp_get_theme( self::$theme_slug );
 		$all_files = $theme->get_files( $all_files, -1, false );
 
-		/**
-		 * Check if a file is minified.
-		 * Loops through all the files and checks if it's minified. If it is, skip it
-		 * because it will break phpcs.
-		 */
+		// Disallowed folders.
+		$re = '/(\/node_modules)|(\/vendor)|(\/test)|(\/tests)/';
+
+		$files_to_sniff = [];
+
 		foreach ( $all_files as $file_name => $file_path ) {
 
 			// Check for Frameworks.
@@ -406,55 +393,24 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 				}
 			}
 
-			// Check if node_modules and vendor folders are present and skip those.
-			if ( strpos( $file_path, 'node_modules' ) !== false || strpos( $file_path, 'vendor' ) !== false ) {
-				unset( $all_files[ $file_name ] );
-				break;
-			}
+			// Check if files are in disallowed folders (defined by the regex) and remove them.
+			preg_match_all( $re, $file_path, $matches, PREG_SET_ORDER, 0 );
 
-			// Check CSS/JS.
-			if ( ! $check_php_only && ( strpos( $file_name, '.js' ) !== false || strpos( $file_name, '.css' ) !== false ) ) {
-
-				// Check if files have .min in the file name.
-				if ( strpos( $file_name, '.min.' ) !== false ) {
-					unset( $all_files[ $file_name ] );
-					break;
-				}
-
-				// Check for minified/css not follow standard naming conventions.
-				try {
-					$file_contents = file_get_contents( $file_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					$file_lines    = explode( "\n", $file_contents );
-
-					$row = 0;
-					foreach ( $file_lines as $line ) {
-						if ( $row <= 10 && strlen( $line ) > 1000 ) {
-							unset( $all_files[ $file_name ] );
-							break;
-						}
-					}
-				} catch ( Exception $e ) {
-					new \WP_Error(
-						'error_reading_file',
-						sprintf(
-							/* translators: %s: Name of the file */
-							esc_html__( 'There was an error reading the file %s', 'theme-sniffer' ),
-							$file_name
-						)
-					);
-				}
+			if ( empty( $matches ) ) {
+				$files_to_sniff[ $file_name ] = $file_path;
 			}
 		}
 
-		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*';
+		// Safeguard, but don't seems to be working correctly.
+		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*,.*/tests/.*,.*/test/.*';
 
 		$results_arguments = [
-			'extensions'          => $check_php_only,
+			'extensions'          => 'php',
 			'show_warnings'       => $show_warnings,
 			'minimum_php_version' => $minimum_php_version,
 			'args'                => $args,
 			'theme_prefixes'      => $theme_prefixes,
-			'all_files'           => $all_files,
+			'all_files'           => $files_to_sniff,
 			'standards_array'     => $standards_array,
 			'ignore_annotations'  => $ignore_annotations,
 			'ignored'             => $ignored,
@@ -462,6 +418,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		];
 
 		$sniff_results = $this->get_sniff_results( $results_arguments );
+
 		if ( $raw_output ) {
 			$results_raw = [
 				self::SUCCESS => true,
@@ -478,32 +435,29 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$total_fixable = $sniffer_results[ self::TOTALS ][ self::FIXABLE ];
 		$total_files   = $sniffer_results[ self::FILES ];
 
-		if ( ! $check_php_only ) {
+		// Check theme headers.
+		$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
+		$screenshot_checks   = $this->screenshot_check();
+		$readme_checks       = $this->readme_check();
 
-			// Check theme headers.
-			$theme_header_checks = $this->style_headers_check( self::$theme_slug, $theme, $show_warnings );
-			$screenshot_checks   = $this->screenshot_check();
-			$readme_checks       = $this->readme_check();
-
-			foreach ( $screenshot_checks as $file ) {
-				$total_errors  += $file[ self::ERRORS ];
-				$total_warning += $file[ self::WARNINGS ];
-			}
-
-			$total_files += $screenshot_checks;
-
-			foreach ( $readme_checks as $file ) {
-				$total_errors  += $file[ self::ERRORS ];
-				$total_warning += $file[ self::WARNINGS ];
-			}
-
-			$total_files += $readme_checks;
-
-			$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
-			$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
-			$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
-			$total_files   += $theme_header_checks[ self::FILES ];
+		foreach ( $screenshot_checks as $file ) {
+			$total_errors  += $file[ self::ERRORS ];
+			$total_warning += $file[ self::WARNINGS ];
 		}
+
+		$total_files += $screenshot_checks;
+
+		foreach ( $readme_checks as $file ) {
+			$total_errors  += $file[ self::ERRORS ];
+			$total_warning += $file[ self::WARNINGS ];
+		}
+
+		$total_files += $readme_checks;
+
+		$total_errors  += $theme_header_checks[ self::TOTALS ][ self::ERRORS ];
+		$total_warning += $theme_header_checks[ self::TOTALS ][ self::WARNINGS ];
+		$total_fixable += $theme_header_checks[ self::TOTALS ][ self::FIXABLE ];
+		$total_files   += $theme_header_checks[ self::FILES ];
 
 		// Filtering the files for easier JS handling.
 		$file_i = 0;
@@ -537,10 +491,12 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	}
 
 	/**
-	 * Method that retunrs the reuslts based on a custom PHPCS Runner
+	 * Method that returns the results based on a custom PHPCS Runner
 	 *
-	 * @param  array ...$arguments Array of passed arguments.
-	 * @return string              Sniff results string.
+	 * @param array ...$arguments Array of passed arguments.
+	 * @return string             Sniff results string.
+	 *
+	 * @throws \PHP_CodeSniffer\Exceptions\DeepExitException Sniffer exception.
 	 */
 	protected function get_sniff_results( ...$arguments ) {
 		// Unpack the arguments.
