@@ -38,7 +38,7 @@ class Validator extends Validate_File {
 	 *
 	 * @since 1.1.0
 	 */
-	public $extensions = [ 'png', 'jpg' ];
+	public $extensions = array( 'png', 'jpg' );
 
 	/**
 	 * Runs screenshot validators
@@ -63,27 +63,27 @@ class Validator extends Validate_File {
 
 		// Missing mime type.
 		if ( ! $mime_type ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'error',
 				'message'  => sprintf(
 					esc_html__( 'Screenshot mime type could not be determined, screenshots must have a mime type of "img/png" or "img/jpg".', 'theme-sniffer' ),
 					$mime_type
 				),
-			];
+			);
 
 			return;
 		}
 
 		// Valid mime type returned, but not a png.
 		if ( $mime_type !== 'image/png' ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => sprintf(
 					/* translators: 1: screenshot mime type found */
 					esc_html__( 'Screenshot has mime type of "%1$s", but a mimetype of "img/png" is recommended.', 'theme-sniffer' ),
 					$mime_type
 				),
-			];
+			);
 
 			return;
 		}
@@ -94,7 +94,7 @@ class Validator extends Validate_File {
 
 		// Screenshot too big.
 		if ( $width > 1200 || $height > 900 ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'error',
 				'message'  => sprintf(
 					/* translators: 1: screenshot width 2: screenshot height */
@@ -102,27 +102,27 @@ class Validator extends Validate_File {
 					$width,
 					$height
 				),
-			];
+			);
 
 			return;
 		}
 
 		// Aspect Ratio.
 		if ( $height / $width !== 0.75 ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'error',
 				'message'  => esc_html__( 'Screenshot aspect ratio must be 4:3!', 'theme-sniffer' ),
-			];
+			);
 
 			return;
 		}
 
 		// Recommended size.
 		if ( $width !== 1200 || $height !== 900 ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => esc_html__( 'Screenshot size of 1200x900 is recommended to account for HiDPI displays.', 'theme-sniffer' ),
-			];
+			);
 
 			return;
 		}

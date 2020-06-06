@@ -52,10 +52,10 @@ final class Templated_View extends Base_View {
 	 * @return array Array of possible locations.
 	 */
 	protected function get_locations( $uri ) : array {
-		return [
+		return array(
 			trailingslashit( \get_stylesheet_directory() ) . $uri,
 			trailingslashit( \get_template_directory() ) . $uri,
 			trailingslashit( dirname( __DIR__, 2 ) ) . $uri,
-		];
+		);
 	}
 }

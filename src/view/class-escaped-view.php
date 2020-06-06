@@ -24,15 +24,15 @@ final class Escaped_View implements View {
 	/**
 	 * Tags that are allowed to be rendered.
 	 */
-	const ALLOWED_TAGS = [
-		'form'   => [
+	const ALLOWED_TAGS = array(
+		'form'   => array(
 			'id'       => true,
 			'class'    => true,
 			'action'   => true,
 			'method'   => true,
 			'tabindex' => true,
-		],
-		'input'  => [
+		),
+		'input'  => array(
 			'id'       => true,
 			'class'    => true,
 			'type'     => true,
@@ -40,16 +40,16 @@ final class Escaped_View implements View {
 			'value'    => true,
 			'tabindex' => true,
 			'checked'  => true,
-		],
-		'select' => [
+		),
+		'select' => array(
 			'id'       => true,
 			'class'    => true,
 			'type'     => true,
 			'name'     => true,
 			'value'    => true,
 			'tabindex' => true,
-		],
-		'option' => [
+		),
+		'option' => array(
 			'id'       => true,
 			'class'    => true,
 			'type'     => true,
@@ -57,39 +57,39 @@ final class Escaped_View implements View {
 			'value'    => true,
 			'selected' => true,
 			'tabindex' => true,
-		],
-		'label'  => [
+		),
+		'label'  => array(
 			'for' => true,
-		],
-		'div'    => [
+		),
+		'div'    => array(
 			'class' => true,
-		],
-		'svg'    => [
+		),
+		'svg'    => array(
 			'class'   => true,
 			'style'   => true,
 			'width'   => true,
 			'height'  => true,
 			'viewbox' => true,
 			'xmlns'   => true,
-		],
-		'g'      => [
+		),
+		'g'      => array(
 			'fill'      => true,
 			'fill-rule' => true,
 			'transform' => true,
-		],
-		'path'   => [
+		),
+		'path'   => array(
 			'd'            => true,
 			'id'           => true,
 			'fill'         => true,
 			'style'        => true,
 			'stroke'       => true,
 			'stroke-width' => true,
-		],
-		'mask'   => [
+		),
+		'mask'   => array(
 			'id'   => true,
 			'fill' => true,
-		],
-		'rect'   => [
+		),
+		'rect'   => array(
 			'transform' => true,
 			'fill'      => true,
 			'width'     => true,
@@ -98,12 +98,12 @@ final class Escaped_View implements View {
 			'ry'        => true,
 			'x'         => true,
 			'y'         => true,
-		],
-		'xmlns'  => [
+		),
+		'xmlns'  => array(
 			'xlink' => true,
-		],
-		'defs'   => [],
-	];
+		),
+		'defs'   => array(),
+	);
 
 	/**
 	 * View instance to decorate.
@@ -117,7 +117,7 @@ final class Escaped_View implements View {
 	 *
 	 * @var array
 	 */
-	private $allowed_tags = [];
+	private $allowed_tags = array();
 
 	/**
 	 * Instantiate a Escaped_View object.
@@ -142,7 +142,7 @@ final class Escaped_View implements View {
 	 * @return string Rendered HTML.
 	 * @throws Failed_To_Load_View If the View URI could not be loaded.
 	 */
-	public function render( array $context = [] ) : string {
+	public function render( array $context = array() ) : string {
 		return wp_kses( $this->view->render( $context ), $this->allowed_tags );
 	}
 

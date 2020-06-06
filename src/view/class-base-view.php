@@ -43,7 +43,7 @@ class Base_View implements View {
 	 *
 	 * @var array
 	 */
-	protected $internal_context = [];
+	protected $internal_context = array();
 
 	/**
 	 * Instantiate a View object.
@@ -64,7 +64,7 @@ class Base_View implements View {
 	 * @return string              Rendered HTML.
 	 * @throws Failed_To_Load_View If the View URI could not be loaded.
 	 */
-	public function render( array $context = [] ) : string {
+	public function render( array $context = array() ) : string {
 		$context = array_filter( $context );
 
 		// Add context to the current instance to make it available within the rendered view.
@@ -116,7 +116,7 @@ class Base_View implements View {
 	public function render_partial( $uri, array $context = null ) : string {
 		$view = new static( $uri );
 
-		return $view->render( $context ?: $this->internal_context );
+		return $view->render( $context ? $context : $this->internal_context );
 	}
 
 	/**

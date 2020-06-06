@@ -31,33 +31,33 @@ trait Sniffer_Helpers {
 	 * @return array Standards details.
 	 */
 	public function get_wpcs_standards() : array {
-		$standards = [
-			'wordpress-theme' => [
+		$standards = array(
+			'wordpress-theme' => array(
 				'label'       => 'WPThemeReview',
 				'description' => esc_html__( 'Ruleset for WordPress theme review requirements (Required)', 'theme-sniffer' ),
 				'default'     => 1,
-			],
-			'wordpress-core'  => [
+			),
+			'wordpress-core'  => array(
 				'label'       => 'WordPress-Core',
 				'description' => esc_html__( 'Main ruleset for WordPress core coding standards (Optional)', 'theme-sniffer' ),
 				'default'     => 0,
-			],
-			'wordpress-extra' => [
+			),
+			'wordpress-extra' => array(
 				'label'       => 'WordPress-Extra',
 				'description' => esc_html__( 'Extended ruleset for recommended best practices (Optional)', 'theme-sniffer' ),
 				'default'     => 0,
-			],
-			'wordpress-docs'  => [
+			),
+			'wordpress-docs'  => array(
 				'label'       => 'WordPress-Docs',
 				'description' => esc_html__( 'Additional ruleset for WordPress inline documentation standards (Optional)', 'theme-sniffer' ),
 				'default'     => 0,
-			],
-			'wordpress-vip'   => [
+			),
+			'wordpress-vip'   => array(
 				'label'       => 'WordPress-VIP',
 				'description' => esc_html__( 'Extended ruleset for WordPress VIP coding requirements (Optional)', 'theme-sniffer' ),
 				'default'     => 0,
-			],
-		];
+			),
+		);
 
 		if ( has_filter( 'theme_sniffer_add_standards' ) ) {
 			$standards = apply_filters( 'theme_sniffer_add_standards', $standards );
@@ -71,7 +71,7 @@ trait Sniffer_Helpers {
 	 *
 	 * @since  1.0.0 Moved to a trait.
 	 *
-	 * @throws Api_Response_Error If API is down.
+	 * @throws No_Themes_Present If there are no themes in the themes directory.
 	 * @return array Array of active themes.
 	 */
 	public function get_active_themes() : array {
@@ -84,7 +84,7 @@ trait Sniffer_Helpers {
 			);
 		}
 
-		$themes = [];
+		$themes = array();
 		foreach ( $all_themes as $theme_slug => $theme ) {
 			$theme_name    = $theme->get( 'Name' );
 			$theme_version = $theme->get( 'Version' );
@@ -110,13 +110,13 @@ trait Sniffer_Helpers {
 	 * @return array PHP versions.
 	 */
 	public function get_php_versions() : array {
-		return [
+		return array(
 			'5.6',
 			'7.0',
 			'7.1',
 			'7.2',
 			'7.3',
-		];
+		);
 	}
 
 	/**
@@ -129,8 +129,8 @@ trait Sniffer_Helpers {
 	 * @return array Theme tags array.
 	 */
 	public function get_theme_tags() : array {
-		return [
-			'subject_tags' => [
+		return array(
+			'subject_tags' => array(
 				'blog',
 				'e-commerce',
 				'education',
@@ -140,8 +140,8 @@ trait Sniffer_Helpers {
 				'news',
 				'photography',
 				'portfolio',
-			],
-			'allowed_tags' => [
+			),
+			'allowed_tags' => array(
 				'grid-layout',
 				'one-column',
 				'two-columns',
@@ -172,8 +172,8 @@ trait Sniffer_Helpers {
 				'theme-options',
 				'threaded-comments',
 				'translation-ready',
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -193,7 +193,7 @@ trait Sniffer_Helpers {
 	 * @return array List of required headers.
 	 */
 	public function get_required_headers() {
-		return [
+		return array(
 			'Name',
 			'Description',
 			'Author',
@@ -201,7 +201,7 @@ trait Sniffer_Helpers {
 			'License',
 			'License URI',
 			'TextDomain',
-		];
+		);
 	}
 
 	/**
@@ -306,7 +306,7 @@ trait Sniffer_Helpers {
 		if ( file_exists( $readme ) ) {
 
 			// Check if theme has set minimum PHP version in it's readme.txt file.
-			$theme_php_version = get_file_data( $readme, [ 'minimum_php_version' => 'Requires PHP' ] );
+			$theme_php_version = get_file_data( $readme, array( 'minimum_php_version' => 'Requires PHP' ) );
 
 			// Theme has provided an override to minimum PHP version defined by WP Core.
 			if ( ! empty( $theme_php_version['minimum_php_version'] ) ) {

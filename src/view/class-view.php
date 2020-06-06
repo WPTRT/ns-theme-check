@@ -29,7 +29,7 @@ interface View extends Renderable {
 	 * @return string Rendered HTML.
 	 * @throws Failed_To_Load_View If the View URI could not be loaded.
 	 */
-	public function render( array $context = [] ) : string;
+	public function render( array $context = array() ) : string;
 
 	/**
 	 * Render a partial view.

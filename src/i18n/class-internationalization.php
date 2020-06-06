@@ -35,7 +35,7 @@ class Internationalization implements Service {
 	 * Register the textdomain.
 	 */
 	public function register() {
-		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 	}
 
 	/**

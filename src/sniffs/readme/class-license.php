@@ -46,22 +46,22 @@ class License extends Validate {
 
 		// Only report errors.
 		if ( $license_data->status !== 'success' ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => $license_data->status,
 				'message'  => $license_data->message,
-			];
+			);
 		}
 
 		// Check if GPLv2 compatible if no errors found with License Identifier so far.
 		if ( $license_data->status !== 'warning' && ! $this->is_gpl2_or_later_compatible( $license_data ) ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => sprintf(
 					/* translators: %s: the license specified in readme.txt */
 					esc_html__( 'The license specified, %s is not compatible with WordPress\' license of GPL-2.0-or-later.  All themes must meet this requirement!' ),
 					$this->args
 				),
-			];
+			);
 		}
 	}
 }

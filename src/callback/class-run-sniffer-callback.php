@@ -364,12 +364,12 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$selected_standards
 		);
 
-		$args = [];
+		$args = array();
 
 		// Current theme text domain.
-		$args[ self::TEXT_DOMAINS ] = [ self::$theme_slug ];
+		$args[ self::TEXT_DOMAINS ] = array( self::$theme_slug );
 
-		$all_files = [ 'php' ];
+		$all_files = array( 'php' );
 
 		$theme     = wp_get_theme( self::$theme_slug );
 		$all_files = $theme->get_files( $all_files, -1, false );
@@ -377,15 +377,15 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		// Disallowed folders.
 		$re = '/(\/node_modules)|(\/vendor)|(\/test)|(\/tests)/';
 
-		$files_to_sniff = [];
+		$files_to_sniff = array();
 
 		foreach ( $all_files as $file_name => $file_path ) {
 
 			// Check for Frameworks.
-			$allowed_frameworks = [
+			$allowed_frameworks = array(
 				'kirki'       => 'kirki.php',
 				'hybrid-core' => 'hybrid.php',
-			];
+			);
 
 			foreach ( $allowed_frameworks as $framework_textdomain => $identifier ) {
 				if ( strrpos( $file_name, $identifier ) !== false && ! in_array( $framework_textdomain, $args[ self::TEXT_DOMAINS ], true ) ) {
@@ -404,7 +404,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		// Safeguard, but don't seems to be working correctly.
 		$ignored = '.*/node_modules/.*,.*/vendor/.*,.*/assets/build/.*,.*/build/.*,.*/bin/.*,.*/tests/.*,.*/test/.*';
 
-		$results_arguments = [
+		$results_arguments = array(
 			'extensions'          => 'php',
 			'show_warnings'       => $show_warnings,
 			'minimum_php_version' => $minimum_php_version,
@@ -415,15 +415,15 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			'ignore_annotations'  => $ignore_annotations,
 			'ignored'             => $ignored,
 			'raw_output'          => $raw_output,
-		];
+		);
 
 		$sniff_results = $this->get_sniff_results( $results_arguments );
 
 		if ( $raw_output ) {
-			$results_raw = [
+			$results_raw = array(
 				self::SUCCESS => true,
 				self::DATA    => $sniff_results,
-			];
+			);
 
 			\wp_send_json( $results_raw, 200 );
 		}
@@ -461,7 +461,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 
 		// Filtering the files for easier JS handling.
 		$file_i = 0;
-		$files  = [];
+		$files  = array();
 
 		foreach ( $total_files as $file_path => $file_sniff_results ) {
 
@@ -477,15 +477,15 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			$file_i++;
 		}
 
-		$results = [
+		$results = array(
 			self::SUCCESS => true,
-			self::TOTALS  => [
+			self::TOTALS  => array(
 				self::ERRORS   => $total_errors,
 				self::WARNINGS => $total_warning,
 				self::FIXABLE  => $total_fixable,
-			],
+			),
 			self::FILES   => $files,
-		];
+		);
 
 		\wp_send_json( $results, 200 );
 	}
@@ -514,7 +514,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		// Create a custom runner.
 		$runner = new Runner();
 
-		$config_args = [ '-s', '-p' ];
+		$config_args = array( '-s', '-p' );
 
 		if ( $show_warnings === '0' ) {
 			$config_args[] = '-n';
@@ -525,10 +525,10 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$all_files = array_values( $all_files );
 
 		if ( $extensions ) {
-			$runner->config->extensions = [
+			$runner->config->extensions = array(
 				'php' => 'PHP',
 				'inc' => 'PHP',
-			];
+			);
 		}
 
 		$runner->config->standards   = $standards_array;
@@ -543,7 +543,7 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$runner->config->ignored     = $ignored;
 
 		if ( ! $raw_output ) {
-			$runner->config->reports = [ 'json' => null ];
+			$runner->config->reports = array( 'json' => null );
 		}
 
 		$runner->init();
@@ -595,35 +595,35 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 	protected function style_headers_check( $theme_slug, \WP_Theme $theme, $show_warnings ) {
 		$required_headers = $this->get_required_headers();
 
-		$notices = [];
+		$notices = array();
 
 		foreach ( $required_headers as $header ) {
 			if ( $theme->get( $header ) ) {
 				continue;
 			}
 
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => sprintf(
 					/* translators: 1: comment header line */
 					esc_html__( 'The %1$s is not defined in the style.css header.', 'theme-sniffer' ),
 					$header
 				),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		if ( strpos( $theme_slug, 'wordpress' ) || strpos( $theme_slug, 'theme' ) ) { // phpcs:ignore
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => esc_html__( 'The theme name cannot contain WordPress or Theme as a part of its name.', 'theme-sniffer' ),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		if ( preg_match( '|[^\d\.]|', $theme->get( 'Version' ) ) ) {
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => esc_html__( 'Version strings can only contain numeric and period characters (e.g. 1.2).', 'theme-sniffer' ),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		// Prevent duplicate URLs.
@@ -631,14 +631,14 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 		$authoruri = trim( $theme->get( 'AuthorURI' ), '/\\' );
 
 		if ( ( $themeuri === $authoruri ) && ( ! empty( $themeuri ) || ! empty( $authoruri ) ) ) {
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => esc_html__( 'Duplicate theme and author URLs. A theme URL is a page/site that provides details about this specific theme. An author URL is a page/site that provides information about the author of the theme. The theme and author URL are optional.', 'theme-sniffer' ),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		if ( $theme_slug === $theme->get( 'Text Domain' ) ) {
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => sprintf(
 					/* translators: %1$s: Text Domain, %2$s: Theme Slug */
 					esc_html__( 'The text domain "%1$s" must match the theme slug "%2$s".', 'theme-sniffer' ),
@@ -646,27 +646,27 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 					$theme_slug
 				),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		$registered_tags    = $this->get_theme_tags();
 		$tags               = array_map( 'strtolower', $theme->get( 'Tags' ) );
 		$tags_count         = array_count_values( $tags );
-		$subject_tags_names = [];
+		$subject_tags_names = array();
 
 		$subject_tags = array_flip( $registered_tags['subject_tags'] );
 		$allowed_tags = array_flip( $registered_tags['allowed_tags'] );
 
 		foreach ( $tags as $tag ) {
 			if ( $tags_count[ $tag ] > 1 ) {
-				$notices[] = [
+				$notices[] = array(
 					self::MESSAGE  => sprintf(
 						/* translators: %s: Theme tag */
 						esc_html__( 'The tag "%s" is being used more than once, please remove the duplicate.', 'theme-sniffer' ),
 						$tag
 					),
 					self::SEVERITY => self::ERROR,
-				];
+				);
 			}
 
 			if ( isset( $subject_tags[ $tag ] ) ) {
@@ -675,29 +675,29 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 			}
 
 			if ( ! isset( $allowed_tags[ $tag ] ) ) {
-				$notices[] = [
+				$notices[] = array(
 					self::MESSAGE  => sprintf(
 						/* translators: %s: Theme tag */
 						wp_kses_post( __( 'Please remove "%s" as it is not a standard tag.', 'theme-sniffer' ) ),
 						$tag
 					),
 					self::SEVERITY => self::ERROR,
-				];
+				);
 				continue;
 			}
 
 			if ( 'accessibility-ready' === $tag && $show_warnings !== '0' ) {
-				$notices[] = [
+				$notices[] = array(
 					self::MESSAGE  => wp_kses_post( __( 'Themes that use the "accessibility-ready" tag will need to undergo an accessibility review.', 'theme-sniffer' ) ),
 					self::SEVERITY => self::WARNING,
-				];
+				);
 			}
 		}
 
 		$subject_tags_count = count( $subject_tags_names );
 
 		if ( $subject_tags_count > 3 ) {
-			$notices[] = [
+			$notices[] = array(
 				self::MESSAGE  => sprintf(
 					/* translators: 1: Subject theme tag, 2: Tags list */
 					esc_html__( 'A maximum of 3 subject tags are allowed. The theme has %1$d subjects tags [%2$s]. Please remove the subject tags, which do not directly apply to the theme.', 'theme-sniffer' ),
@@ -705,12 +705,12 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 					implode( ',', $subject_tags_names )
 				),
 				self::SEVERITY => self::ERROR,
-			];
+			);
 		}
 
 		$error_count   = 0;
 		$warning_count = 0;
-		$messages      = [];
+		$messages      = array();
 
 		foreach ( $notices as $notice ) {
 			$severity = $notice[ self::SEVERITY ];
@@ -721,28 +721,28 @@ final class Run_Sniffer_Callback extends Base_Ajax_Callback {
 				$warning_count++;
 			}
 
-			$messages[] = [
+			$messages[] = array(
 				self::MESSAGE  => $notice[ self::MESSAGE ],
 				self::SEVERITY => $severity,
 				self::FIXABLE  => false,
 				self::TYPE     => strtoupper( $severity ),
-			];
+			);
 		}
 
-		$header_results = [
-			self::TOTALS => [
+		$header_results = array(
+			self::TOTALS => array(
 				self::ERRORS   => $error_count,
 				self::WARNINGS => $warning_count,
 				self::FIXABLE  => $error_count + $warning_count,
-			],
-			self::FILES => [
-				self::$theme_root . "/{$theme_slug}/style.css" => [
+			),
+			self::FILES => array(
+				self::$theme_root . "/{$theme_slug}/style.css" => array(
 					self::ERRORS   => $error_count,
 					self::WARNINGS => $warning_count,
 					self::MESSAGES => $messages,
-				],
-			],
-		];
+				),
+			),
+		);
 
 		return $header_results;
 	}

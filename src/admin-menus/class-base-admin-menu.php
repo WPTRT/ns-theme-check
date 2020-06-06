@@ -33,7 +33,7 @@ abstract class Base_Admin_Menu implements Renderable, Service {
 					$this->get_menu_title(),
 					$this->get_capability(),
 					$this->get_menu_slug(),
-					[ $this, 'process_admin_menu' ],
+					array( $this, 'process_admin_menu' ),
 					$this->get_icon(),
 					$this->get_position()
 				);
@@ -66,7 +66,7 @@ abstract class Base_Admin_Menu implements Renderable, Service {
 	 *
 	 * @return string Rendered HTML.
 	 */
-	public function render( array $context = [] ) : string {
+	public function render( array $context = array() ) : string {
 		try {
 			$view = new Escaped_View(
 				new Templated_View( $this->get_view_uri() )

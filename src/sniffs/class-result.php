@@ -116,7 +116,7 @@ class Result implements Has_Results {
 	 *
 	 * @since 1.1.0
 	 */
-	public $results = [];
+	public $results = array();
 
 	/**
 	 * Instantiate class and set class properties.
@@ -154,13 +154,13 @@ class Result implements Has_Results {
 					$this->results[ $this->file ][ self::WARNINGS ]++;
 				}
 
-				$this->results[ $this->file ][ self::MESSAGES ][] = [
+				$this->results[ $this->file ][ self::MESSAGES ][] = array(
 					self::MESSAGE  => esc_html( $result[ self::MESSAGE ] ?? '' ),
 					self::SOURCE   => $result[ self::SOURCE ] ?? null,
 					self::SEVERITY => $result[ self::SEVERITY ] ?? null,
 					self::FIXABLE  => $result[ self::FIXABLE ] ?? false,
 					self::TYPE     => strtoupper( $result[ self::SEVERITY ] ?? '' ),
-				];
+				);
 			}
 		}
 
@@ -175,13 +175,13 @@ class Result implements Has_Results {
 	 * @return array Formatted result.
 	 */
 	private function set_format() {
-		return [
-			$this->file => [
+		return array(
+			$this->file => array(
 				self::ERRORS   => 0,
 				self::WARNINGS => 0,
-				self::MESSAGES => [],
-			],
-		];
+				self::MESSAGES => array(),
+			),
+		);
 	}
 
 	/**

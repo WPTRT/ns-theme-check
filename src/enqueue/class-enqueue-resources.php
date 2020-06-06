@@ -40,12 +40,12 @@ class Enqueue_Resources implements Assets {
 	public function register() {
 		add_action(
 			'admin_enqueue_scripts',
-			[ $this, 'enqueue_styles' ]
+			array( $this, 'enqueue_styles' )
 		);
 
 		add_action(
 			'admin_enqueue_scripts',
-			[ $this, 'enqueue_scripts' ]
+			array( $this, 'enqueue_scripts' )
 		);
 	}
 
@@ -64,7 +64,7 @@ class Enqueue_Resources implements Assets {
 		wp_register_style(
 			self::CSS_HANDLE,
 			$this->get_manifest_assets_data( self::CSS_URI ),
-			[],
+			array(),
 			self::VERSION,
 			self::MEDIA_ALL
 		);
@@ -107,10 +107,10 @@ class Enqueue_Resources implements Assets {
 	 * @return array List of all the script dependencies
 	 */
 	protected function get_js_dependencies() : array {
-		return [
+		return array(
 			'jquery',
 			'esprima',
-		];
+		);
 	}
 
 	/**
@@ -119,16 +119,16 @@ class Enqueue_Resources implements Assets {
 	 * @return array Key value pair of different localizations
 	 */
 	protected function get_localizations() : array {
-		return [
-			self::LOCALIZATION_HANDLE => [
+		return array(
+			self::LOCALIZATION_HANDLE => array(
 				'sniffError'      => esc_html__( 'The check has failed. This could happen due to running out of memory. Either reduce the file length or increase PHP memory.', 'theme-sniffer' ),
 				'checkCompleted'  => esc_html__( 'Check is completed. The results are below.', 'theme-sniffer' ),
 				'checkInProgress' => esc_html__( 'Check in progress', 'theme-sniffer' ),
 				'errorReport'     => esc_html__( 'Error', 'theme-sniffer' ),
 				'ajaxAborted'     => esc_html__( 'Checking stopped', 'theme-sniffer' ),
 				'copySuccess'     => esc_attr__( 'Copied!', 'theme-sniffer' ),
-			],
-		];
+			),
+		);
 	}
 
 	/**
