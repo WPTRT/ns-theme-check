@@ -64,7 +64,7 @@ final class Di_Container {
 
 		$builder->enableCompilation( __DIR__ );
 
-		$definitions = [];
+		$definitions = array();
 
 		foreach ( $services as $service_name => $service_dependencies ) {
 			$definitions[ $service_name ] = \DI\create()->constructor( ...$this->get_di_dependencies( $service_dependencies ) );
@@ -113,11 +113,11 @@ final class Di_Container {
 	 * @return array
 	 */
 	private function get_prepared_service_array( array $services ) : array {
-		$prepared_services = [];
+		$prepared_services = array();
 
 		foreach ( $services as $class => $dependencies ) {
 			if ( ! is_array( $dependencies ) ) {
-				$prepared_services[ $dependencies ] = [];
+				$prepared_services[ $dependencies ] = array();
 			} else {
 				$prepared_services[ $class ] = $dependencies;
 			}

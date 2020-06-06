@@ -50,15 +50,15 @@ class License_Uri extends Validate {
 
 			// Missing License URI field warning.
 			if ( empty( $this->args->uri ) ) {
-				$this->results[] = [
+				$this->results[] = array(
 					'severity' => 'warning',
 					'message'  => esc_html__( 'All themes are required to provide a License URI in their readme.txt!', 'theme-sniffer' ),
-				];
+				);
 			}
 
 			// URI field is invalid.
 			if ( empty( preg_grep( '/^' . preg_quote( $this->args->uri, '/' ) . '$/i', $uris ) ) ) {
-				$this->results[] = [
+				$this->results[] = array(
 					'severity' => 'warning',
 					'message'  => wp_kses(
 						sprintf(
@@ -68,18 +68,18 @@ class License_Uri extends Validate {
 							$this->args->primary,
 							implode( '<br/>', $uris )
 						),
-						[
-							'br' => [],
-						]
+						array(
+							'br' => array(),
+						)
 					),
-				];
+				);
 			}
 		} else {
 			// Unable to determine License URI without valid License.
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => esc_html__( 'Unable to determine License URI with an invalid License supplied in readme.txt!', 'theme-sniffer' ),
-			];
+			);
 		}
 	}
 }

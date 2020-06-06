@@ -40,7 +40,7 @@ abstract class Validate_File implements Has_Results {
 	 *
 	 * @since 1.1.0
 	 */
-	public $extension = [];
+	public $extension = array();
 
 	/**
 	 * Sniff results for the readme.txt.
@@ -49,7 +49,7 @@ abstract class Validate_File implements Has_Results {
 	 *
 	 * @since 1.1.0
 	 */
-	public $results = [];
+	public $results = array();
 
 	/**
 	 * The file to reference.
@@ -84,7 +84,7 @@ abstract class Validate_File implements Has_Results {
 	public function set_file() {
 		$file = false;
 		foreach ( $this->extensions as $extenstion ) {
-			$file = implode( '/', [ $this->theme_root, $this->theme_slug, $this->filename . '.' . $extenstion ] );
+			$file = implode( '/', array( $this->theme_root, $this->theme_slug, $this->filename . '.' . $extenstion ) );
 			$file = $this->file_exists( $file );
 			if ( $file !== false ) {
 				break;
@@ -107,16 +107,16 @@ abstract class Validate_File implements Has_Results {
 		if ( $file === false ) {
 
 			// Set file class property for result output.
-			$this->file = implode( '/', [ $this->theme_root, $this->theme_slug, $this->filename . '.' . $this->extensions[0] ] );
+			$this->file = implode( '/', array( $this->theme_root, $this->theme_slug, $this->filename . '.' . $this->extensions[0] ) );
 
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'error',
 				'message'  => sprintf(
 					/* translators: 1: the file required including name and extension. */
 					esc_html__( 'Themes are required to provide %1$s', 'theme-sniffer' ),
 					$this->filename . '.' . $this->extensions[0]
 				),
-			];
+			);
 
 			return;
 		}
@@ -125,7 +125,7 @@ abstract class Validate_File implements Has_Results {
 		$pathinfo = pathinfo( $file );
 
 		if ( $pathinfo['extension'] !== $this->extensions[0] ) {
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => sprintf(
 					/* translators: 1: filename being validated 2: file extension found 3: recommended file extension to use */
@@ -134,7 +134,7 @@ abstract class Validate_File implements Has_Results {
 					$pathinfo['extension'],
 					$this->extensions[0]
 				),
-			];
+			);
 
 			return;
 		}

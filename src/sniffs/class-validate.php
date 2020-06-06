@@ -21,7 +21,7 @@ abstract class Validate implements Validatable, Has_Results {
 	 *
 	 * @since 1.1.0
 	 */
-	protected $results = [];
+	protected $results = array();
 
 	/**
 	 * Initialize class and set class properties.

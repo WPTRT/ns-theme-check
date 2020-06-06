@@ -38,7 +38,7 @@ class Validator extends Validate_File {
 	 *
 	 * @since 1.1.0
 	 */
-	public $extensions = [ 'txt', 'md' ];
+	public $extensions = array( 'txt', 'md' );
 
 	/**
 	 * Sniff results for the readme.txt.
@@ -47,7 +47,7 @@ class Validator extends Validate_File {
 	 *
 	 * @since 1.1.0
 	 */
-	public $results = [];
+	public $results = array();
 
 	/**
 	 * Set defaults that are necessary for any validators if needed.
@@ -58,10 +58,10 @@ class Validator extends Validate_File {
 	 */
 	public function set_defaults( $parser ) {
 		if ( ! empty( $parser->license ) && ! empty( $parser->license_uri ) ) {
-			$parser->license_uri = (object) [
+			$parser->license_uri = (object) array(
 				'primary' => $parser->license,
 				'uri'     => $parser->license_uri,
-			];
+			);
 		}
 
 		return $parser;

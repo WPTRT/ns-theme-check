@@ -27,7 +27,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 *
 	 * @var Service[]
 	 */
-	private $services = [];
+	private $services = array();
 
 	/**
 	 * Activate the plugin.
@@ -92,9 +92,9 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	public function register() {
 		$this->register_assets_manifest_data();
 
-		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-		add_action( 'plugin_action_links_' . PLUGIN_BASENAME, [ $this, 'plugin_settings_link' ] );
-		add_filter( 'extra_theme_headers', [ $this, 'add_headers' ] );
+		add_action( 'plugins_loaded', array( $this, 'register_services' ) );
+		add_action( 'plugin_action_links_' . PLUGIN_BASENAME, array( $this, 'plugin_settings_link' ) );
+		add_filter( 'extra_theme_headers', array( $this, 'add_headers' ) );
 	}
 
 	/**
@@ -183,11 +183,11 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 	 * @return array<string> Array of fully qualified class names.
 	 */
 	private function get_service_classes() : array {
-		return [
+		return array(
 			Admin_Menus\Sniff_Page::class,
 			Callback\Run_Sniffer_Callback::class,
 			Enqueue\Enqueue_Resources::class,
 			i18n\Internationalization::class,
-		];
+		);
 	}
 }

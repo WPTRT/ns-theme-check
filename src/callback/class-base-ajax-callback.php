@@ -27,11 +27,11 @@ abstract class Base_Ajax_Callback implements Invokable, Service {
 
 		$callback_name = $this->get_action_name();
 
-		add_action( "wp_ajax_{$callback_name}", [ $this, 'callback' ] );
+		add_action( "wp_ajax_{$callback_name}", array( $this, 'callback' ) );
 
 		// Add nopriv action.
 		if ( $this->is_public() ) {
-			add_action( "wp_ajax_nopriv_{$callback_name}", [ $this, 'callback' ] );
+			add_action( "wp_ajax_nopriv_{$callback_name}", array( $this, 'callback' ) );
 		}
 	}
 

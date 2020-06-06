@@ -62,13 +62,13 @@ trait Readme_Helpers {
 	 * @return object $reponse Object containing license criteria and match information.
 	 */
 	public function find_license( $id ) {
-		$response             = (object) [];
+		$response             = (object) array();
 		$response->provided   = $id;
-		$response->deprecated = [];
-		$response->live       = [];
+		$response->deprecated = array();
+		$response->live       = array();
 
 		// SPDX ID exact match, so skip loop.
-		$found = $this->license_data[ $response->provided ] ?? [];
+		$found = $this->license_data[ $response->provided ] ?? array();
 
 		// Check if license is deprecated.  Set data.
 		if ( $found ) {
@@ -175,13 +175,13 @@ trait Readme_Helpers {
 	 * @return array Blacklisted resource urls.
 	 */
 	public function get_blacklist() : array {
-		return [
+		return array(
 			'unsplash',
 			'sxc.hu',
 			'photopin.com',
 			'publicdomainpictures.net',
 			'splitshire.com',
 			'pixabay.com',
-		];
+		);
 	}
 }

@@ -37,14 +37,14 @@ class Contributors extends Validate {
 		// Check each user's profile in list.
 		foreach ( $this->args as $contributor ) {
 			$profile  = "https://profiles.wordpress.org/{$contributor}/";
-			$response = wp_remote_head( $profile, [ 'timeout' => 20 ] );
+			$response = wp_remote_head( $profile, array( 'timeout' => 20 ) );
 
 			// Error with remote request.
 			if ( is_wp_error( $response ) ) {
-				$this->results[] = [
+				$this->results[] = array(
 					'severity' => 'warning',
 					'message'  => esc_html__( 'Something went wrong when remotely reaching out to WordPress.org to valid the contributors in readme.txt' ),
-				];
+				);
 
 				continue;
 			}
@@ -58,20 +58,20 @@ class Contributors extends Validate {
 
 			// Profile page redirect.
 			if ( $status === 302 ) {
-				$this->results[] = [
+				$this->results[] = array(
 					'severity' => 'error',
 					/* translators: %s: a contributor's username for WordPress.org that wasn't found. */
 					'message'  => sprintf( esc_html__( 'The user %s, is not a valid WordPress.org username!', 'theme-sniffer' ), $contributor ),
-				];
+				);
 
 				continue;
 			}
 
 			// Catch all error if something beyond this..
-			$this->results[] = [
+			$this->results[] = array(
 				'severity' => 'warning',
 				'message'  => esc_html__( 'Something went wrong when validating readme.txt\'s contributors list!', 'theme-sniffer' ),
-			];
+			);
 		}
 	}
 }
