@@ -49,7 +49,7 @@ final class Plugin implements Registerable, Has_Activation, Has_Deactivation {
 			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}
 
-		if ( version_compare( PHP_VERSION_ID, '70000', '<' ) ) {
+		if ( version_compare( (string) PHP_VERSION_ID, '70000', '<' ) ) {
 			\deactivate_plugins( PLUGIN_BASENAME );
 
 			$error_message = esc_html__( 'Theme Sniffer requires PHP 7.0 or greater to function.', 'theme-sniffer' );
