@@ -75,7 +75,7 @@ Development prerequisites:
 
 * Installed [Node.js](https://nodejs.org/en/)
 * Installed [Composer](https://getcomposer.org/)
-* Test environment - [Local by Flywheel](https://local.getflywheel.com/), [VVV](https://varyingvagrantvagrants.org/), [Docker](https://www.docker.com/), [MAMP](https://www.mamp.info/en/), [XAMPP](https://www.apachefriends.org/index.html), [WAMP](http://www.wampserver.com/en/) (whatever works for you)
+* Test environment - [Local by Flywheel](https://local.getflywheel.com/), [VVV](https://varyingvagrantvagrants.org/), [Docker](https://www.docker.com/), [MAMP](https://www.mamp.info/en/), [XAMPP](https://www.apachefriends.org/index.html), [WAMP](http://www.wampserver.com/en/), [DevKinsta](https://kinsta.com/devkinsta/) (whatever works for you)
 
 All of the development asset files are located in the `assets/dev/` folder. We have refactored the plugin to use the latest JavaScript development methods. This is why we are using [webpack](https://webpack.js.org/) to bundle our assets.
 
