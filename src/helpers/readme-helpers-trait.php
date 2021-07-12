@@ -136,7 +136,7 @@ trait Readme_Helpers {
 		} elseif ( ! empty( $response->deprecated ) ) { // Deprecated match found.
 			$response->status = 'warning';
 			/* translators: %s: User provided license identifier. */
-			$response->message = sprintf( esc_html__( 'The license identification provided, $s, indicates a deprecated license!  Please use a valid SPDX Identifier!', 'theme-sniffer' ), $response->provided );
+			$response->message = sprintf( esc_html__( 'The license identification provided, %s, indicates a deprecated license!  Please use a valid SPDX Identifier!', 'theme-sniffer' ), $response->provided );
 		} else { // No matches found.
 			$response->status = 'warning';
 			/* translators: %s: unrecognized user provided license identifier */
